@@ -9,8 +9,10 @@
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
 
 ## 0.3.2-SNAPSHOT
-
-
+- /api/upload production では PUBLIC_DIR 環境変数を定義すること。
+    export PUBLIC_DIR=/home/ubuntu/reports/public
+- api/copy! でエラー。
+  No method in multimethod 'do-copy' for dispatch value: [java.io.File java.lang.String]
 ## 0.3.1 - 2022-05-23
 - (layout/render [req] "template.html" {:key value}) で渡し、
   template.html 中に、
