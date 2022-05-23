@@ -13,6 +13,6 @@
    {:middleware [middleware/wrap-restricted
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
-   "/ping" (response/ok {:status 200
-                         :body "pong"})])
-
+   ["/ping" {:get (fn [_]
+                    (response/ok {:status 200
+                                  :body "pong"}))}]])

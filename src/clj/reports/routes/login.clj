@@ -30,9 +30,8 @@
 
 (defn logout! [request]
   (-> (response/found "/login")
-      (assoc :session {})
+      (assoc :session {})))
       ;;(dissoc :session) ; NG.
-      (assoc :flash "dissoc?")))
 
 (defn login-routes []
   [""
