@@ -9,7 +9,9 @@
    [ring.util.http-response :as response]))
 
 (defn home-page [request]
-  (layout/render [request] "home.html"))
+  (if-let [login (get-in request [:session :identity])]
+    (layout/render [request] "home.html" {:login (name login)})
+    (layout/render [request] "error.html")))
 
 (defn home-routes []
   ["/r"

@@ -44,11 +44,14 @@
    [:img {:src "/img/warning_clojure.png"}]])
 
 (defn home-page []
-  [:section.section>div.container>div.content
-   [:ul
-    [:li [:a {:href "#/upload"} "Upload"]]
-    [:li [:a {:href "#/browse"} "Browse"]]
-    [:li [:a {:href "#/goods"}  "Goods"]]]])
+  (let [name js/login]
+    [:section.section>div.container>div.content
+     [:p "login as " name]
+     [:ul
+      [:li [:a {:href "#/upload"} "Upload"]]
+      [:li [:a {:href "#/browse"} "Browse"]]
+      [:li [:a {:href "#/goods"}  "Goods"]]]]))
+
 
 (defn upload-page []
   [:section.section>div.container>div.content
@@ -59,8 +62,10 @@
    [:h2 "Browse"]])
 
 (defn goods-page []
-  [:section.section>div.container>div.content
-   [:h2 "Goods"]])
+  (let [name js/login]
+   [:section.section>div.container>div.content
+    [:p "you are " name]
+    [:h2 "Goods"]]))
 
 (def pages
   {:home   #'home-page

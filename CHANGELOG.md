@@ -11,6 +11,16 @@
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
 
 ## 0.3.1-SNAPSHOT
+- (layout/render [req] "template.html" {:key value}) で渡し、
+  template.html 中に、
+
+```
+  <script type="text/javascript">
+        var value = "{{key}}";
+  </script>
+```
+  cljs 側ではその値を js/key で参照できる。
+
 
 ## 0.3.0 - 2022-05-23
 - (assoc :session {}) は良くて、(dissoc :session) はダメな理由はなんだ？
