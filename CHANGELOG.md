@@ -13,6 +13,8 @@
     export PUBLIC_DIR=/home/ubuntu/reports/public
 - api/copy! でエラー。
   No method in multimethod 'do-copy' for dispatch value: [java.io.File java.lang.String]
+  ->  (io/copy tempfile (io/file (str dir "/" filename)))
+
 ## 0.3.1 - 2022-05-23
 - (layout/render [req] "template.html" {:key value}) で渡し、
   template.html 中に、
