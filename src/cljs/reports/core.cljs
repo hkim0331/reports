@@ -35,6 +35,9 @@
       {:class (when @expanded? :is-active)}
       [:div.navbar-start
        [nav-link "#/" "Home" :home]
+       [nav-link "#/upload" "Upload" :upload]
+       [nav-link "#/browse" "Browse" :browse]
+       [nav-link "#/goods"  "Goods" :goods]
        [nav-link "/login" "Login"]
        [nav-link "/logout" "Logout"]
        [nav-link "#/about" "About" :about]]]]))
@@ -52,10 +55,24 @@
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]]]]))
 
+(defn button-up [id]
+  [:buttun
+   {:on-click #(.log js/console "click " id)}
+   "up"])
+
+(defn upload-column [s1 s2 id]
+  [:div.columns
+   [:div.column s1]
+   [:div.column s2 [:input {:type "file" :id id}]]
+   [:div.column [button-up id]]])
 
 (defn upload-page []
   [:section.section>div.container>div.content
-   [:h2 "Upload"]])
+   [:h2 "Upload"]
+   [upload-column (str js/login) "/" "html"]
+   [upload-column "" "/css" "css"]
+   [upload-column "" "/images" "images"]
+   [upload-column "" "/js" "js"]])
 
 (defn browse-page []
   [:section.section>div.container>div.content
@@ -63,14 +80,13 @@
 
 (defn goods-page []
   (let [name js/login]
-   [:section.section>div.container>div.content
-    [:p "you are " name]
-    [:h2 "Goods"]]))
+    [:section.section>div.container>div.content
+     [:p "you are " name]
+     [:h2 "Goods"]]))
 
 (def pages
   {:home   #'home-page
    :about  #'about-page
-
    :upload #'upload-page
    :browse #'browse-page
    :goods  #'goods-page})
@@ -85,7 +101,6 @@
   (reitit/router
    [["/" :home]
     ["/about" :about]
-
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]]))

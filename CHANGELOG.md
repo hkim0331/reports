@@ -4,22 +4,22 @@
 - Uploads
 - Browse
 - Goods
-- home-routes
-- app-routes after login success
 - login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
 
-## 0.3.1-SNAPSHOT
+
+## 0.3.1 - 2022-05-23
 - (layout/render [req] "template.html" {:key value}) で渡し、
   template.html 中に、
 
 ```
   <script type="text/javascript">
-        var value = "{{key}}";
+        var key = "{{value}}";
   </script>
 ```
   cljs 側ではその値を js/key で参照できる。
+- test deploy to l.melt. OK.
 
 
 ## 0.3.0 - 2022-05-23
