@@ -7,13 +7,17 @@
 - login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
+- form looks
+- time format
 
-## 0.3.2-SNAPSHOT
+
+## 0.3.3 - 2022-05-23
 - /api/upload production では PUBLIC_DIR 環境変数を定義すること。
     export PUBLIC_DIR=/home/ubuntu/reports/public
 - api/copy! でエラー。
   No method in multimethod 'do-copy' for dispatch value: [java.io.File java.lang.String]
   ->  (io/copy tempfile (io/file (str dir "/" filename)))
+- About にバージョンと更新日時を表示。
 
 ## 0.3.1 - 2022-05-23
 - (layout/render [req] "template.html" {:key value}) で渡し、

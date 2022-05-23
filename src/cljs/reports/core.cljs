@@ -11,6 +11,9 @@
    [clojure.string :as string])
   (:import goog.History))
 
+(def ^:private version "0.3.3")
+(def ^:private now (js/Date))
+
 (defonce session (r/atom {:page :home}))
 
 (defn nav-link [uri title page]
@@ -44,7 +47,9 @@
 
 (defn about-page []
   [:section.section>div.container>div.content
-   [:img {:src "/img/warning_clojure.png"}]])
+   [:img {:src "/img/warning_clojure.png"}]
+   [:p "version: " version]
+   [:p "updated: " now]])
 
 (defn home-page []
   (let [name js/login]
@@ -112,7 +117,7 @@
 (def router
   (reitit/router
    [["/" :home]
-    ["/about" :about]
+    ["/about"  :about]
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]]))
