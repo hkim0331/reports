@@ -28,7 +28,7 @@
             (assoc :session {}
                    :flash "login failed"))))))
 
-(defn logout! [request]
+(defn logout! [_]
   (-> (response/found "/login")
       (assoc :session {})))
       ;;(dissoc :session) ; NG.
@@ -41,3 +41,4 @@
    ["/login" {:get  login-page
               :post login!}]
    ["/logout" {:get logout!}]])
+

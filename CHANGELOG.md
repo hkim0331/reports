@@ -4,12 +4,23 @@
 - Uploads
 - Browse
 - Goods
-- home-routes
-- app-routes after login success
 - login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
-- github 取り下げて上げ直し。
+
+
+## 0.3.1 - 2022-05-23
+- (layout/render [req] "template.html" {:key value}) で渡し、
+  template.html 中に、
+
+```
+  <script type="text/javascript">
+        var key = "{{value}}";
+  </script>
+```
+  cljs 側ではその値を js/key で参照できる。
+- test deploy to l.melt. OK.
+- fix typo. parInfer 使ってると時々、括弧の対応を外してしまって気がつかない。
 
 ## 0.3.0 - 2022-05-23
 - (assoc :session {}) は良くて、(dissoc :session) はダメな理由はなんだ？
@@ -20,6 +31,7 @@
 - nav-bar の Report はリンクじゃなくていいけど　-> メニューが不細工に見えるので止める。
   代わりに #/ をリンク。
 - カラの Upload, Browse, Goods ページ。
+- github 取り下げて上げ直し。
 
 # RESTART
 深夜のプログラミングは思ったほど捗らない。

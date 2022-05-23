@@ -35,6 +35,9 @@
       {:class (when @expanded? :is-active)}
       [:div.navbar-start
        [nav-link "#/" "Home" :home]
+       [nav-link "#/upload" "Upload" :upload]
+       [nav-link "#/browse" "Browse" :browse]
+       [nav-link "#/goods"  "Goods" :goods]
        [nav-link "/login" "Login"]
        [nav-link "/logout" "Logout"]
        [nav-link "#/about" "About" :about]]]]))
@@ -44,28 +47,64 @@
    [:img {:src "/img/warning_clojure.png"}]])
 
 (defn home-page []
-  [:section.section>div.container>div.content
-   [:ul
-    [:li [:a {:href "#/upload"} "Upload"]]
-    [:li [:a {:href "#/browse"} "Browse"]]
-    [:li [:a {:href "#/goods"}  "Goods"]]]])
+  (let [name js/login]
+    [:section.section>div.container>div.content
+     [:h1 "UNDER CONSTRUCTION"]
+     [:ul
+      [:li [:a {:href "#/upload"} "Upload"]]
+      [:li [:a {:href "#/browse"} "Browse"]]
+      [:li [:a {:href "#/goods"}  "Goods"]]]]))
+
+(defn button-up [id]
+  [:button
+   {:type "button"
+    :on-click #(.log js/console "click " id)}
+   "up"])
+
+(defn anti-forgery-field []
+  [:input {:type "hidden"
+           :name "__anti-forgery-token"
+           :value js/csrfToken}])
+
+;; (defn upload-test []
+;;   [:form {:method "post"
+;;           :action "/r/upload"
+;;           :enc-type "multipart/form-data"}
+;;    [anti-forgery-field]
+;;    [:input {:type "file" :name "upload-test"}]
+;;    [:input {:type "submit"}]])
+
+;; not ajax. form.
+(defn upload-column [s1 s2 id]
+  [:form {:method "post"
+          :action "/r/upload"
+          :enc-type "multipart/form-data"}
+   [anti-forgery-field]
+   [:div.columns
+     [:div.column s1]
+     [:div.column s2 [:input {:type "file" :name id}]]
+     [:div.column [:input {:type "submit"}]]]])
 
 (defn upload-page []
   [:section.section>div.container>div.content
-   [:h2 "Upload"]])
+   [:h2 "Upload"]
+   [upload-column (str js/login) "/" "html"]
+   [upload-column "" "/css" "css"]
+   [upload-column "" "/images" "images"]
+   [upload-column "" "/js" "js"]])
 
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]])
 
 (defn goods-page []
-  [:section.section>div.container>div.content
-   [:h2 "Goods"]])
-
+  (let [name js/login]
+    [:section.section>div.container>div.content
+     [:h2 "Goods"]
+     [:p "hello, " name "."]]))
 (def pages
   {:home   #'home-page
    :about  #'about-page
-
    :upload #'upload-page
    :browse #'browse-page
    :goods  #'goods-page})
@@ -80,7 +119,6 @@
   (reitit/router
    [["/" :home]
     ["/about" :about]
-
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]]))

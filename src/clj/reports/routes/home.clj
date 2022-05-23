@@ -9,7 +9,15 @@
    [ring.util.http-response :as response]))
 
 (defn home-page [request]
-  (layout/render [request] "home.html"))
+  (if-let [login (get-in request [:session :identity])]
+    (layout/render [request] "home.html" {:login (name login)})
+    (layout/render [request] "error.html")))
+
+
+(defn upload-file [request]
+  (println "upload-file" (:multipart-params request))
+  (response/ok {:status 200 :body "under construction"}))
+
 
 (defn home-routes []
   ["/r"
@@ -17,5 +25,4 @@
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/" {:get home-page}]
-   ["/never" {:get (fn [_] {:status 200
-                            :body "not-authenticated uses shoud never come here"})}]])
+   ["/upload" {:post upload-file}]])
