@@ -20,7 +20,7 @@
 ```
   cljs 側ではその値を js/key で参照できる。
 - test deploy to l.melt. OK.
-
+- fix typo. parInfer 使ってると時々、括弧の対応を外してしまって気がつかない。
 
 ## 0.3.0 - 2022-05-23
 - (assoc :session {}) は良くて、(dissoc :session) はダメな理由はなんだ？
