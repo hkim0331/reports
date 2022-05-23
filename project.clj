@@ -1,4 +1,4 @@
-(defproject reports "0.3.0"
+(defproject reports "0.3.1-SNAPSHOT"
 
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
