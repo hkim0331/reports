@@ -33,9 +33,6 @@
       (assoc :session {})))
       ;;(dissoc :session) ; NG.
 
-(defn upload-test [{params :multipart-params}]
- (response/ok params))
-
 (defn login-routes []
   [""
    {:middleware [middleware/wrap-csrf
@@ -43,5 +40,5 @@
    ["/" {:get please-login-page}]
    ["/login" {:get  login-page
               :post login!}]
-   ["/logout" {:get logout!}]
-   ["/upload-test" {:post upload-test}]])
+   ["/logout" {:get logout!}]])
+

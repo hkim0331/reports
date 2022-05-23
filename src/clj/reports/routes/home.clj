@@ -15,8 +15,8 @@
 
 
 (defn upload-file [request]
-  (println (:multipart-params request))
-  (response/ok "ok"))
+  (println "upload-file" (:multipart-params request))
+  (response/ok {:status 200 :body "under construction"}))
 
 
 (defn home-routes []
