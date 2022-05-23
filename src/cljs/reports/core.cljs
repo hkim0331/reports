@@ -49,15 +49,16 @@
 (defn home-page []
   (let [name js/login]
     [:section.section>div.container>div.content
-     [:p "login as " name]
+     [:h1 "UNDER CONSTRUCTION"]
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]]]]))
 
 (defn button-up [id]
-  [:buttun
-   {:on-click #(.log js/console "click " id)}
+  [:button
+   {:type "button"
+    :on-click #(.log js/console "click " id)}
    "up"])
 
 (defn upload-column [s1 s2 id]
