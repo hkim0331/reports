@@ -12,9 +12,10 @@
 (defn upload!
   "受け取った multiplart-params を login/{id}/filename にセーブする。
    id = html の時は login 直下とする。[need polish up]"
-  [{params :multipart-params}]
-  (println "params " params)
-  (response/ok {:status 200 :body "under construction"}))
+  [{{:strs [type login upload]} :multipart-params}]
+  (let [{:keys [filename tempfile size]} upload]
+    (println type login filename tempfile size)
+    (response/ok {:status 200 :body "under construction"})))
 
 (defn services-routes []
   ["/api"

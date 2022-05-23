@@ -55,19 +55,16 @@
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]]]]))
 
-(defn button-up [id]
-  [:button
-   {:type "button"
-    :on-click #(.log js/console "click " id)}
-   "up"])
+;; (defn button-up [id]
+;;   [:button
+;;    {:type "button"
+;;     :on-click #(.log js/console "click " id)}
+;;    "up"])
 
 (defn hidden-field [name value]
   [:input {:type "hidden"
-           :nane name
+           :name name
            :value value}])
-
-;; (defn anti-forgery-field []
-;;   (hidden-field "__anti-forgery-token" js/csrfToken))
 
 ;; not ajax. form.
 (defn upload-column [s1 s2 type]
