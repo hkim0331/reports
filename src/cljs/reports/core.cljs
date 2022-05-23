@@ -46,23 +46,21 @@
 (defn home-page []
   [:section.section>div.container>div.content
    [:ul
-    [:li [:a {:href "#/about"} "About"]]
-    [:li [:a {:href "#/upoad"} "Upload"]]
+    [:li [:a {:href "#/upload"} "Upload"]]
     [:li [:a {:href "#/browse"} "Browse"]]
-    [:li [:a {:href "#/goods"} "Goods"]]]])
+    [:li [:a {:href "#/goods"}  "Goods"]]]])
 
-;; FIXME: なぜにこれがダメか？
 (defn upload-page []
-  (.log js/console "upload-page")
   [:section.section>div.container>div.content
    [:h2 "Upload"]])
 
 (defn browse-page []
-  [:h2 "Browse"])
+  [:section.section>div.container>div.content
+   [:h2 "Browse"]])
 
 (defn goods-page []
-  (.log js/console "goods-page")
-  [:h2 "Goods"])
+  [:section.section>div.container>div.content
+   [:h2 "Goods"]])
 
 (def pages
   {:home   #'home-page
