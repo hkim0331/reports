@@ -8,6 +8,14 @@
    [ring.util.response]
    [ring.util.http-response :as response]))
 
+;; destructuring
+(defn upload!
+  "受け取った multiplart-params を login/{id}/filename にセーブする。
+   id = html の時は login 直下とする。[need polish up]"
+  [{params :multipart-params}]
+  (println "params " params)
+  (response/ok {:status 200 :body "under construction"}))
+
 (defn services-routes []
   ["/api"
    {:middleware [middleware/wrap-restricted
@@ -15,4 +23,5 @@
                  middleware/wrap-formats]}
    ["/ping" {:get (fn [_]
                     (response/ok {:status 200
-                                  :body "pong"}))}]])
+                                  :body "pong"}))}]
+   ["/upload" {:post upload!}]])

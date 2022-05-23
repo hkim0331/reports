@@ -61,37 +61,34 @@
     :on-click #(.log js/console "click " id)}
    "up"])
 
-(defn anti-forgery-field []
+(defn hidden-field [name value]
   [:input {:type "hidden"
-           :name "__anti-forgery-token"
-           :value js/csrfToken}])
+           :nane name
+           :value value}])
 
-;; (defn upload-test []
-;;   [:form {:method "post"
-;;           :action "/r/upload"
-;;           :enc-type "multipart/form-data"}
-;;    [anti-forgery-field]
-;;    [:input {:type "file" :name "upload-test"}]
-;;    [:input {:type "submit"}]])
+;; (defn anti-forgery-field []
+;;   (hidden-field "__anti-forgery-token" js/csrfToken))
 
 ;; not ajax. form.
-(defn upload-column [s1 s2 id]
+(defn upload-column [s1 s2 type]
   [:form {:method "post"
-          :action "/r/upload"
+          :action "/api/upload"
           :enc-type "multipart/form-data"}
-   [anti-forgery-field]
+   [hidden-field "__anti-forgery-token" js/csrfToken]
+   [hidden-field "type" type]
+   [hidden-field "login" js/login]
    [:div.columns
-     [:div.column s1]
-     [:div.column s2 [:input {:type "file" :name id}]]
-     [:div.column [:input {:type "submit"}]]]])
+    [:div.column s1]
+    [:div.column s2 [:input {:type "file" :name "upload"}]]
+    [:div.column [:button {:type "submit"} "up"]]]])
 
 (defn upload-page []
   [:section.section>div.container>div.content
    [:h2 "Upload"]
    [upload-column (str js/login) "/" "html"]
-   [upload-column "" "/css" "css"]
-   [upload-column "" "/images" "images"]
-   [upload-column "" "/js" "js"]])
+   [upload-column "" "/css/" "css"]
+   [upload-column "" "/images/" "images"]
+   [upload-column "" "/js/" "js"]])
 
 (defn browse-page []
   [:section.section>div.container>div.content

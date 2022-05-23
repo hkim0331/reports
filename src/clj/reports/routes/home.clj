@@ -13,16 +13,9 @@
     (layout/render [request] "home.html" {:login (name login)})
     (layout/render [request] "error.html")))
 
-
-(defn upload-file [request]
-  (println "upload-file" (:multipart-params request))
-  (response/ok {:status 200 :body "under construction"}))
-
-
 (defn home-routes []
   ["/r"
    {:middleware [middleware/wrap-restricted
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
-   ["/" {:get home-page}]
-   ["/upload" {:post upload-file}]])
+   ["/" {:get home-page}]])
