@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reports Login</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/screen.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div class="container-fluid">
+    <h2>Reports: Login</h2>
+    {% if flash  %}
+    <div>{{flash}}</div>
+    {% endif %}
+    <form method="post">
+        {% csrf-field %}
+        <input name="login" placeholder="アカウント">
+        <input name="password" type="password" placeholder="パスワード">
+        <input type="submit" value="login">
+    </form>
+  </div>
+</body>
+</html>
