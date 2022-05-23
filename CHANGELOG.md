@@ -8,6 +8,7 @@
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
 
+## 0.3.2-SNAPSHOT
 
 ## 0.3.1 - 2022-05-23
 - (layout/render [req] "template.html" {:key value}) で渡し、
