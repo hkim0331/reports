@@ -18,6 +18,7 @@
 - login/logout を nav-bar に表示。
 - nav-bar の Report はリンクじゃなくていいけど　-> メニューが不細工に見えるので止める。
   代わりに #/ をリンク。
+- カラの Upload, Browse, Goods ページ。
 
 # RESTART
 深夜のプログラミングは思ったほど捗らない。
