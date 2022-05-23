@@ -61,19 +61,38 @@
     :on-click #(.log js/console "click " id)}
    "up"])
 
+(defn anti-forgery-field []
+  [:input {:type "hidden"
+           :name "__anti-forgery-token"
+           :value js/csrfToken}])
+
+(defn upload-test []
+  [:form {:method "post"
+          :action "/r/upload"
+          :enc-type "multipart/form-data"}
+   [anti-forgery-field]
+   [:input {:type "file" :name "upload-test"}]
+   [:input {:type "submit"}]])
+
+;; not ajax. form.  405 - Not allowed error.
 (defn upload-column [s1 s2 id]
-  [:div.columns
-   [:div.column s1]
-   [:div.column s2 [:input {:type "file" :id id}]]
-   [:div.column [button-up id]]])
+  [:form {:method "post"
+          :action "/r/upload"
+          :enc-type "multipart/form-data"}
+   [anti-forgery-field]
+   [:div.columns
+     [:div.column s1]
+     [:div.column s2 [:input {:type "file" :name "upload-test"}]]
+     [:div.column [:input {:type "submit"}]]]])
 
 (defn upload-page []
   [:section.section>div.container>div.content
    [:h2 "Upload"]
    [upload-column (str js/login) "/" "html"]
-   [upload-column "" "/css" "css"]
-   [upload-column "" "/images" "images"]
-   [upload-column "" "/js" "js"]])
+  ;;  [upload-column "" "/css" "css"]
+  ;;  [upload-column "" "/images" "images"]
+  ;;  [upload-column "" "/js" "js"]
+   [upload-test]])
 
 (defn browse-page []
   [:section.section>div.container>div.content
@@ -83,7 +102,8 @@
   (let [name js/login]
     [:section.section>div.container>div.content
      [:p "you are " name]
-     [:h2 "Goods"]]))
+     [:h2 "Goods"]
+     [upload-test]]))
 
 (def pages
   {:home   #'home-page

@@ -28,10 +28,13 @@
             (assoc :session {}
                    :flash "login failed"))))))
 
-(defn logout! [request]
+(defn logout! [_]
   (-> (response/found "/login")
       (assoc :session {})))
       ;;(dissoc :session) ; NG.
+
+(defn upload-test [{params :multipart-params}]
+ (response/ok params))
 
 (defn login-routes []
   [""
@@ -40,4 +43,5 @@
    ["/" {:get please-login-page}]
    ["/login" {:get  login-page
               :post login!}]
-   ["/logout" {:get logout!}]])
+   ["/logout" {:get logout!}]
+   ["/upload-test" {:post upload-test}]])

@@ -13,11 +13,16 @@
     (layout/render [request] "home.html" {:login (name login)})
     (layout/render [request] "error.html")))
 
+
+(defn upload-file [request]
+  (println (:multipart-params request))
+  (response/ok "ok"))
+
+
 (defn home-routes []
   ["/r"
    {:middleware [middleware/wrap-restricted
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/" {:get home-page}]
-   ["/never" {:get (fn [_] {:status 200
-                            :body "not-authenticated uses shoud never come here"})}]])
+   ["/upload" {:post upload-file}]])
