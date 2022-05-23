@@ -1,0 +1,4 @@
+CREATE TABLE uploads (
+id  SERIAL PRIMARY KEY,
+login varchar(20) NOT NULL,
+uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
