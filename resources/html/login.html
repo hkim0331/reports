@@ -7,7 +7,8 @@
     <link href="/css/screen.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-  <div class="container-fluid">
+  <div class="container">
+    <div style="margin-left:2rem; margin-right:2rem;">
     <h2>Reports: Login</h2>
     {% if flash  %}
     <div>{{flash}}</div>
@@ -18,6 +19,13 @@
         <input name="password" type="password" placeholder="パスワード">
         <input type="submit" value="login">
     </form>
+    <hr>
+    <p>
+      Invalid anti-forgery token が表示される場合、
+      ログイン用の秘密情報（トークン）がタイムアウトになってます。
+      ページを再読み込みし、ログインし直してください。
+    </p>
+    </div>
   </div>
 </body>
 </html>

@@ -6,8 +6,14 @@
 - login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
-- form looks
+- upload: form looks
+- feedback upload
+- チラッと見える土台　html
 
+## 0.5.0-SNAPSHOT
+Browse に取り掛からなくちゃ。
+- Invalid anti-forgery token
+  -> 「再読み込み後にログイン」のメッセージ
 
 ## 0.4.0 - 2022-05-24
 - :page-url "http://localhost:3001/" の導入。
