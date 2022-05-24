@@ -40,7 +40,7 @@
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
 
-(defn get-logins [request]
+(defn logins [request]
   (let [ret (db/get-logins)]
     (response/ok ret)))
 
@@ -48,23 +48,25 @@
 (defn users-hot [request]
   (->> (db/get-logins)
        (map :login)
-       (distinct)))
+       (distinct)
+       (response/ok)))
 
 (defn users-random [request]
   (->> (db/get-logins)
        (map :login)
        (distinct)
-       (shuffle)))
+       (shuffle)
+       (response/ok)))
 
 (defn services-routes []
   ["/api"
-   {:middleware [middleware/wrap-restricted
+   {:middleware [;;middleware/wrap-restricted
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/ping" {:get (fn [_]
                     (response/ok {:status 200
                                   :body "pong"}))}]
    ["/upload" {:post upload!}]
-   ["/logins" {:get get-logins}]
-   ["/api/users-hot"    {:get users-hot}]
-   ["/api/users-random" {:get users-random}]])
+   ["/logins" {:get logins}]
+   ["/users-hot"    {:get users-hot}]
+   ["/users-random" {:get users-random}]])

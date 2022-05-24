@@ -104,7 +104,7 @@
   (GET url
      {:handler
         #(set! (.-innerHTML (.getElementById js/document "browse"))
-              %)
+              (str %))
       :error-handler #(.log js/console (str "error: " %))}))
 
 (defn browse-page []
