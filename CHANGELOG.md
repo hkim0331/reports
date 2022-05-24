@@ -15,6 +15,8 @@
 
 
 ## 0.5.1-SNAPSHOT
+- Browse random/hot の並び替えができる。
+  ラジオボタンが選びにくく、選べないのではとずーっと思ってた。
 
 ## 0.5.0 - 2022-05-24
 can browse locally

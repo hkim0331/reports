@@ -101,37 +101,27 @@
 ;; -------------------------
 ;; Browse
 
-;; ;; これができない！
-;; (defn make-list [users]
-;;   (into
-;;    [:ul]
-;;    (for [u users]
-;;      [:li u])))
-
-;; (defn list-users [url]
-;;   (GET url
-;;     {:handler
-;;      #(set! (.-innerHTML (.getElementById js/document "browse"))
-;;             (make-list %))
-;;      :error-handler #(.log js/console (str "error: " %))}))
-
-;; old 0.5.0
-;; (defn browse-page []
-;;   [:section.section>div.container>div.content
-;;    [:h2 "Browse"]
-;;    [:p "under construction(random/hots, form `goods`)"]
-;;    (into [:ul]
-;;          (for [u (shuffle @users)]
-;;            [:li [:a {:href (str js/hp_url u)} u]]))])
-(defonce filter? (r/atom true))
+(defonce random? (r/atom false))
 
 (def filters {true identity false shuffle})
 
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-   [:p "under construction(random/hots, form `goods`)"]
-   (for [u ((filters @filter?) @users)]
+   [:p "under constrution"]
+   [:p "random/hot が選びにくい。メッセージはまだ送信できない。"]
+
+   [:div
+    [:input {:type "radio"
+             :checked (not @random?)
+             :on-change #(swap! random? not)}]
+    " radom "
+    [:input {:type "radio"
+             :checked @random?
+             :on-change #(swap! random? not)}]
+    " hot "]
+   [:br]
+   (for [u ((filters @random?) @users)]
      ;; ちょっと上下に開きすぎ
      [:div.columns
       [:div.column
