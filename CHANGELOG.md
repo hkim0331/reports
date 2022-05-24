@@ -9,6 +9,7 @@
 - upload: form looks
 - feedback upload
 - チラッと見える土台　html
+- with-let の使い方
 
 ## 0.5.0-SNAPSHOT
 Browse に取り掛からなくちゃ。

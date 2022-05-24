@@ -44,6 +44,18 @@
   (let [ret (db/get-logins)]
     (response/ok ret)))
 
+;; 引数に n をとる
+(defn users-hot [request]
+  (->> (db/get-logins)
+       (map :login)
+       (distinct)))
+
+(defn users-random [request]
+  (->> (db/get-logins)
+       (map :login)
+       (distinct)
+       (shuffle)))
+
 (defn services-routes []
   ["/api"
    {:middleware [middleware/wrap-restricted
@@ -53,4 +65,6 @@
                     (response/ok {:status 200
                                   :body "pong"}))}]
    ["/upload" {:post upload!}]
-   ["/logins" {:get get-logins}]])
+   ["/logins" {:get get-logins}]
+   ["/api/users-hot"    {:get users-hot}]
+   ["/api/users-random" {:get users-random}]])

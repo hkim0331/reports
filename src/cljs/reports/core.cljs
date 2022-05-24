@@ -97,24 +97,23 @@
      [:p "check your report => "
       [:a {:href url} "check"]]]))
 
-
 ;; -------------------------
 ;; Browse
 
-(defn hot []
-  (set! (.-innerHTML (.getElementById js/document "browse"))
-   "<p>hot</p>"))
-
-(def random []
-  (set! (.-innerHTML (.getElementById js/document "browse"))
-   "<p>random</p>"))
+(defn list-users [url]
+  (GET url
+     {:handler
+        #(set! (.-innerHTML (.getElementById js/document "browse"))
+              %)
+      :error-handler #(.log js/console (str "error: " %))}))
 
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
    [:p
-    [:input {:on-click #(hot)} "hot"]
-    [:input {:on-ckick #{random}} "random"]]
+    [:button {:on-click #(list-users "/api/users-hot")} "hot"]
+    " "
+    [:button {:on-click #(list-users "/api/users-random")} "random"]]
    [:div#browse]])
 
 ;; -------------------------
