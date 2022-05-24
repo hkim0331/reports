@@ -149,11 +149,16 @@
 ;; -------------------------
 ;; Goods
 
+(defonce goods (r/atom []))
+
 (defn goods-page []
-  (let [name js/login]
-    [:section.section>div.container>div.content
-     [:h2 "Goods"]
-     [:p "UNDER CONSTRUCTION"]]))
+  [:section.section>div.container>div.content
+   [:h2 "Goods to " js/login]
+   (for [g @goods]
+     [:div
+      (.toLocaleString (:timestamp g))
+      [:br]
+      [:p (:message g)]])])
 
 ;; -------------------------
 ;; Pages
@@ -205,10 +210,16 @@
 (defn reset-users! []
   (GET "/api/users"
     {:handler #(reset! users %)}
-    {:error-handler (.log js/console "error: %")}))
+    {:error-handler #(.log js/console "error:" %)}))
+
+(defn reset-goods! []
+  (GET (str "/api/goods/" js/login)
+    {:handler #(reset! goods %)
+     :error-handler #(.log js/console "error:" %)}))
 
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
+  (reset-goods!)
   (mount-components))
