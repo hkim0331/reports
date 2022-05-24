@@ -10,8 +10,8 @@ SELECT * FROM uploads
 
 -- :name get-logins :? :*
 -- :doc retrieve logins order by id
-SELECT login from uploads order by id
+SELECT login FROM uploads order by id
 
 -- :name logins-by-reverse-uploaded :? :*
 -- :doc retrieve logins, newers are first
-SELECT login from uploads order by uploaded_at desc
+SELECT login FROM uploads ORDER BY uploaded_at DESC

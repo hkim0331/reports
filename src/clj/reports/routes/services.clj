@@ -58,17 +58,17 @@
 ;;        (shuffle)
 ;;        (response/ok)))
 
-(defn hot-users
+(defn users
   "distinct users order by uploaded_at"
   [request]
-  (->> (db/logins-by-reverse-uploaded
-        (map :login)
-        (distinct)
-        (response/ok))))
+  (->> (db/logins-by-reverse-uploaded)
+       (map :login)
+       (distinct)
+       (response/ok)))
 
 (defn services-routes []
   ["/api"
-   {:middleware [middleware/wrap-restricted
+   {:middleware [;;middleware/wrap-restricted
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/ping" {:get (fn [_]
@@ -76,6 +76,6 @@
                                   :body "pong"}))}]
    ["/upload" {:post upload!}]
    ["/logins" {:get logins}]
-   ["/users"  {:get hot-users}]])
+   ["/users"  {:get users}]])
    ;;["/users-hot"    {:get users-hot}]
    ;;["/users-random" {:get users-random}]])
