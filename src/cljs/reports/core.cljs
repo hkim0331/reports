@@ -11,7 +11,7 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.6.0-SNAPSHOT")
+(def ^:private version "0.6.0")
 (def ^:private now (.toLocaleString (js/Date.)))
 
 (defonce session (r/atom {:page :home}))
@@ -119,9 +119,7 @@
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-   [:p "under constrution"]
-   [:p "random/hot が選びにくい。メッセージはまだ送信できない。"]
-
+   [:p "random/hot が選びにくい。フィールドの長さ、配置の調整はこの後のバージョンで。"]
    [:div
     [:input {:type "radio"
              :checked (not @random?)
@@ -142,8 +140,8 @@
        [:input {:id i :placeholder "message"}]
        [:button {:on-click
                  #(send-message!
-                    u
-                    (.-value (.getElementById js/document i)))}
+                   u
+                   (.-value (.getElementById js/document i)))}
         "send"]]])])
 
 ;; -------------------------
