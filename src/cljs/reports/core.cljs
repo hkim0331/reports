@@ -1,14 +1,14 @@
 (ns reports.core
   (:require
+   [ajax.core :refer [GET POST]]
+   [clojure.string :as string]
+   [markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
-   [goog.events :as events]
-   [goog.history.EventType :as HistoryEventType]
-   [markdown.core :refer [md->html]]
-   [reports.ajax :as ajax]
-   [ajax.core :refer [GET POST]]
    [reitit.core :as reitit]
-   [clojure.string :as string])
+   [reports.ajax :as ajax]
+   [goog.events :as events]
+   [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
 (def ^:private version "0.4.0")
@@ -50,8 +50,8 @@
   [:section.section>div.container>div.content
    [:img {:src "/img/warning_clojure.png"}]
    [:p "program: hkimura" [:br]
-       "version: " version [:br]
-       "update: " now]])
+    "version: " version [:br]
+    "update: " now]])
 
 (defn home-page []
   (let [name js/login
@@ -64,16 +64,13 @@
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]]]]))
 
-;; (defn button-up [id]
-;;   [:button
-;;    {:type "button"
-;;     :on-click #(.log js/console "click " id)}
-;;    "up"])
-
 (defn hidden-field [name value]
   [:input {:type "hidden"
            :name name
            :value value}])
+
+;; -------------------------
+;; Uploads
 
 ;; not ajax. form.
 (defn upload-column [s1 s2 type]
@@ -101,9 +98,27 @@
       [:a {:href url} "check"]]]))
 
 
+;; -------------------------
+;; Browse
+
+(defn hot []
+  (set! (.-innerHTML (.getElementById js/document "browse"))
+   "<p>hot</p>"))
+
+(def random []
+  (set! (.-innerHTML (.getElementById js/document "browse"))
+   "<p>random</p>"))
+
 (defn browse-page []
   [:section.section>div.container>div.content
-   [:h2 "Browse"]])
+   [:h2 "Browse"]
+   [:p
+    [:input {:on-click #(hot)} "hot"]
+    [:input {:on-ckick #{random}} "random"]]
+   [:div#browse]])
+
+;; -------------------------
+;; Goods
 
 (defn goods-page []
   (let [name js/login]
