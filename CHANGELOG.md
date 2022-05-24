@@ -13,6 +13,14 @@
 - bulmer, div
 
 
+## 0.6.1 - 2022-05-24
+- 送信メッセージ長さのチェック
+- 受け取ったメッセージの表示
+### FIXME
+- good 送信後の input フィールドのクリア
+- timestamp の表示
+  [TaggedValue: LocalDateTime, 2022-05-24T23:30:40.697]
+
 ## 0.6.0 - 2022-05-24
 - js/alert recv, mesg
 - can send messages

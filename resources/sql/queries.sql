@@ -21,3 +21,8 @@ SELECT login FROM uploads ORDER BY uploaded_at DESC
 INSERT INTO goods
 (snd, rcv, message)
 VALUES (:snd, :rcv, :message)
+
+-- :name goods :? :*
+-- :doc messages received by rcv
+SELECT * FROM goods
+WHERE rcv = :rcv

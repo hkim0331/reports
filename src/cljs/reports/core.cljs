@@ -11,7 +11,7 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.6.0")
+(def ^:private version "0.6.1")
 (def ^:private now (.toLocaleString (js/Date.)))
 
 (defonce session (r/atom {:page :home}))
@@ -104,14 +104,15 @@
 (def min-mesg 10)
 
 (defn send-message! [recv mesg]
-  (js/alert (str mesg " to " recv))
-  (POST "/api/save-message"
-    {:headers {"x-csrf-field" js/csrfToken}
-     :params {:snd js/login
-              :rcv recv
-              :message mesg}
-     :handler #(.log js/console "sent")
-     :error-handler #(.log js/console (str %))}))
+  (if (< (count mesg) min-mesg)
+    (js/alert (str "メッセージは " min-mesg "文字以上です。"))
+    (POST "/api/save-message"
+      {:headers {"x-csrf-field" js/csrfToken}
+       :params {:snd js/login
+                :rcv recv
+                :message mesg}
+       :handler #(js/alert (str recv " に " mesg "を送った。"))
+       :error-handler #(.log js/console (str %))})))
 
 (defonce random? (r/atom false))
 (def filters {true identity false shuffle})
@@ -139,19 +140,25 @@
        " "
        [:input {:id i :placeholder "message"}]
        [:button {:on-click
-                 #(send-message!
-                   u
-                   (.-value (.getElementById js/document i)))}
+                 #(let [obj (.getElementById js/document i)]
+                    (send-message! u (.-value obj))
+                    ;;FIXME クリアしない。
+                    (set! (.-innerHTML obj) ""))}
         "send"]]])])
 
 ;; -------------------------
 ;; Goods
 
+(defonce goods (r/atom []))
+
 (defn goods-page []
-  (let [name js/login]
-    [:section.section>div.container>div.content
-     [:h2 "Goods"]
-     [:p "UNDER CONSTRUCTION"]]))
+  [:section.section>div.container>div.content
+   [:h2 "Goods to " js/login]
+   (for [g @goods]
+     [:div
+      (.toLocaleString (:timestamp g))
+      [:br]
+      [:p (:message g)]])])
 
 ;; -------------------------
 ;; Pages
@@ -203,10 +210,16 @@
 (defn reset-users! []
   (GET "/api/users"
     {:handler #(reset! users %)}
-    {:error-handler (.log js/console "error: %")}))
+    {:error-handler #(.log js/console "error:" %)}))
+
+(defn reset-goods! []
+  (GET (str "/api/goods/" js/login)
+    {:handler #(reset! goods %)
+     :error-handler #(.log js/console "error:" %)}))
 
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
+  (reset-goods!)
   (mount-components))
