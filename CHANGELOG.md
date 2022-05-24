@@ -11,11 +11,17 @@
 - チラッと見える土台　html
 - with-let の使い方
 - bulmer, div
-- Warning: Every element in a seq should have a unique :key: ([:div.columns [:div.column [:a {:href "http://localhost:8080/hkimura"} "hkimura"]] [:div.column " " [:input {:placeholder "message"}] [:button "send"]]] [:div.columns [:div.column [:a {:href "http://localhost:8080/user2"} "user2"]] [:div.column " " [:input {:placeholder "message"}] [:button "send"]]] [:div.columns [:div.column [:a {:href "http://localhost:8080/user1"} "user1"]] [:div.column " " [:input {:placeholder "message"}] [:button "send"]]])
- (in browse-page)
 
-## 0.6.0-SNAPSHOT
+
+## 0.6.0 - 2022-05-24
 - js/alert recv, mesg
+- can send messages
+- (for [u @users]) のループを　map-indexed で回した。
+
+  Warning: Every element in a seq should have a unique :key: ([:div.columns [:div.column [:a {:href "http://localhost:8080/hkimura"} "hkimura"]] [:div.column " " [:input {:placeholder "message"}] [:button "send"]]] [:div.columns [:div.column [:a {:href "http://localhost:8080/user2"} "user2"]] [:div.column " " [:input {:placeholder "message"}] [:button "send"]]] [:div.columns [:div.column [:a {:href "http://localhost:8080/user1"} "user1"]] [:div.column " " [:input {:placeholder "message"}] [:button "send"]]])
+ (in browse-page)
+- can send messages
+
 
 ## 0.5.1 - 2022-05-24
 - Browse random/hot の並び替えができる。
