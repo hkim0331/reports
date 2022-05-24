@@ -34,10 +34,35 @@
       (when (empty? filename)
         (throw (Exception. "did not select a file.")))
       (io/copy tempfile (io/file (str dir "/" filename)))
+      (db/create-upload! {:login login :filename filename})
       (-> (response/found "/r/#/upload")
           (assoc :flash (str "uploaded " filename)))
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
+
+(defn logins [request]
+  (let [ret (db/get-logins)]
+    (response/ok ret)))
+
+;; 引数に n をとる
+(defn users-hot [request]
+  (->> (db/get-logins)
+       (map :login)
+       (distinct)
+       (response/ok)))
+
+(defn users-random [request]
+  (->> (db/get-logins)
+       (map :login)
+       (distinct)
+       (shuffle)
+       (response/ok)))
+
+(defn distinct-users [request]
+  (->> (db/get-logins)
+       (map :login)
+       (distinct)
+       (response/ok)))
 
 (defn services-routes []
   ["/api"
@@ -47,4 +72,8 @@
    ["/ping" {:get (fn [_]
                     (response/ok {:status 200
                                   :body "pong"}))}]
-   ["/upload" {:post upload!}]])
+   ["/upload" {:post upload!}]
+   ["/logins" {:get logins}]
+   ["/users"  {:get distinct-users}]
+   ["/users-hot"    {:get users-hot}]
+   ["/users-random" {:get users-random}]])

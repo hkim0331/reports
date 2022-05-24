@@ -6,14 +6,20 @@
 - login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
-- form looks
-- time format
-- env ver を cljs から参照できるか？
-- CLJS repl がつながらなくなった理由。
-- check your report URL を csrf と同様の手段で cljs に渡す。
+- upload: form looks
+- feedback upload
+- チラッと見える土台　html
+- with-let の使い方
 
+## 0.5.0 - 2022-05-24
+can browse locally
+- Invalid anti-forgery token
+  -> 「再読み込み後にログイン」のメッセージ
+- alter table uploads add column filename varchar(64) not null
+- db/create-upload!
+- db/get-uploads
 
-## 0.4.0-SNAPSHOT
+## 0.4.0 - 2022-05-24
 - :page-url "http://localhost:3001/" の導入。
   デベロップでは http-server を動かしとけ。
   プロダクションでは "https://hp.melt.kyutech.ac.jp/" になる。
@@ -22,7 +28,9 @@
   (js/Date) == (str (js/Date.))
 - `check your report` in upload-page
 - `check your report` in home-page
-
+- check your report URL を csrf と同様の手段で cljs に渡す。
+- time format
+  (.toLocaleString (js/Date.))
 
 ## 0.3.3 - 2022-05-23
 - /api/upload production では PUBLIC_DIR 環境変数を定義すること。

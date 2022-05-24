@@ -1,20 +1,21 @@
 (ns reports.core
   (:require
+   [ajax.core :refer [GET POST]]
+   [clojure.string :as string]
+   [markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
-   [goog.events :as events]
-   [goog.history.EventType :as HistoryEventType]
-   [markdown.core :refer [md->html]]
-   [reports.ajax :as ajax]
-   [ajax.core :refer [GET POST]]
    [reitit.core :as reitit]
-   [clojure.string :as string])
+   [reports.ajax :as ajax]
+   [goog.events :as events]
+   [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.4.0")
-(def ^:private now (js/Date))
+(def ^:private version "0.5.0")
+(def ^:private now (.toLocaleString (js/Date.)))
 
 (defonce session (r/atom {:page :home}))
+(defonce users (r/atom []))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -38,9 +39,10 @@
       {:class (when @expanded? :is-active)}
       [:div.navbar-start
        [nav-link "#/" "Home" :home]
-       [nav-link "#/upload" "Upload" :upload]
-       [nav-link "#/browse" "Browse" :browse]
-       [nav-link "#/goods"  "Goods" :goods]
+      ;; ちょっとうるさい
+      ;;  [nav-link "#/upload" "Upload" :upload]
+      ;;  [nav-link "#/browse" "Browse" :browse]
+      ;;  [nav-link "#/goods"  "Goods" :goods]
        [nav-link "/login" "Login"]
        [nav-link "/logout" "Logout"]
        [nav-link "#/about" "About" :about]]]]))
@@ -48,8 +50,9 @@
 (defn about-page []
   [:section.section>div.container>div.content
    [:img {:src "/img/warning_clojure.png"}]
-   [:p "version: " version]
-   [:p "updated: " now]])
+   [:p "program: hkimura" [:br]
+    "version: " version [:br]
+    "update: " now]])
 
 (defn home-page []
   (let [name js/login
@@ -62,16 +65,13 @@
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]]]]))
 
-;; (defn button-up [id]
-;;   [:button
-;;    {:type "button"
-;;     :on-click #(.log js/console "click " id)}
-;;    "up"])
-
 (defn hidden-field [name value]
   [:input {:type "hidden"
            :name name
            :value value}])
+
+;; -------------------------
+;; Uploads
 
 ;; not ajax. form.
 (defn upload-column [s1 s2 type]
@@ -98,10 +98,37 @@
      [:p "check your report => "
       [:a {:href url} "check"]]]))
 
+;; -------------------------
+;; Browse
+
+(defn reset-users! []
+  (GET "/api/users"
+    {:handler #(reset! users %)}
+    {:error-handler (.log js/console "error: %")}))
+
+;; ;; これができない！
+;; (defn make-list [users]
+;;   (into
+;;    [:ul]
+;;    (for [u users]
+;;      [:li u])))
+
+;; (defn list-users [url]
+;;   (GET url
+;;     {:handler
+;;      #(set! (.-innerHTML (.getElementById js/document "browse"))
+;;             (make-list %))
+;;      :error-handler #(.log js/console (str "error: " %))}))
 
 (defn browse-page []
   [:section.section>div.container>div.content
-   [:h2 "Browse"]])
+   [:h2 "Browse"]
+   (into [:ul]
+         (for [u @users]
+           [:li [:a {:href (str js/hp_url u)} u]]))])
+
+;; -------------------------
+;; Goods
 
 (defn goods-page []
   (let [name js/login]
@@ -155,4 +182,5 @@
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
+  (reset-users!)
   (mount-components))
