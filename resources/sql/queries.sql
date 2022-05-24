@@ -9,5 +9,9 @@ VALUES (:login, :filename)
 SELECT * FROM uploads
 
 -- :name get-logins :? :*
--- :dor retrieve login reverse order
-SELECT login from uploads order by id;
+-- :doc retrieve logins order by id
+SELECT login from uploads order by id
+
+-- :name logins-by-reverse-uploaded :? :*
+-- :doc retrieve logins, newers are first
+SELECT login from uploads order by uploaded_at desc

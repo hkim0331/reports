@@ -10,6 +10,8 @@
 - feedback upload
 - チラッと見える土台　html
 - with-let の使い方
+- hot/random
+
 
 ## 0.5.0 - 2022-05-24
 can browse locally

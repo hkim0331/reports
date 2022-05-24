@@ -22,7 +22,7 @@
                  [luminus-transit "0.1.5"]
                  [luminus-undertow "0.1.14"]
                  [luminus/ring-ttl-session "0.3.3"]
-                 [markdown-clj "1.10.8"]
+                 ;;[markdown-clj "1.10.8"]
                  [metosin/muuntaja "0.6.8"]
                  [metosin/reitit "0.5.15"]
                  [metosin/ring-http-response "0.9.3"]

@@ -2,7 +2,7 @@
   (:require
    [ajax.core :refer [GET POST]]
    [clojure.string :as string]
-   [markdown.core :refer [md->html]]
+   ;;[markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
    [reitit.core :as reitit]
@@ -101,11 +101,6 @@
 ;; -------------------------
 ;; Browse
 
-(defn reset-users! []
-  (GET "/api/users"
-    {:handler #(reset! users %)}
-    {:error-handler (.log js/console "error: %")}))
-
 ;; ;; これができない！
 ;; (defn make-list [users]
 ;;   (into
@@ -123,8 +118,9 @@
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
+   [:p "under construction(random/hots, form `goods`)"]
    (into [:ul]
-         (for [u @users]
+         (for [u (shuffle @users)]
            [:li [:a {:href (str js/hp_url u)} u]]))])
 
 ;; -------------------------
@@ -134,7 +130,11 @@
   (let [name js/login]
     [:section.section>div.container>div.content
      [:h2 "Goods"]
-     [:p "hello, " name "."]]))
+     [:p "UNDER CONSTRUCTION"]]))
+
+;; -------------------------
+;; Pages
+
 (def pages
   {:home   #'home-page
    :about  #'about-page
@@ -178,6 +178,11 @@
 (defn ^:dev/after-load mount-components []
   (rdom/render [#'navbar] (.getElementById js/document "navbar"))
   (rdom/render [#'page] (.getElementById js/document "app")))
+
+(defn reset-users! []
+  (GET "/api/users"
+    {:handler #(reset! users %)}
+    {:error-handler (.log js/console "error: %")}))
 
 (defn init! []
   (ajax/load-interceptors!)
