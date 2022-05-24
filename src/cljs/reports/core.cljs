@@ -11,7 +11,7 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.5.0")
+(def ^:private version "0.5.1-SNAPSHOT")
 (def ^:private now (.toLocaleString (js/Date.)))
 
 (defonce session (r/atom {:page :home}))

@@ -12,6 +12,7 @@
 - with-let の使い方
 - hot/random
 
+## 0.5.1-SNAPSHOT
 
 ## 0.5.0 - 2022-05-24
 can browse locally
