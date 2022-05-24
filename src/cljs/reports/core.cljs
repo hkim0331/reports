@@ -52,9 +52,11 @@
    [:p "updated: " now]])
 
 (defn home-page []
-  (let [name js/login]
+  (let [name js/login
+        url (str js/hp_url name)]
     [:section.section>div.container>div.content
      [:h1 "UNDER CONSTRUCTION"]
+     [:p "check your report => " [:a {:href url} "check"]]
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
@@ -85,7 +87,8 @@
     [:div.column [:button {:type "submit"} "up"]]]])
 
 (defn upload-page []
-  (let [url (str js/hp-url "/" js/login)]
+  (let [url (str js/hp_url js/login)]
+    (.log js/console "url:" url)
     [:section.section>div.container>div.content
      [:h2 "Upload"]
      [upload-column (str js/login) "/" "html"]

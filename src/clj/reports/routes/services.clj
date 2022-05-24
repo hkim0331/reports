@@ -12,7 +12,7 @@
    [ring.util.http-response :as response]))
 
 (defn dest-dir [login subdir]
-  (let [public (:public-dir env)]
+  (let [public (:upload-to env)]
     (if (= subdir "html")
       (str public "/" login)
       (str public "/" login "/" subdir))))
