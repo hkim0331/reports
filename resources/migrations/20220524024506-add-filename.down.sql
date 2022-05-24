@@ -1,0 +1,1 @@
+alter table uploads drop column filename;
