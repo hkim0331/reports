@@ -9,12 +9,15 @@
 - upload: form looks
 - feedback upload
 - チラッと見える土台　html
+- with-let の使い方
 
 ## 0.5.0-SNAPSHOT
 Browse に取り掛からなくちゃ。
 - Invalid anti-forgery token
   -> 「再読み込み後にログイン」のメッセージ
 - alter table uploads add column filename varchar(64) not null
+- db/create-upload!
+- db/get-uploads
 
 ## 0.4.0 - 2022-05-24
 - :page-url "http://localhost:3001/" の導入。
