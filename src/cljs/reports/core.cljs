@@ -101,8 +101,17 @@
 ;; -------------------------
 ;; Browse
 
-(defn send-message [recv mesg]
- (js/alert (str "send message to " recv ", " mesg)))
+(def min-mesg 10)
+
+(defn send-message! [recv mesg]
+  (js/alert (str mesg " to " recv))
+  (POST "/api/save-message"
+    {:headers {"x-csrf-field" js/csrfToken}
+     :params {:snd js/login
+              :rcv recv
+              :message mesg}
+     :handler #(.log js/console "sent")
+     :error-handler #(.log js/console (str %))}))
 
 (defonce random? (r/atom false))
 (def filters {true identity false shuffle})
@@ -132,7 +141,7 @@
        " "
        [:input {:id i :placeholder "message"}]
        [:button {:on-click
-                 #(send-message
+                 #(send-message!
                     u
                     (.-value (.getElementById js/document i)))}
         "send"]]])])
