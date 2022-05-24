@@ -101,8 +101,10 @@
 ;; -------------------------
 ;; Browse
 
-(defonce random? (r/atom false))
+(defn send-message [recv mesg]
+ (js/alert (str "send message to " recv ", " mesg)))
 
+(defonce random? (r/atom false))
 (def filters {true identity false shuffle})
 
 (defn browse-page []
@@ -121,15 +123,19 @@
              :on-change #(swap! random? not)}]
     " hot "]
    [:br]
-   (for [u ((filters @random?) @users)]
+   (for [[i u] (map-indexed vector ((filters @random?) @users))]
      ;; ちょっと上下に開きすぎ
      [:div.columns
       [:div.column
        [:a {:href (str js/hp_url u)} u]]
       [:div.column
        " "
-       [:input {:placeholder "message"}]
-       [:button "send"]]])])
+       [:input {:id i :placeholder "message"}]
+       [:button {:on-click
+                 #(send-message
+                    u
+                    (.-value (.getElementById js/document i)))}
+        "send"]]])])
 
 ;; -------------------------
 ;; Goods
