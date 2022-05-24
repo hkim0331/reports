@@ -10,11 +10,9 @@
 - feedback upload
 - チラッと見える土台　html
 - with-let の使い方
-- hot/random/all
 - bulmer, div
 
-
-## 0.5.1-SNAPSHOT
+## 0.5.1 - 2022-05-24
 - Browse random/hot の並び替えができる。
   ラジオボタンが選びにくく、選べないのではとずーっと思ってた。
 
