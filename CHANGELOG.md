@@ -11,8 +11,8 @@
 - チラッと見える土台　html
 - with-let の使い方
 
-## 0.5.0-SNAPSHOT
-Browse に取り掛からなくちゃ。
+## 0.5.0 - 2022-05-24
+can browse locally
 - Invalid anti-forgery token
   -> 「再読み込み後にログイン」のメッセージ
 - alter table uploads add column filename varchar(64) not null
