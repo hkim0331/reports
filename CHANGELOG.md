@@ -15,6 +15,7 @@
  (in browse-page)
 
 ## 0.6.0-SNAPSHOT
+- js/alert recv, mesg
 
 ## 0.5.1 - 2022-05-24
 - Browse random/hot の並び替えができる。

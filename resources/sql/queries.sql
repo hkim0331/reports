@@ -15,3 +15,9 @@ SELECT login FROM uploads order by id
 -- :name logins-by-reverse-uploaded :? :*
 -- :doc retrieve logins, newers are first
 SELECT login FROM uploads ORDER BY uploaded_at DESC
+
+-- :name save-message! :! :n
+-- :doc message from snd to rcv
+INSERT INTO goods
+(snd, rcv, message)
+VALUES (:snd, :rcv, :message)
