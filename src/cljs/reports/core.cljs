@@ -15,6 +15,7 @@
 (def ^:private now (.toLocaleString (js/Date.)))
 
 (defonce session (r/atom {:page :home}))
+(defonce users (r/atom []))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -100,21 +101,31 @@
 ;; -------------------------
 ;; Browse
 
-(defn list-users [url]
-  (GET url
-     {:handler
-        #(set! (.-innerHTML (.getElementById js/document "browse"))
-              (str %))
-      :error-handler #(.log js/console (str "error: " %))}))
+(defn reset-users! []
+  (GET "/api/users"
+    {:handler #(reset! users %)}
+    {:error-handler (.log js/console "error: %")}))
+
+;; ;; これができない！
+;; (defn make-list [users]
+;;   (into
+;;    [:ul]
+;;    (for [u users]
+;;      [:li u])))
+
+;; (defn list-users [url]
+;;   (GET url
+;;     {:handler
+;;      #(set! (.-innerHTML (.getElementById js/document "browse"))
+;;             (make-list %))
+;;      :error-handler #(.log js/console (str "error: " %))}))
 
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-   [:p
-    [:button {:on-click #(list-users "/api/users-hot")} "hot"]
-    " "
-    [:button {:on-click #(list-users "/api/users-random")} "random"]]
-   [:div#browse]])
+   (into [:ul]
+         (for [u @users]
+           [:li [:a {:href (str js/hp_url u)} u]]))])
 
 ;; -------------------------
 ;; Goods
@@ -171,4 +182,5 @@
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
+  (reset-users!)
   (mount-components))

@@ -58,9 +58,15 @@
        (shuffle)
        (response/ok)))
 
+(defn distinct-users [request]
+  (->> (db/get-logins)
+       (map :login)
+       (distinct)
+       (response/ok)))
+
 (defn services-routes []
   ["/api"
-   {:middleware [;;middleware/wrap-restricted
+   {:middleware [middleware/wrap-restricted
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/ping" {:get (fn [_]
@@ -68,5 +74,6 @@
                                   :body "pong"}))}]
    ["/upload" {:post upload!}]
    ["/logins" {:get logins}]
+   ["/users"  {:get distinct-users}]
    ["/users-hot"    {:get users-hot}]
    ["/users-random" {:get users-random}]])
