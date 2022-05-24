@@ -104,14 +104,15 @@
 (def min-mesg 10)
 
 (defn send-message! [recv mesg]
-  (js/alert (str mesg " to " recv))
-  (POST "/api/save-message"
-    {:headers {"x-csrf-field" js/csrfToken}
-     :params {:snd js/login
-              :rcv recv
-              :message mesg}
-     :handler #(.log js/console "sent")
-     :error-handler #(.log js/console (str %))}))
+  (if (< (count mesg) min-mesg)
+    (js/alert (str "メッセージは " min-mesg "文字以上です。"))
+    (POST "/api/save-message"
+      {:headers {"x-csrf-field" js/csrfToken}
+       :params {:snd js/login
+                :rcv recv
+                :message mesg}
+       :handler #(js/alert (str recv " に " mesg "を送った。"))
+       :error-handler #(.log js/console (str %))})))
 
 (defonce random? (r/atom false))
 (def filters {true identity false shuffle})
@@ -139,9 +140,10 @@
        " "
        [:input {:id i :placeholder "message"}]
        [:button {:on-click
-                 #(send-message!
-                   u
-                   (.-value (.getElementById js/document i)))}
+                 #(let [obj (.getElementById js/document i)]
+                    (send-message! u (.-value obj))
+                    ;;FIXME クリアしない。
+                    (set! (.-innerHTML obj) ""))}
         "send"]]])])
 
 ;; -------------------------
