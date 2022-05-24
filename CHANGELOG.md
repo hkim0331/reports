@@ -11,7 +11,10 @@
 - チラッと見える土台　html
 - with-let の使い方
 - bulmer, div
+- good 送信後のクリア
+- メッセージ長さのチェック
 
+## 0.6.1-SNAPSHOT
 
 ## 0.6.0 - 2022-05-24
 - js/alert recv, mesg
