@@ -12,7 +12,7 @@
   (:import goog.History))
 
 (def ^:private version "0.4.0")
-(def ^:private now (js/Date))
+(def ^:private now (.toLocaleString (js/Date.)))
 
 (defonce session (r/atom {:page :home}))
 
@@ -38,9 +38,10 @@
       {:class (when @expanded? :is-active)}
       [:div.navbar-start
        [nav-link "#/" "Home" :home]
-       [nav-link "#/upload" "Upload" :upload]
-       [nav-link "#/browse" "Browse" :browse]
-       [nav-link "#/goods"  "Goods" :goods]
+      ;; ちょっとうるさい
+      ;;  [nav-link "#/upload" "Upload" :upload]
+      ;;  [nav-link "#/browse" "Browse" :browse]
+      ;;  [nav-link "#/goods"  "Goods" :goods]
        [nav-link "/login" "Login"]
        [nav-link "/logout" "Logout"]
        [nav-link "#/about" "About" :about]]]]))
@@ -48,8 +49,9 @@
 (defn about-page []
   [:section.section>div.container>div.content
    [:img {:src "/img/warning_clojure.png"}]
-   [:p "version: " version]
-   [:p "updated: " now]])
+   [:p "program: hkimura" [:br]
+       "version: " version [:br]
+       "update: " now]])
 
 (defn home-page []
   (let [name js/login
