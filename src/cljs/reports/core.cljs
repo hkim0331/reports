@@ -115,13 +115,31 @@
 ;;             (make-list %))
 ;;      :error-handler #(.log js/console (str "error: " %))}))
 
+;; old 0.5.0
+;; (defn browse-page []
+;;   [:section.section>div.container>div.content
+;;    [:h2 "Browse"]
+;;    [:p "under construction(random/hots, form `goods`)"]
+;;    (into [:ul]
+;;          (for [u (shuffle @users)]
+;;            [:li [:a {:href (str js/hp_url u)} u]]))])
+(defonce filter? (r/atom true))
+
+(def filters {true identity false shuffle})
+
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
    [:p "under construction(random/hots, form `goods`)"]
-   (into [:ul]
-         (for [u (shuffle @users)]
-           [:li [:a {:href (str js/hp_url u)} u]]))])
+   (for [u ((filters @filter?) @users)]
+     ;; ちょっと上下に開きすぎ
+     [:div.columns
+      [:div.column
+       [:a {:href (str js/hp_url u)} u]]
+      [:div.column
+       " "
+       [:input {:placeholder "message"}]
+       [:button "send"]]])])
 
 ;; -------------------------
 ;; Goods

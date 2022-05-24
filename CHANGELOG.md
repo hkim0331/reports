@@ -6,11 +6,13 @@
 - login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
-- upload: form looks
+- upload looks
 - feedback upload
 - チラッと見える土台　html
 - with-let の使い方
-- hot/random
+- hot/random/all
+- bulmer, div
+
 
 ## 0.5.1-SNAPSHOT
 
