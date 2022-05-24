@@ -5,7 +5,6 @@
                 :output-dir "target/cljsbuild/public/js"
                 :asset-path "/js"
                 :modules    {:app {:entries [reports.app]}}
-                
                 :release    {}}
          :test {:target  :node-test, :output-to "target/test/test.js"
                 :autorun true}}

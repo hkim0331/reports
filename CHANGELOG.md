@@ -1,13 +1,37 @@
 # Reports
 
 ## Unreleased
-- Uploads
 - Browse
 - Goods
 - login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
+- form looks
+- time format
+- env ver を cljs から参照できるか？
+- CLJS repl がつながらなくなった理由。
+- check your report URL を csrf と同様の手段で cljs に渡す。
 
+
+## 0.4.0-SNAPSHOT
+- :page-url "http://localhost:3001/" の導入。
+  デベロップでは http-server を動かしとけ。
+  プロダクションでは "https://hp.melt.kyutech.ac.jp/" になる。
+- upload 後の戻り先 -> /r/#/upload とした。
+- (js/Date.) or (js/Date)
+  (js/Date) == (str (js/Date.))
+- `check your report` in upload-page
+- `check your report` in home-page
+
+
+## 0.3.3 - 2022-05-23
+- /api/upload production では PUBLIC_DIR 環境変数を定義すること。
+    export PUBLIC_DIR=/home/ubuntu/reports/public
+- api/copy! でエラー。
+  No method in multimethod 'do-copy' for dispatch value: [java.io.File java.lang.String]
+  ->  (io/copy tempfile (io/file (str dir "/" filename)))
+- About にバージョンと更新日時を表示。
+- Uploads が動き出した。
 
 ## 0.3.1 - 2022-05-23
 - (layout/render [req] "template.html" {:key value}) で渡し、
