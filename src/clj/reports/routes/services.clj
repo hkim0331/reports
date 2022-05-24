@@ -45,28 +45,30 @@
     (response/ok ret)))
 
 ;; 引数に n をとる
-(defn users-hot [request]
-  (->> (db/get-logins)
-       (map :login)
-       (distinct)
-       (response/ok)))
+;; (defn users-hot [request]
+;;   (->> (db/get-logins)
+;;        (map :login)
+;;        (distinct)
+;;        (response/ok)))
 
-(defn users-random [request]
-  (->> (db/get-logins)
-       (map :login)
-       (distinct)
-       (shuffle)
-       (response/ok)))
+;; (defn users-random [request]
+;;   (->> (db/get-logins)
+;;        (map :login)
+;;        (distinct)
+;;        (shuffle)
+;;        (response/ok)))
 
-(defn distinct-users [request]
-  (->> (db/get-logins)
+(defn users
+  "distinct users order by uploaded_at"
+  [request]
+  (->> (db/logins-by-reverse-uploaded)
        (map :login)
        (distinct)
        (response/ok)))
 
 (defn services-routes []
   ["/api"
-   {:middleware [middleware/wrap-restricted
+   {:middleware [;;middleware/wrap-restricted
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/ping" {:get (fn [_]
@@ -74,6 +76,6 @@
                                   :body "pong"}))}]
    ["/upload" {:post upload!}]
    ["/logins" {:get logins}]
-   ["/users"  {:get distinct-users}]
-   ["/users-hot"    {:get users-hot}]
-   ["/users-random" {:get users-random}]])
+   ["/users"  {:get users}]])
+   ;;["/users-hot"    {:get users-hot}]
+   ;;["/users-random" {:get users-random}]])

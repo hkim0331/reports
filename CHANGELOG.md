@@ -6,10 +6,15 @@
 - login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
-- upload: form looks
+- upload looks
 - feedback upload
 - チラッと見える土台　html
 - with-let の使い方
+- bulmer, div
+
+## 0.5.1 - 2022-05-24
+- Browse random/hot の並び替えができる。
+  ラジオボタンが選びにくく、選べないのではとずーっと思ってた。
 
 ## 0.5.0 - 2022-05-24
 can browse locally

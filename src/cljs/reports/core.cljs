@@ -2,7 +2,7 @@
   (:require
    [ajax.core :refer [GET POST]]
    [clojure.string :as string]
-   [markdown.core :refer [md->html]]
+   ;;[markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
    [reitit.core :as reitit]
@@ -11,7 +11,7 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.5.0")
+(def ^:private version "0.5.1")
 (def ^:private now (.toLocaleString (js/Date.)))
 
 (defonce session (r/atom {:page :home}))
@@ -101,31 +101,35 @@
 ;; -------------------------
 ;; Browse
 
-(defn reset-users! []
-  (GET "/api/users"
-    {:handler #(reset! users %)}
-    {:error-handler (.log js/console "error: %")}))
+(defonce random? (r/atom false))
 
-;; ;; これができない！
-;; (defn make-list [users]
-;;   (into
-;;    [:ul]
-;;    (for [u users]
-;;      [:li u])))
-
-;; (defn list-users [url]
-;;   (GET url
-;;     {:handler
-;;      #(set! (.-innerHTML (.getElementById js/document "browse"))
-;;             (make-list %))
-;;      :error-handler #(.log js/console (str "error: " %))}))
+(def filters {true identity false shuffle})
 
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-   (into [:ul]
-         (for [u @users]
-           [:li [:a {:href (str js/hp_url u)} u]]))])
+   [:p "under constrution"]
+   [:p "random/hot が選びにくい。メッセージはまだ送信できない。"]
+
+   [:div
+    [:input {:type "radio"
+             :checked (not @random?)
+             :on-change #(swap! random? not)}]
+    " radom "
+    [:input {:type "radio"
+             :checked @random?
+             :on-change #(swap! random? not)}]
+    " hot "]
+   [:br]
+   (for [u ((filters @random?) @users)]
+     ;; ちょっと上下に開きすぎ
+     [:div.columns
+      [:div.column
+       [:a {:href (str js/hp_url u)} u]]
+      [:div.column
+       " "
+       [:input {:placeholder "message"}]
+       [:button "send"]]])])
 
 ;; -------------------------
 ;; Goods
@@ -134,7 +138,11 @@
   (let [name js/login]
     [:section.section>div.container>div.content
      [:h2 "Goods"]
-     [:p "hello, " name "."]]))
+     [:p "UNDER CONSTRUCTION"]]))
+
+;; -------------------------
+;; Pages
+
 (def pages
   {:home   #'home-page
    :about  #'about-page
@@ -178,6 +186,11 @@
 (defn ^:dev/after-load mount-components []
   (rdom/render [#'navbar] (.getElementById js/document "navbar"))
   (rdom/render [#'page] (.getElementById js/document "app")))
+
+(defn reset-users! []
+  (GET "/api/users"
+    {:handler #(reset! users %)}
+    {:error-handler (.log js/console "error: %")}))
 
 (defn init! []
   (ajax/load-interceptors!)

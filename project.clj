@@ -1,7 +1,7 @@
-(defproject reports "0.5.0"
+(defproject reports "0.5.1"
 
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "reports for literacy 2022"
+  :url "https://rp.melt.kyutech.ac.jp"
 
   :dependencies [[buddy/buddy-auth "3.0.323"]
                  [buddy/buddy-core "1.10.413"]
@@ -47,21 +47,21 @@
                  ;;
                  [hato "0.8.2"]]
   :min-lein-version "2.0.0"
-  
+
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :test-paths ["test/clj"]
   :resource-paths ["resources" "target/cljsbuild"]
   :target-path "target/%s/"
   :main ^:skip-aot reports.core
 
-  :plugins [] 
+  :plugins []
   :clean-targets ^{:protect false}
   [:target-path "target/cljsbuild"]
-  
+
 
   :profiles
   {:uberjar {:omit-source true
-             
+
              :prep-tasks ["compile" ["run" "-m" "shadow.cljs.devtools.cli" "release" "app"]]
              :aot :all
              :uberjar-name "reports.jar"
@@ -81,9 +81,9 @@
                                  [ring/ring-mock "0.4.0"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
                                  [jonase/eastwood "0.3.5"]
-                                 [cider/cider-nrepl "0.26.0"]] 
-                  
-                  
+                                 [cider/cider-nrepl "0.26.0"]]
+
+
                   :source-paths ["env/dev/clj"  "env/dev/cljs" "test/cljs"]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user
@@ -91,9 +91,9 @@
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:jvm-opts ["-Dconf=test-config.edn"]
-                  :resource-paths ["env/test/resources"]} 
-                  
-                  
-                  
+                  :resource-paths ["env/test/resources"]}
+
+
+
    :profiles/dev {}
    :profiles/test {}})
