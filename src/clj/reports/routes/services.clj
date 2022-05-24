@@ -34,7 +34,8 @@
       (when (empty? filename)
         (throw (Exception. "did not select a file.")))
       (io/copy tempfile (io/file (str dir "/" filename)))
-      (response/ok {:status 200 :body "under construction"})
+      (-> (response/found "/r/#/upload")
+          (assoc :flash (str "uploaded " filename)))
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
 

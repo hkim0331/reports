@@ -85,12 +85,16 @@
     [:div.column [:button {:type "submit"} "up"]]]])
 
 (defn upload-page []
-  [:section.section>div.container>div.content
-   [:h2 "Upload"]
-   [upload-column (str js/login) "/" "html"]
-   [upload-column "" "/css/" "css"]
-   [upload-column "" "/images/" "images"]
-   [upload-column "" "/js/" "js"]])
+  (let [url (str js/hp-url "/" js/login)]
+    [:section.section>div.container>div.content
+     [:h2 "Upload"]
+     [upload-column (str js/login) "/" "html"]
+     [upload-column "" "/css/" "css"]
+     [upload-column "" "/images/" "images"]
+     [upload-column "" "/js/" "js"]
+     [:p "check your report => "
+      [:a {:href url} "check"]]]))
+
 
 (defn browse-page []
   [:section.section>div.container>div.content

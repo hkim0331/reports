@@ -10,7 +10,8 @@
 
 (defn home-page [request]
   (if-let [login (get-in request [:session :identity])]
-    (layout/render [request] "home.html" {:login (name login)})
+    (layout/render [request] "home.html" {:login  (name login)
+                                          :hp-url (:hp-url env)})
     (layout/render [request] "error.html")))
 
 (defn home-routes []
