@@ -11,7 +11,7 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.5.1")
+(def ^:private version "0.6.0")
 (def ^:private now (.toLocaleString (js/Date.)))
 
 (defonce session (r/atom {:page :home}))
@@ -101,16 +101,25 @@
 ;; -------------------------
 ;; Browse
 
-(defonce random? (r/atom false))
+(def min-mesg 10)
 
+(defn send-message! [recv mesg]
+  (js/alert (str mesg " to " recv))
+  (POST "/api/save-message"
+    {:headers {"x-csrf-field" js/csrfToken}
+     :params {:snd js/login
+              :rcv recv
+              :message mesg}
+     :handler #(.log js/console "sent")
+     :error-handler #(.log js/console (str %))}))
+
+(defonce random? (r/atom false))
 (def filters {true identity false shuffle})
 
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-   [:p "under constrution"]
-   [:p "random/hot が選びにくい。メッセージはまだ送信できない。"]
-
+   [:p "random/hot が選びにくい。フィールドの長さ、配置の調整はこの後のバージョンで。"]
    [:div
     [:input {:type "radio"
              :checked (not @random?)
@@ -121,15 +130,19 @@
              :on-change #(swap! random? not)}]
     " hot "]
    [:br]
-   (for [u ((filters @random?) @users)]
+   (for [[i u] (map-indexed vector ((filters @random?) @users))]
      ;; ちょっと上下に開きすぎ
      [:div.columns
       [:div.column
        [:a {:href (str js/hp_url u)} u]]
       [:div.column
        " "
-       [:input {:placeholder "message"}]
-       [:button "send"]]])])
+       [:input {:id i :placeholder "message"}]
+       [:button {:on-click
+                 #(send-message!
+                   u
+                   (.-value (.getElementById js/document i)))}
+        "send"]]])])
 
 ;; -------------------------
 ;; Goods

@@ -66,6 +66,13 @@
        (distinct)
        (response/ok)))
 
+(defn save-message! [{{:keys [snd rcv message]} :params}]
+  (log/debug snd rcv message)
+  (db/save-message! {:snd snd
+                     :rcv rcv
+                     :message message})
+  (response/ok "sent"))
+
 (defn services-routes []
   ["/api"
    {:middleware [;;middleware/wrap-restricted
@@ -76,6 +83,7 @@
                                   :body "pong"}))}]
    ["/upload" {:post upload!}]
    ["/logins" {:get logins}]
-   ["/users"  {:get users}]])
+   ["/users"  {:get users}]
+   ["/save-message" {:post save-message!}]])
    ;;["/users-hot"    {:get users-hot}]
    ;;["/users-random" {:get users-random}]])
