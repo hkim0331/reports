@@ -1,20 +1,17 @@
 # Reports
 
 ## Unreleased
-- login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
-- upload looks
-- feedback upload
 - with-let の使い方
-- bulmer, div
-- good 送信後の input フィールドのクリア
-
+- Upload looks bulma div?
 - button.is-primary.is-small でも大きすぎる
+- good 送信後の input フィールドのクリア
+- feedback upload
 - Goods(sent)
 - Goods(not yet)
 
-## 0.6.3
+## 0.6.3 - 2022-05-25
 ### Fixed
 - Goods ページ: react.development.js:221 Warning: Each child in a list should have a unique "key" prop.
   (for [[id g] (map-indexed vector @goods)]
@@ -29,7 +26,7 @@
        date (subs s 28 39)
        time (subs s 40 48)]
    (str date " " time)))
-  
+ 
 ## 0.6.2 - 2022-05-25
 - db-dump/{db-dump,db-restore}.sh
 - チラッと見える土台　html
