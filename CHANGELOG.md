@@ -1,8 +1,6 @@
 # Reports
 
 ## Unreleased
-- Browse
-- Goods
 - login.html css
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
@@ -11,15 +9,18 @@
 - チラッと見える土台　html
 - with-let の使い方
 - bulmer, div
+- BUG about:update がプログラム起動の時間になっている
+- upload に説明文
+- Goods(sent)
+- Goods(not yet)
+- good 送信後の input フィールドのクリア
+- timestamp の表示
+  [TaggedValue: LocalDateTime, 2022-05-24T23:30:40.697]
 
 
 ## 0.6.1 - 2022-05-24
 - 送信メッセージ長さのチェック
 - 受け取ったメッセージの表示
-### FIXME
-- good 送信後の input フィールドのクリア
-- timestamp の表示
-  [TaggedValue: LocalDateTime, 2022-05-24T23:30:40.697]
 
 ## 0.6.0 - 2022-05-24
 - js/alert recv, mesg
