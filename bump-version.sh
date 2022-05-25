@@ -26,9 +26,9 @@ fi
 # project.clj
 ${SED} -i "s/(defproject \S+) \S+/\1 \"$1\"/" project.clj
 
-# clj
-${SED} -i "s/(def \^:private version) .+/\1 \"$1\")/" src/cljs/reports/core.cljs
-
-# cljs
-#${SED} -i "s/(def \^:private version) .+/\1 \"$1\")/" src/main.cljs
+NOW=`date '+%F %T'`
+${SED} -i \
+  -e "s/(def \^:private version) .+/\1 \"$1\")/" \
+  -e "s/(def \^:private now) .+/\1 \"$NOW\")/" \
+    src/cljs/reports/core.cljs
 
