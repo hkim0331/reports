@@ -11,8 +11,8 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.6.2")
-(def ^:private now "2022-05-25 16:50:17")
+(def ^:private version "0.6.3")
+(def ^:private now "2022-05-25 17:45:31")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
@@ -112,6 +112,7 @@
 ;; -------------------------
 ;; Browse
 
+;; input 長さを調整してから。
 (def min-mesg 10)
 
 (defn send-message! [recv mesg]
@@ -131,7 +132,9 @@
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
+   [:p "リストにあるのはアップロードを実行した人だけです。"]
    [:p "フィールドの長さ、配置の調整はこの後のバージョンで。"]
+
    [:div
     [:input {:type "radio"
              :checked (not @random?)
@@ -150,26 +153,32 @@
       [:div.column
        " "
        [:input {:id i :placeholder "message"}]
-       [:button {:on-click
-                 #(let [obj (.getElementById js/document i)]
-                    (send-message! u (.-value obj))
-                    ;;FIXME クリアしない。
-                    (set! (.-innerHTML obj) ""))}
-        "send"]]])])
+       [:span
+        {:on-click
+         #(let [obj (.getElementById js/document i)]
+            (send-message! u (.-value obj))
+             ;;FIXME クリアしない。
+            (set! (.-innerHTML obj) ""))} " 👍 "]]])])
 
 ;; -------------------------
 ;; Goods
 
 (defonce goods (r/atom []))
 
+(defn time-format [time]
+ (let [s (str time)
+       date (subs s 28 39)
+       time (subs s 40 48)]
+   (str date " " time)))
+
 (defn goods-page []
   [:section.section>div.container>div.content
    [:h2 "Goods to " js/login]
-   (for [g @goods]
-     [:div
-      (.toLocaleString (:timestamp g))
+   (for [[id g] (map-indexed vector @goods)]
+     [:p {:key id}
+      (time-format (:timestamp g))
       [:br]
-      [:p (:message g)]])
+      (:message g)])
    [:h2 "Goods sent"]
    [:p "under construction"]
    [:h3 "Not Yet"]
