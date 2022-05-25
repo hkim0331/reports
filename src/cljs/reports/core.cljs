@@ -11,8 +11,8 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.6.1")
-(def ^:private now (.toLocaleString (js/Date.)))
+(def ^:private version "0.6.2")
+(def ^:private now "2022-05-25 16:50:17")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
@@ -47,6 +47,9 @@
        [nav-link "/logout" "Logout"]
        [nav-link "#/about" "About" :about]]]]))
 
+;; -------------------------
+;; About
+
 (defn about-page []
   [:section.section>div.container>div.content
    [:img {:src "/img/warning_clojure.png"}]
@@ -54,11 +57,13 @@
     "version: " version [:br]
     "update: " now]])
 
+;; -------------------------
+;; Home
+
 (defn home-page []
   (let [name js/login
         url (str js/hp_url name)]
     [:section.section>div.container>div.content
-     [:h1 "UNDER CONSTRUCTION"]
      [:p "check your report => " [:a {:href url} "check"]]
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
@@ -96,8 +101,14 @@
      [upload-column "" "/images/" "images"]
      [upload-column "" "/js/" "js"]
      [:p "check your report => "
-      [:a {:href url} "check"]]]))
-
+      [:a {:href url} "check"]]
+     [:ul
+      [:li "アップロードはファイルひとつずつ。"]
+      [:li "フォルダをアップロードはできません。"]
+      [:li "*.html や *.css, *.png 等のアップロード先はそそれぞれ違います。"]
+      [:li "同じファイル名でアップロードすると上書きします。"]
+      [:li "/js/ はやれる人用。授業では扱っていない。"]
+      [:li "(このページの css はまだ作っていません。不細工なページになってます)"]]]))
 ;; -------------------------
 ;; Browse
 
@@ -120,12 +131,12 @@
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-   [:p "random/hot が選びにくい。フィールドの長さ、配置の調整はこの後のバージョンで。"]
+   [:p "フィールドの長さ、配置の調整はこの後のバージョンで。"]
    [:div
     [:input {:type "radio"
              :checked (not @random?)
              :on-change #(swap! random? not)}]
-    " radom "
+    " random "
     [:input {:type "radio"
              :checked @random?
              :on-change #(swap! random? not)}]
@@ -158,8 +169,11 @@
      [:div
       (.toLocaleString (:timestamp g))
       [:br]
-      [:p (:message g)]])])
-
+      [:p (:message g)]])
+   [:h2 "Goods sent"]
+   [:p "under construction"]
+   [:h3 "Not Yet"]
+   [:p "under construction"]])
 ;; -------------------------
 ;; Pages
 
