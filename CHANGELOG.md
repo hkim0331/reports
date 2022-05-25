@@ -8,11 +8,11 @@
 - button.is-primary.is-small でも大きすぎる
 - good 送信後の input フィールドのクリア
 - feedback upload
-- Goods(sent)
 - Goods(not yet)
 - return key でメッセージ送信
 
 ## 0.6.4-SNAPSHOT
+- Goods(sent)
 
 ## 0.6.3 - 2022-05-25
 ### Fixed

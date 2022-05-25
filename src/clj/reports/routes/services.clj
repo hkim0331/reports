@@ -77,6 +77,9 @@
   (log/debug "me " me)
   (response/ok (db/goods {:rcv me})))
 
+(defn sents [{{:keys [me]} :path-params}]
+   (response/ok (db/sents {:snd me})))
+
 (defn services-routes []
   ["/api"
    {:middleware [;;middleware/wrap-restricted
@@ -89,6 +92,7 @@
    ["/logins" {:get logins}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
-   ["/goods/:me" {:get goods}]])
+   ["/goods/:me" {:get goods}]
+   ["/sents/:me"  {:get sents}]])
    ;;["/users-hot"    {:get users-hot}]
    ;;["/users-random" {:get users-random}]])

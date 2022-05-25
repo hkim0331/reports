@@ -164,6 +164,7 @@
 ;; Goods
 
 (defonce goods (r/atom []))
+(defonce sents (r/atom []))
 
 (defn time-format [time]
  (let [s (str time)
@@ -179,8 +180,13 @@
       (time-format (:timestamp g))
       [:br]
       (:message g)])
+
    [:h2 "Goods sent"]
-   [:p "under construction"]
+   (for [[id s] (map-indexed vector @sents)]
+     [:p {:key id}
+      "To " (:rcv s) ", " (time-format (:timestamp s))
+      [:br]
+      (:message s)])
    [:h3 "Not Yet"]
    [:p "under construction"]])
 ;; -------------------------
@@ -240,9 +246,15 @@
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "error:" %)}))
 
+(defn reset-sents! []
+  (GET (str "/api/sents/" js/login)
+    {:handler #(reset! sents %)
+     :error-handler #(.log js/console "error:" %)}))
+
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
   (reset-goods!)
+  (reset-sents!)
   (mount-components))
