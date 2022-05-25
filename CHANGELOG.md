@@ -6,23 +6,37 @@
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
 - upload looks
 - feedback upload
-- チラッと見える土台　html
 - with-let の使い方
 - bulmer, div
-- BUG about:update がプログラム起動の時間になっている
-- upload に説明文
+- good 送信後の input フィールドのクリア
+
+- button.is-primary.is-small でも大きすぎる
 - Goods(sent)
 - Goods(not yet)
-- good 送信後の input フィールドのクリア
+
+## 0.6.3
+### Fixed
+- Goods ページ: react.development.js:221 Warning: Each child in a list should have a unique "key" prop.
+  (for [[id g] (map-indexed vector @goods)]
+     [:p {:key id}
+      (.toLocaleString (:timestamp g))
+      [:br]
+      (:message g)])
 - timestamp の表示
   [TaggedValue: LocalDateTime, 2022-05-24T23:30:40.697]
-
+  (defn time-format [time]
+    (let [s (str time)
+       date (subs s 28 39)
+       time (subs s 40 48)]
+   (str date " " time)))
+  
 ## 0.6.2 - 2022-05-25
 - db-dump/{db-dump,db-restore}.sh
-- clean up home.html
+- チラッと見える土台　html
+  -> clean up home.html
 - title "Report"
 - bump-version.sh, 日付を date '+%F %T' で得る
-
+- Upload に説明文
 
 ## 0.6.1 - 2022-05-24
 - 送信メッセージ長さのチェック
