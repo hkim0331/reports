@@ -10,6 +10,9 @@
 - feedback upload
 - Goods(sent)
 - Goods(not yet)
+- return key でメッセージ送信
+
+## 0.6.4-SNAPSHOT
 
 ## 0.6.3 - 2022-05-25
 ### Fixed
@@ -26,7 +29,7 @@
        date (subs s 28 39)
        time (subs s 40 48)]
    (str date " " time)))
- 
+
 ## 0.6.2 - 2022-05-25
 - db-dump/{db-dump,db-restore}.sh
 - チラッと見える土台　html
