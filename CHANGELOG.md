@@ -17,7 +17,7 @@
 - timestamp の表示
   [TaggedValue: LocalDateTime, 2022-05-24T23:30:40.697]
 
-## 0.6.2-SNAPSHOT
+## 0.6.2 - 2022-05-25
 - db-dump/{db-dump,db-restore}.sh
 - clean up home.html
 - title "Report"
