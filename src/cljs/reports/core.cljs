@@ -362,30 +362,33 @@
         time (subs s 40 48)]
     (str date " " time)))
 
+;; (contains? @users  u) の @users が展開できない。
+;; id が重複している。
 (defn goods-page []
   [:section.section>div.container>div.content
    [:div.columns
     [:div.column
      [:h2 "Goods Received"]
      (for [[id g] (map-indexed vector @goods)]
-       [:p {:key id}
+       [:p {:key (str "r" id)}
         (time-format (:timestamp g))
         [:br]
         (:message g)])]
     [:div.column
      [:h2 "Goods Sent"]
      (for [[id s] (map-indexed vector @sents)]
-       [:p {:key id}
+       [:p {:key (str "g" id)}
         "To " (:rcv s) ", " (time-format (:timestamp s))
         [:br]
         (:message s)])]
     [:div.column
-     [:h3 "Not Yet"]
-     ;; 未提出はリンクにしない
-     (for [[i u] (map-indexed vector (sort (disj users-all @sents)))]
-       [:p {:key i}  (if (get @users u)
-                       [:a {:href (report-url u)} u]
-                       u)])]]])
+     [:h2 "Not Yet Send To"]
+     (doall
+      (for [[id u] (map-indexed vector (sort (disj users-all @sents)))]
+        [:p {:key (str "n" id)}
+         (if (neg? (.indexOf @users u))
+           u
+           [:a {:href (report-url u)} u])]))]]])
 
 ;; -------------------------
 ;; Pages
@@ -439,6 +442,7 @@
     {:handler #(reset! users %)}
     {:error-handler #(.log js/console "error:" %)}))
 
+(reset-users!)
 (defn reset-goods! []
   (GET (str "/api/goods/" js/login)
     {:handler #(reset! goods %)
@@ -456,3 +460,4 @@
   (reset-goods!)
   (reset-sents!)
   (mount-components))
+

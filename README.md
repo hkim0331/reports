@@ -2,7 +2,7 @@
 
 generated using Luminus version "4.38"
 
-FIXME
+    % lein new luminus reports +postgres +reagent +auth
 
 ## Prerequisites
 

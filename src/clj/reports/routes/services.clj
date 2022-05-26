@@ -44,20 +44,6 @@
   (let [ret (db/get-logins)]
     (response/ok ret)))
 
-;; 引数に n をとる
-;; (defn users-hot [request]
-;;   (->> (db/get-logins)
-;;        (map :login)
-;;        (distinct)
-;;        (response/ok)))
-
-;; (defn users-random [request]
-;;   (->> (db/get-logins)
-;;        (map :login)
-;;        (distinct)
-;;        (shuffle)
-;;        (response/ok)))
-
 (defn users
   "distinct users order by uploaded_at"
   [request]
