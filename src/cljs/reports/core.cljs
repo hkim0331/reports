@@ -360,9 +360,12 @@
         time (subs s 40 48)]
     (str date " " time)))
 
+(defn filter-goods-by [f]
+ (reverse (filter #(= js/login (f %)) @goods)))
+
 (defn goods-page []
-  (let [received (reverse (filter #(= js/login (:rcv %)) @goods))
-        sent     (reverse (filter #(= js/login (:snd %)) @goods))]
+  (let [received (filter-goods-by :rcv)
+        sent     (filter-goods-by :snd)]
     [:section.section>div.container>div.content
      [:div.columns
       [:div.column
@@ -376,7 +379,7 @@
        [:h2 "Goods Sent"]
        (for [[id s] (map-indexed vector sent)]
          [:p {:key (str "g" id)}
-          "To " [:b (:rcv s)] ", " (time-format (:timestamp s))
+          "to " [:b (:rcv s)] ", " (time-format (:timestamp s))
           [:br]
           (:message s)])]
       [:div.column

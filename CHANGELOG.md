@@ -23,6 +23,7 @@
 ### Changed
 - /api/goods/:me -> /api/goods-to/:user
 - /api/sends/:me -> /api/goods-from/:user
+- /api/goods-to, goods-from -> まとめて /api/goods
 - reverse order good reveived/sent
 - windows の絵文字は美しくない。favicon.ico 代えよう。
 - renamed r/atom goods -> r/atom recvs
