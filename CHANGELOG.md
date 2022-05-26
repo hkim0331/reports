@@ -19,7 +19,7 @@
 - hot に時刻表示
 
 
-## 0.7.4-SNAPSHOT
+## 0.7.4 - 2022-05-26
 ### Changed
 - /api/goods/:me -> /api/goods-to/:user
 - /api/sends/:me -> /api/goods-from/:user
