@@ -8,6 +8,11 @@
 - feedback upload
 - return key でメッセージ送信
 
+## 0.7.2 - 2022-05-26
+- 0.7.1 は機能していない。
+- get や contains ではなく、.indexOf
+- calva-cljs node repl 
+
 ## 0.7.1 - 2022-05-26
 - Goods: 未提出はリンクにしない。
 
