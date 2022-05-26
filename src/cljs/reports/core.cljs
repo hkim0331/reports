@@ -67,7 +67,8 @@
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
-      [:li [:a {:href "#/goods"}  "Goods"]]]]))
+      [:li [:a {:href "#/goods"}  "Goods"] 
+           " (" [:a {:href "#/histogram"} "histogram"] ")"]]]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -369,6 +370,7 @@
      [:div.columns
       [:div.column
        [:h2 "Goods Received"]
+
        (for [[id g] (map-indexed vector received)]
          [:p {:key (str "r" id)}
           (time-format (:timestamp g))
@@ -393,6 +395,28 @@
              [:a {:href (report-url u)} u])]))]]]))
 
 ;; -------------------------
+;; Histgram
+(defn good-marks [n]
+ (repeat n "🤗"))
+
+(defn abbrev [s]
+ (concat (first s) (map (fn [x] "*") (rest s))))
+
+(defn histogram [f]
+ (map-indexed vector (->> (group-by f @goods)
+                          (map (fn [x] [(first x) (count (second x))])))))
+
+(defn histogram-page []
+  [:section.section>div.container>div.content
+   [:h2 "Goods Sent"]
+   (for [[id [nm ct]] (histogram :snd)]
+     [:p {:key id} (good-marks ct) " " (abbrev nm)])
+   [:h2 "Goods Received"]
+   (for [[id [nm ct]] (histogram :rcv)]
+     [:p {:key id} (good-marks ct) " " (abbrev nm)])])
+
+
+;; -------------------------
 ;; Pages
 
 (def pages
@@ -400,7 +424,8 @@
    :about  #'about-page
    :upload #'upload-page
    :browse #'browse-page
-   :goods  #'goods-page})
+   :goods  #'goods-page
+   :histogram #'histogram-page})
 
 (defn page []
   [(pages (:page @session))])
@@ -414,7 +439,8 @@
     ["/about"  :about]
     ["/upload" :upload]
     ["/browse" :browse]
-    ["/goods"  :goods]]))
+    ["/goods"  :goods]
+    ["/histogram" :histogram]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")

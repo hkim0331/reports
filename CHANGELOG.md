@@ -10,16 +10,16 @@
 - ADMIN: list messages all page
 - login 名の最大幅で div
 - ERROR: XMLHttpRequest is not defined
-- cljs repl
-; No available JS runtime.
-; See https://shadow-cljs.github.io/docs/UsersGuide.html#repl-troubleshooting
-今は reports プロジェクト内で clj/cljs を切り替えて作業できている。手順次第でできるようだ。
-タブを選択するだけで repl が切り替わっている(m2)
 - hot に時刻表示
 - error Access to /r/ is not authorized を
   /login にリダイレクトする
-- Warning: validateDOMNesting(...): <div> cannot appear as a descendant of <p>.
 
+## 0.8.0 - 2022-05-27
+- histogram(?)
+- cljs repl
+  今は reports プロジェクト内で clj/cljs を切り替えて作業できている。
+  手順次第でできるようだ。タブを選択するだけで repl が切り替わっている(m2)
+- Warning: validateDOMNesting(...): <div> cannot appear as a descendant of <p>.
 
 ## 0.7.4 - 2022-05-26
 ### Changed
