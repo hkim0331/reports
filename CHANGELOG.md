@@ -15,6 +15,7 @@
   /login にリダイレクトする
 
 ## 0.8.0 - 2022-05-27
+- define `core.cljs` private functions using `defn-`
 - histogram(?)
 - cljs repl
   今は reports プロジェクト内で clj/cljs を切り替えて作業できている。
