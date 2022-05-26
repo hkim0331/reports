@@ -11,8 +11,8 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.6.4")
-(def ^:private now "2022-05-26 10:31:21")
+(def ^:private version "0.7.0")
+(def ^:private now "2022-05-26 11:17:38")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
@@ -69,7 +69,8 @@
      [:p "〆切間際のやっつけレポートは点数低い。"
       [:br]
       "課題の意味わかってない証拠。"]
-     [:p "check your report => " [:a {:href url} "check"]]
+     [:p "check your report => "
+      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
@@ -92,48 +93,46 @@
    [hidden-field "type" type]
    [hidden-field "login" js/login]
    [:div.columns
-    [:div.column s1]
+    [:div.column.is-one-fifth s1]
     [:div.column s2 [:input {:type "file" :name "upload"}]]
-    [:div.column [:button {:type "submit"} "up"]]]])
+    [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
 (defn upload-page []
   (let [url (str js/hp_url js/login)]
     (.log js/console "url:" url)
     [:section.section>div.container>div.content
      [:h2 "Upload"]
-     [upload-column (str js/login) "/ " "html"]
-     [upload-column "" "/css/ " "css"]
-     [upload-column "" "/images/ " "images"]
-     [upload-column "" "/js/ " "js"]
-     [:p "check your report => "
-      [:a {:href url} "check"]]
+     [:p
+      [upload-column (str js/login) "/ " "html"]
+      [upload-column "" "/css/ " "css"]
+      [upload-column "" "/images/ " "images"]
+      [upload-column "" "/js/ " "js"]]
+     [:p "check your uploads => "
+       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
       [:li "アップロードはファイルひとつずつ。"]
       [:li "フォルダはアップロードできない。"]
       [:li "*.html や *.css, *.png 等のアップロード先はそそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書きする。"]
       [:li "/js/ はやれる人用。授業では扱っていない。"]
-      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
-      [:li "(このページの css はまだ作っていません。不細工なページになってます)"]]]))
+      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
+
 ;; -------------------------
 ;; Browse
 
-
-
-;; input 長さを調整してから。
-(def min-mesg 10)
+(def min-mesg 20)
 
 (defn send-message! [recv mesg]
   (cond (< (count mesg) min-mesg)
         (js/alert (str "メッセージは " min-mesg "文字以上です。"))
         (= recv js/login)
-        (js/alert "自分へのメッセージは送れません。")
+        (js/alert "自分自身へのメッセージは送れません。")
         :else
         (POST "/api/save-message"
           {:headers {"x-csrf-field" js/csrfToken}
-           :params {:snd js/login}
-                 :rcv recv
-                   :message mesg
+           :params {:snd js/login
+                    :rcv recv
+                    :message mesg}
            :handler #(js/alert (str recv " に " mesg "を送った。"))
            :error-handler #(.log js/console (str %))})))
 
@@ -163,11 +162,11 @@
    (for [[i u] (map-indexed vector ((filters @random?) @users))]
      ;; ちょっと上下に開きすぎ
      [:div.columns
-      [:div.column
+      [:div.column.is-one-fifth
        [:a {:href (report-url u)} u]]
       [:div.column
        " "
-       [:input {:id i :placeholder "message"}]
+       [:input {:id i :placeholder "message" :size 60}]
        [:button
         {:on-click
          #(let [obj (.getElementById js/document i)]
@@ -366,7 +365,6 @@
     (str date " " time)))
 
 (defn goods-page []
-  (let [not-yet ()])
   [:section.section>div.container>div.content
    [:div.columns
     [:div.column
