@@ -11,8 +11,10 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.7.2")
-(def ^:private now "2022-05-26 13:26:27")
+;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
+
+(def ^:private version "0.7.4")
+(def ^:private now "2022-05-26 23:11:10")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
@@ -28,8 +30,6 @@
     [:nav.navbar.is-info>div.container
      [:div.navbar-brand
       [:a.navbar-item {:href "#/" :style {:font-weight :bold}} "Reports"]
-      ;; 不細工だからやめよう
-      ;;[:span "Reports"]
       [:span.navbar-burger.burger
        {:data-target :nav-menu
         :on-click #(swap! expanded? not)
@@ -39,10 +39,6 @@
       {:class (when @expanded? :is-active)}
       [:div.navbar-start
        [nav-link "#/" "Home" :home]
-      ;; ちょっとうるさい
-      ;;  [nav-link "#/upload" "Upload" :upload]
-      ;;  [nav-link "#/browse" "Browse" :browse]
-      ;;  [nav-link "#/goods"  "Goods" :goods]
        [nav-link "/login" "Login"]
        [nav-link "/logout" "Logout"]
        [nav-link "#/about" "About" :about]]]]))
@@ -109,7 +105,7 @@
      [:ul
       [:li "アップロードはファイルひとつずつ。"]
       [:li "フォルダはアップロードできない。"]
-      [:li "*.html や *.css, *.png 等のアップロード先はそそれぞれ違います。"]
+      [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書きする。"]
       [:li "/js/ はやれる人用。授業では扱っていない。"]
       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
@@ -130,7 +126,7 @@
            :params {:snd js/login
                     :rcv recv
                     :message mesg}
-           :handler #(js/alert (str recv " に " mesg "を送った。"))
+           :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
            :error-handler #(.log js/console (str %))})))
 
 (defonce random? (r/atom false))
@@ -145,7 +141,8 @@
    [:h2 "Browse"]
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
     (str (count @users))
-    " 人。"]
+    " 人。残りはいったい？"
+    "大好きな「平常点」、失ってるって気づけよ。平常点は平常につく。"]
    [:div
     [:input {:type "radio"
              :checked (not @random?)
@@ -158,7 +155,7 @@
    [:br]
    (for [[i u] (map-indexed vector ((filters @random?) @users))]
      ;; ちょっと上下に開きすぎ
-     [:div.columns
+     [:div.columns {:key i}
       [:div.column.is-one-fifth
        [:a {:href (report-url u)} u]]
       [:div.column
@@ -168,14 +165,15 @@
         {:on-click
          #(let [obj (.getElementById js/document i)]
             (send-message! u (.-value obj))
-             ;;FIXME クリアしない。
+             ;; クリアしないが、その方が誰にコメントしたかわかる。
             (set! (.-innerHTML obj) ""))} "good!"]]])])
 
 ;; -------------------------
 ;; Goods
 
+;;(defonce recvs (r/atom []))
+;;(defonce sents (r/atom []))
 (defonce goods (r/atom []))
-(defonce sents (r/atom []))
 
 ;; 2022-05-26 時点の select login from users;
 (def users-all
@@ -362,33 +360,38 @@
         time (subs s 40 48)]
     (str date " " time)))
 
-;; (contains? @users  u) の @users が展開できない。
-;; id が重複している。
+(defn filter-goods-by [f]
+ (reverse (filter #(= js/login (f %)) @goods)))
+
 (defn goods-page []
-  [:section.section>div.container>div.content
-   [:div.columns
-    [:div.column
-     [:h2 "Goods Received"]
-     (for [[id g] (map-indexed vector @goods)]
-       [:p {:key (str "r" id)}
-        (time-format (:timestamp g))
-        [:br]
-        (:message g)])]
-    [:div.column
-     [:h2 "Goods Sent"]
-     (for [[id s] (map-indexed vector @sents)]
-       [:p {:key (str "g" id)}
-        "To " (:rcv s) ", " (time-format (:timestamp s))
-        [:br]
-        (:message s)])]
-    [:div.column
-     [:h2 "Not Yet Send To"]
-     (doall
-      (for [[id u] (map-indexed vector (sort (disj users-all @sents)))]
-        [:p {:key (str "n" id)}
-         (if (neg? (.indexOf @users u))
-           u
-           [:a {:href (report-url u)} u])]))]]])
+  (let [received (filter-goods-by :rcv)
+        sent     (filter-goods-by :snd)]
+    [:section.section>div.container>div.content
+     [:div.columns
+      [:div.column
+       [:h2 "Goods Received"]
+       (for [[id g] (map-indexed vector received)]
+         [:p {:key (str "r" id)}
+          (time-format (:timestamp g))
+          [:br]
+          (:message g)])]
+      [:div.column
+       [:h2 "Goods Sent"]
+       (for [[id s] (map-indexed vector sent)]
+         [:p {:key (str "g" id)}
+          "to " [:b (:rcv s)] ", " (time-format (:timestamp s))
+          [:br]
+          (:message s)])]
+      [:div.column
+       [:h2 "Not Yet Send To"]
+       (doall
+        (for [[id u] (map-indexed vector
+                                  (shuffle (disj users-all
+                                                 (map #(:snd %) sent))))]
+          [:p {:key (str "n" id)}
+           (if (neg? (.indexOf @users u))
+             u
+             [:a {:href (report-url u)} u])]))]]]))
 
 ;; -------------------------
 ;; Pages
@@ -435,29 +438,34 @@
 
 (defn ^:dev/after-load mount-components []
   (rdom/render [#'navbar] (.getElementById js/document "navbar"))
-  (rdom/render [#'page] (.getElementById js/document "app")))
+  (rdom/render [#'page]   (.getElementById js/document "app")))
 
 (defn reset-users! []
   (GET "/api/users"
     {:handler #(reset! users %)}
     {:error-handler #(.log js/console "error:" %)}))
 
-(reset-users!)
-(defn reset-goods! []
-  (GET (str "/api/goods/" js/login)
-    {:handler #(reset! goods %)
-     :error-handler #(.log js/console "error:" %)}))
+;; (reset-users!)
+;; (defn reset-recvs! []
+;;   (GET (str "/api/goods-to/" js/login)
+;;     {:handler #(reset! recvs %)
+;;      :error-handler #(.log js/console "error:" %)}))
 
-(defn reset-sents! []
-  (GET (str "/api/sents/" js/login)
-    {:handler #(reset! sents %)
-     :error-handler #(.log js/console "error:" %)}))
+;; (defn reset-sents! []
+;;   (GET (str "/api/goods-from/" js/login)
+;;     {:handler #(reset! sents %)
+;;      :error-handler #(.log js/console "error:" %)}))
+
+(defn reset-goods! []
+  (GET (str "/api/goods")
+    {:handler #(reset! goods %)
+     :error-handler #(.log js/console "reset-goods! error:" %)}))
 
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
+  ;; (reset-recvs!)
+  ;; (reset-sents!)
   (reset-goods!)
-  (reset-sents!)
   (mount-components))
-

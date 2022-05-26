@@ -7,11 +7,38 @@
 - good 送信後の input フィールドのクリア
 - feedback upload
 - return key でメッセージ送信
+- ADMIN: list messages all page
+- login 名の最大幅で div
+- ERROR: XMLHttpRequest is not defined
+- cljs repl
+; No available JS runtime.
+; See https://shadow-cljs.github.io/docs/UsersGuide.html#repl-troubleshooting
+今は reports プロジェクト内で clj/cljs を切り替えて作業できている。手順次第でできるようだ。
+タブを選択するだけで repl が切り替わっている(m2)
+- hot に時刻表示
+
+
+## 0.7.4 - 2022-05-26
+### Changed
+- /api/goods/:me -> /api/goods-to/:user
+- /api/sends/:me -> /api/goods-from/:user
+- /api/goods-to, goods-from -> まとめて /api/goods
+- reverse order good reveived/sent
+- windows の絵文字は美しくない。favicon.ico 代えよう。
+- renamed r/atom goods -> r/atom recvs
+- To [:b user],
+- goods をダウンロードしておき、使い回す。
+### Added
+- /api/goods
+
+## 0.7.3 - 2022-05-26
+- not yet sent to をシャッフル
+- forget access restriction remove comment
 
 ## 0.7.2 - 2022-05-26
 - 0.7.1 は機能していない。
 - get や contains ではなく、.indexOf
-- calva-cljs node repl 
+- calva-cljs node repl
 
 ## 0.7.1 - 2022-05-26
 - Goods: 未提出はリンクにしない。
