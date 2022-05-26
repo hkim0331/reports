@@ -69,7 +69,7 @@
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]]]]))
 
-(defn hidden-field [name value]
+(defn- hidden-field [name value]
   [:input {:type "hidden"
            :name name
            :value value}])
@@ -78,7 +78,7 @@
 ;; Uploads
 
 ;; not ajax. form.
-(defn upload-column [s1 s2 type]
+(defn- upload-column [s1 s2 type]
   [:form {:method "post"
           :action "/api/upload"
           :enc-type "multipart/form-data"}
@@ -95,12 +95,12 @@
     (.log js/console "url:" url)
     [:section.section>div.container>div.content
      [:h2 "Upload"]
-     [:p
+     [:div
       [upload-column (str js/login) "/ " "html"]
       [upload-column "" "/css/ " "css"]
       [upload-column "" "/images/ " "images"]
       [upload-column "" "/js/ " "js"]]
-     [:p "check your uploads => "
+     [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
       [:li "アップロードはファイルひとつずつ。"]
@@ -113,7 +113,7 @@
 ;; -------------------------
 ;; Browse
 
-(def min-mesg 20)
+(def ^:private min-mesg 20)
 
 (defn send-message! [recv mesg]
   (cond (< (count mesg) min-mesg)
@@ -130,10 +130,9 @@
            :error-handler #(.log js/console (str %))})))
 
 (defonce random? (r/atom false))
+(def ^:private filters {true identity false shuffle})
 
-(def filters {true identity false shuffle})
-
-(defn report-url [user]
+(defn- report-url [user]
   (str js/hp_url user))
 
 (defn browse-page []
@@ -176,7 +175,7 @@
 (defonce goods (r/atom []))
 
 ;; 2022-05-26 時点の select login from users;
-(def users-all
+(def ^:private users-all
   #{"TyanA"
     "Iota"
     "user1"
@@ -354,13 +353,13 @@
     "yuchan"
     "birdman"})
 
-(defn time-format [time]
+(defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
         time (subs s 40 48)]
     (str date " " time)))
 
-(defn filter-goods-by [f]
+(defn- filter-goods-by [f]
  (reverse (filter #(= js/login (f %)) @goods)))
 
 (defn goods-page []
@@ -440,7 +439,7 @@
   (rdom/render [#'navbar] (.getElementById js/document "navbar"))
   (rdom/render [#'page]   (.getElementById js/document "app")))
 
-(defn reset-users! []
+(defn- reset-users! []
   (GET "/api/users"
     {:handler #(reset! users %)}
     {:error-handler #(.log js/console "error:" %)}))
@@ -456,7 +455,7 @@
 ;;     {:handler #(reset! sents %)
 ;;      :error-handler #(.log js/console "error:" %)}))
 
-(defn reset-goods! []
+(defn- reset-goods! []
   (GET (str "/api/goods")
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "reset-goods! error:" %)}))

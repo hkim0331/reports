@@ -16,6 +16,9 @@
 今は reports プロジェクト内で clj/cljs を切り替えて作業できている。手順次第でできるようだ。
 タブを選択するだけで repl が切り替わっている(m2)
 - hot に時刻表示
+- error Access to /r/ is not authorized を
+  /login にリダイレクトする
+- Warning: validateDOMNesting(...): <div> cannot appear as a descendant of <p>.
 
 
 ## 0.7.4 - 2022-05-26

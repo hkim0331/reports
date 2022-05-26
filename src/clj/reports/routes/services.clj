@@ -40,9 +40,9 @@
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
 
-(defn logins [_]
-  (let [ret (db/get-logins)]
-    (response/ok ret)))
+;; (defn logins [_]
+;;   (let [ret (db/get-logins)]
+;;     (response/ok ret)))
 
 (defn users
   "distinct users order by uploaded_at"
@@ -77,7 +77,7 @@
                     (response/ok {:status 200
                                   :body "pong"}))}]
    ["/upload" {:post upload!}]
-   ["/logins" {:get logins}]
+  ;;  ["/logins" {:get logins}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
   ;;  ["/goods-to/:user"   {:get goods-to}]
