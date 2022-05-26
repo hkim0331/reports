@@ -19,6 +19,12 @@
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
 
+(defn- admin?
+  "cljs のため。
+   本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
+  [user]
+  (= "hkimura" user))
+
 (defn nav-link [uri title page]
   [:a.navbar-item
    {:href   uri
@@ -403,7 +409,7 @@
   (repeat n "🤗"))
 
 (defn abbrev [s]
-  (concat (first s) (map (fn [_] "*") (rest s))))
+ (concat (first s) (map (fn [_] "*") (rest s))))
 
 (defn histogram [f]
   (map-indexed vector (->> (group-by f @goods)
@@ -412,12 +418,14 @@
 (defn histogram-received-page []
   [:section.section>div.container>div.content
    [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
+   [:p "誰が何通、「いいね」を受け取っているか。"]
    (for [[id [nm ct]] (histogram :rcv)]
      [:p {:key id} (good-marks ct) " " (abbrev nm)])])
 
 (defn histogram-sent-page []
   [:section.section>div.container>div.content
    [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
+   [:p "誰が何通、「いいね」を送ってくれたか。"]
    (for [[id [nm ct]] (histogram :snd)]
      [:p {:key id} (good-marks ct) " " (abbrev nm)])])
 
