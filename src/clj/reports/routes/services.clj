@@ -59,12 +59,11 @@
                      :message message})
   (response/ok "sent"))
 
-(defn goods [{{:keys [me]} :path-params}]
-  (log/debug "me " me)
-  (response/ok (db/goods {:rcv me})))
+(defn goods-to [{{:keys [user]} :path-params}]
+  (response/ok (db/goods {:rcv user})))
 
-(defn sents [{{:keys [me]} :path-params}]
-   (response/ok (db/sents {:snd me})))
+(defn goods-from [{{:keys [user]} :path-params}]
+   (response/ok (db/sents {:snd user})))
 
 (defn services-routes []
   ["/api"
@@ -78,7 +77,7 @@
    ["/logins" {:get logins}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
-   ["/goods/:me" {:get goods}]
-   ["/sents/:me"  {:get sents}]])
+   ["/goods-to/:user"   {:get goods-to}]
+   ["/goods-from/:user" {:get goods-from}]])
    ;;["/users-hot"    {:get users-hot}]
    ;;["/users-random" {:get users-random}]])

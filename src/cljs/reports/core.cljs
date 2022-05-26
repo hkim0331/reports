@@ -13,8 +13,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.7.3-SNAPSHOT")
-(def ^:private now "2022-05-26 14:45:38")
+(def ^:private version "0.7.3")
+(def ^:private now "2022-05-26 15:06:33")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
@@ -440,12 +440,12 @@
 
 (reset-users!)
 (defn reset-goods! []
-  (GET (str "/api/goods/" js/login)
+  (GET (str "/api/goods-to/" js/login)
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "error:" %)}))
 
 (defn reset-sents! []
-  (GET (str "/api/sents/" js/login)
+  (GET (str "/api/goods-from/" js/login)
     {:handler #(reset! sents %)
      :error-handler #(.log js/console "error:" %)}))
 

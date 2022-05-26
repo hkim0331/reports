@@ -1,4 +1,4 @@
-(defproject reports "0.7.3-SNAPSHOT"
+(defproject reports "0.7.3"
 
   :description "reports for literacy 2022"
   :url "https://rp.melt.kyutech.ac.jp"
@@ -58,7 +58,6 @@
   :clean-targets ^{:protect false}
   [:target-path "target/cljsbuild"]
 
-
   :profiles
   {:uberjar {:omit-source true
 
@@ -83,7 +82,6 @@
                                  [jonase/eastwood "0.3.5"]
                                  [cider/cider-nrepl "0.26.0"]]
 
-
                   :source-paths ["env/dev/clj"  "env/dev/cljs" "test/cljs"]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user
@@ -92,8 +90,6 @@
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:jvm-opts ["-Dconf=test-config.edn"]
                   :resource-paths ["env/test/resources"]}
-
-
 
    :profiles/dev {}
    :profiles/test {}})

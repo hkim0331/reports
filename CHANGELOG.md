@@ -11,6 +11,12 @@
 - login 名の最大幅で div
 - windows の絵文字は美しくない
 - ERROR: XMLHttpRequest is not defined
+- reverse order good reveived/sent?
+
+## 0.7.4-SNAPSHOT
+### Changed
+- /api/goods/:me -> /api/goods-to/:user
+- /api/sends/:me -> /api/goods-from/:user
 
 ## 0.7.3 - 2022-05-26
 - not yet sent to をシャッフル
