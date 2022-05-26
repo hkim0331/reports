@@ -11,13 +11,11 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.7.0")
-(def ^:private now "2022-05-26 11:17:38")
+(def ^:private version "0.7.1")
+(def ^:private now "2022-05-26 11:32:39")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
-
-
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -67,7 +65,6 @@
         url (str js/hp_url name)]
     [:section.section>div.container>div.content
      [:p "〆切間際のやっつけレポートは点数低い。"
-      [:br]
       "課題の意味わかってない証拠。"]
      [:p "check your report => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
@@ -108,7 +105,7 @@
       [upload-column "" "/images/ " "images"]
       [upload-column "" "/js/ " "js"]]
      [:p "check your uploads => "
-       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
       [:li "アップロードはファイルひとつずつ。"]
       [:li "フォルダはアップロードできない。"]
@@ -180,6 +177,7 @@
 (defonce goods (r/atom []))
 (defonce sents (r/atom []))
 
+;; 2022-05-26 時点の select login from users;
 (def users-all
   #{"TyanA"
     "Iota"
@@ -383,8 +381,11 @@
         (:message s)])]
     [:div.column
      [:h3 "Not Yet"]
+     ;; 未提出はリンクにしない
      (for [[i u] (map-indexed vector (sort (disj users-all @sents)))]
-       [:p {:key i} [:a {:href (report-url u)} u]])]]])
+       [:p {:key i}  (if (get @users u)
+                       [:a {:href (report-url u)} u]
+                       u)])]]])
 
 ;; -------------------------
 ;; Pages
