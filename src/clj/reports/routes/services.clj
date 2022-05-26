@@ -60,24 +60,28 @@
   (response/ok "sent"))
 
 (defn goods-to [{{:keys [user]} :path-params}]
-  (response/ok (db/goods {:rcv user})))
+  (response/ok (db/rcvs {:rcv user})))
 
 (defn goods-from [{{:keys [user]} :path-params}]
-   (response/ok (db/sents {:snd user})))
+  (response/ok (db/snds {:snd user})))
+
+(defn goods [request]
+  (response/ok (db/goods)))
 
 (defn services-routes []
   ["/api"
    {:middleware [middleware/wrap-restricted
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
-  ;;  ["/ping" {:get (fn [_]
-  ;;                   (response/ok {:status 200
-  ;;                                 :body "pong"}))}]
+   ["/ping" {:get (fn [_]
+                    (response/ok {:status 200
+                                  :body "pong"}))}]
    ["/upload" {:post upload!}]
    ["/logins" {:get logins}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
    ["/goods-to/:user"   {:get goods-to}]
-   ["/goods-from/:user" {:get goods-from}]])
+   ["/goods-from/:user" {:get goods-from}]
+   ["/goods" {:get goods}]])
    ;;["/users-hot"    {:get users-hot}]
    ;;["/users-random" {:get users-random}]])
