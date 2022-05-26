@@ -64,6 +64,9 @@
   (let [name js/login
         url (str js/hp_url name)]
     [:section.section>div.container>div.content
+     [:p "〆切間際のやっつけレポートは点数低い。"
+         [:br]
+         "課題の意味わかってない証拠。"]
      [:p "check your report => " [:a {:href url} "check"]]
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
@@ -96,18 +99,19 @@
     (.log js/console "url:" url)
     [:section.section>div.container>div.content
      [:h2 "Upload"]
-     [upload-column (str js/login) "/" "html"]
-     [upload-column "" "/css/" "css"]
-     [upload-column "" "/images/" "images"]
-     [upload-column "" "/js/" "js"]
+     [upload-column (str js/login) "/ " "html"]
+     [upload-column "" "/css/ " "css"]
+     [upload-column "" "/images/ " "images"]
+     [upload-column "" "/js/ " "js"]
      [:p "check your report => "
       [:a {:href url} "check"]]
      [:ul
       [:li "アップロードはファイルひとつずつ。"]
-      [:li "フォルダをアップロードはできません。"]
+      [:li "フォルダはアップロードできない。"]
       [:li "*.html や *.css, *.png 等のアップロード先はそそれぞれ違います。"]
-      [:li "同じファイル名でアップロードすると上書きします。"]
+      [:li "同じファイル名でアップロードすると上書きする。"]
       [:li "/js/ はやれる人用。授業では扱っていない。"]
+      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
       [:li "(このページの css はまだ作っていません。不細工なページになってます)"]]]))
 ;; -------------------------
 ;; Browse
@@ -116,15 +120,18 @@
 (def min-mesg 10)
 
 (defn send-message! [recv mesg]
-  (if (< (count mesg) min-mesg)
-    (js/alert (str "メッセージは " min-mesg "文字以上です。"))
-    (POST "/api/save-message"
-      {:headers {"x-csrf-field" js/csrfToken}
-       :params {:snd js/login
-                :rcv recv
-                :message mesg}
-       :handler #(js/alert (str recv " に " mesg "を送った。"))
-       :error-handler #(.log js/console (str %))})))
+  (cond (< (count mesg) min-mesg)
+        (js/alert (str "メッセージは " min-mesg "文字以上です。"))
+        (= recv js/login)
+        (js/alert "自分へのメッセージは送れません。")
+        :else
+        (POST "/api/save-message"
+             {:headers {"x-csrf-field" js/csrfToken}
+              :params {:snd js/login
+                       :rcv recv
+                       :message mesg}
+              :handler #(js/alert (str recv " に " mesg "を送った。"))
+              :error-handler #(.log js/console (str %))})))
 
 (defonce random? (r/atom false))
 (def filters {true identity false shuffle})
@@ -132,9 +139,9 @@
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-   [:p "リストにあるのはアップロードを実行した人だけです。"]
-   [:p "フィールドの長さ、配置の調整はこの後のバージョンで。"]
-
+   [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
+       (str (count @users))
+       " 人。"]
    [:div
     [:input {:type "radio"
              :checked (not @random?)
@@ -153,12 +160,12 @@
       [:div.column
        " "
        [:input {:id i :placeholder "message"}]
-       [:span
+       [:button
         {:on-click
          #(let [obj (.getElementById js/document i)]
             (send-message! u (.-value obj))
              ;;FIXME クリアしない。
-            (set! (.-innerHTML obj) ""))} " 👍 "]]])])
+            (set! (.-innerHTML obj) ""))} "good!"]]])])
 
 ;; -------------------------
 ;; Goods
@@ -174,21 +181,24 @@
 
 (defn goods-page []
   [:section.section>div.container>div.content
-   [:h2 "Goods to " js/login]
-   (for [[id g] (map-indexed vector @goods)]
-     [:p {:key id}
-      (time-format (:timestamp g))
-      [:br]
-      (:message g)])
-
-   [:h2 "Goods sent"]
-   (for [[id s] (map-indexed vector @sents)]
-     [:p {:key id}
-      "To " (:rcv s) ", " (time-format (:timestamp s))
-      [:br]
-      (:message s)])
-   [:h3 "Not Yet"]
-   [:p "under construction"]])
+   [:div.columns
+    [:div.column
+     [:h2 "Goods Received"]
+     (for [[id g] (map-indexed vector @goods)]
+       [:p {:key id}
+        (time-format (:timestamp g))
+        [:br]
+        (:message g)])]
+    [:div.column
+     [:h2 "Goods Sent"]
+     (for [[id s] (map-indexed vector @sents)]
+       [:p {:key id}
+        "To " (:rcv s) ", " (time-format (:timestamp s))
+        [:br]
+        (:message s)])]
+    [:div.column
+     [:h3 "Not Yet"]
+     [:p "まだメッセージを送っていない宛先をリストの予定"]]]])
 ;; -------------------------
 ;; Pages
 

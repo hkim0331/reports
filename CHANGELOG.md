@@ -4,15 +4,17 @@
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
 - with-let の使い方
-- Upload looks bulma div?
 - button.is-primary.is-small でも大きすぎる
 - good 送信後の input フィールドのクリア
 - feedback upload
 - Goods(not yet)
 - return key でメッセージ送信
 
-## 0.6.4-SNAPSHOT
+
+## 0.6.4 - 2022-05-26
 - Goods(sent)
+- Goods を三分割
+- 自分から自分へのメッセージを弾く
 
 ## 0.6.3 - 2022-05-25
 ### Fixed
