@@ -1,21 +1,25 @@
 # Reports
 
 ## Unreleased
-- logout! assoc が良くて dissoc がダメな理由
-  -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
 - with-let の使い方
 - button.is-primary.is-small でも大きすぎる
+- is-fifth でも大きすぎる。
 - good 送信後の input フィールドのクリア
 - feedback upload
-- Goods(not yet)
 - return key でメッセージ送信
-- 提出がないレポートへのリンクはどうする？エラーでいいか。
+
+## 0.7.0-SNAPSHOT
+- one-fifth より幅が狭いクラスは定義されてない。
+- logout! assoc が良くて disj がダメな理由
+  -> disj の引数は set
 
 ## 0.6.4 - 2022-05-26
 - Goods(sent)
 - Goods を三分割
 - 自分から自分へのメッセージを弾く
-- not yet をリンク込みで <- 提出がないときどうする？
+- Goods(not yet) 提出がないときどうする？
+  -> エラーでいいか。
+
 
 ## 0.6.3 - 2022-05-25
 ### Fixed
