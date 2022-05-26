@@ -4,12 +4,18 @@
 - logout! assoc が良くて dissoc がダメな理由
   -> buddy-auth の都合か？コードを読まないと。他のサイトはどうしてる？
 - with-let の使い方
-- Upload looks bulma div?
 - button.is-primary.is-small でも大きすぎる
 - good 送信後の input フィールドのクリア
 - feedback upload
-- Goods(sent)
 - Goods(not yet)
+- return key でメッセージ送信
+- 提出がないレポートへのリンクはどうする？エラーでいいか。
+
+## 0.6.4 - 2022-05-26
+- Goods(sent)
+- Goods を三分割
+- 自分から自分へのメッセージを弾く
+- not yet をリンク込みで <- 提出がないときどうする？
 
 ## 0.6.3 - 2022-05-25
 ### Fixed
@@ -26,7 +32,7 @@
        date (subs s 28 39)
        time (subs s 40 48)]
    (str date " " time)))
- 
+
 ## 0.6.2 - 2022-05-25
 - db-dump/{db-dump,db-restore}.sh
 - チラッと見える土台　html

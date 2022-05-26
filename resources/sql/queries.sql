@@ -26,3 +26,8 @@ VALUES (:snd, :rcv, :message)
 -- :doc messages received by rcv
 SELECT * FROM goods
 WHERE rcv = :rcv
+
+-- :name sents :? :*
+-- :doc messages sent by snd
+SELECT * FROM goods
+WHERE snd = :snd

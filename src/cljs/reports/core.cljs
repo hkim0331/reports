@@ -11,11 +11,13 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.6.3")
-(def ^:private now "2022-05-25 17:45:31")
+(def ^:private version "0.6.4")
+(def ^:private now "2022-05-26 10:31:21")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
+
+
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -64,6 +66,9 @@
   (let [name js/login
         url (str js/hp_url name)]
     [:section.section>div.container>div.content
+     [:p "〆切間際のやっつけレポートは点数低い。"
+      [:br]
+      "課題の意味わかってない証拠。"]
      [:p "check your report => " [:a {:href url} "check"]]
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
@@ -96,45 +101,55 @@
     (.log js/console "url:" url)
     [:section.section>div.container>div.content
      [:h2 "Upload"]
-     [upload-column (str js/login) "/" "html"]
-     [upload-column "" "/css/" "css"]
-     [upload-column "" "/images/" "images"]
-     [upload-column "" "/js/" "js"]
+     [upload-column (str js/login) "/ " "html"]
+     [upload-column "" "/css/ " "css"]
+     [upload-column "" "/images/ " "images"]
+     [upload-column "" "/js/ " "js"]
      [:p "check your report => "
       [:a {:href url} "check"]]
      [:ul
       [:li "アップロードはファイルひとつずつ。"]
-      [:li "フォルダをアップロードはできません。"]
+      [:li "フォルダはアップロードできない。"]
       [:li "*.html や *.css, *.png 等のアップロード先はそそれぞれ違います。"]
-      [:li "同じファイル名でアップロードすると上書きします。"]
+      [:li "同じファイル名でアップロードすると上書きする。"]
       [:li "/js/ はやれる人用。授業では扱っていない。"]
+      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
       [:li "(このページの css はまだ作っていません。不細工なページになってます)"]]]))
 ;; -------------------------
 ;; Browse
+
+
 
 ;; input 長さを調整してから。
 (def min-mesg 10)
 
 (defn send-message! [recv mesg]
-  (if (< (count mesg) min-mesg)
-    (js/alert (str "メッセージは " min-mesg "文字以上です。"))
-    (POST "/api/save-message"
-      {:headers {"x-csrf-field" js/csrfToken}
-       :params {:snd js/login
-                :rcv recv
-                :message mesg}
-       :handler #(js/alert (str recv " に " mesg "を送った。"))
-       :error-handler #(.log js/console (str %))})))
+  (cond (< (count mesg) min-mesg)
+        (js/alert (str "メッセージは " min-mesg "文字以上です。"))
+        (= recv js/login)
+        (js/alert "自分へのメッセージは送れません。")
+        :else
+        (POST "/api/save-message"
+          {:headers {"x-csrf-field" js/csrfToken}
+           :params {:snd js/login}
+                 :rcv recv
+                   :message mesg
+           :handler #(js/alert (str recv " に " mesg "を送った。"))
+           :error-handler #(.log js/console (str %))})))
 
 (defonce random? (r/atom false))
+
 (def filters {true identity false shuffle})
+
+(defn report-url [user]
+  (str js/hp_url user))
 
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-   [:p "リストにあるのはアップロードを実行した人だけです。"]
-   [:p "フィールドの長さ、配置の調整はこの後のバージョンで。"]
-
+   [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
+    (str (count @users))
+    " 人。"]
    [:div
     [:input {:type "radio"
              :checked (not @random?)
@@ -149,40 +164,230 @@
      ;; ちょっと上下に開きすぎ
      [:div.columns
       [:div.column
-       [:a {:href (str js/hp_url u)} u]]
+       [:a {:href (report-url u)} u]]
       [:div.column
        " "
        [:input {:id i :placeholder "message"}]
-       [:span
+       [:button
         {:on-click
          #(let [obj (.getElementById js/document i)]
             (send-message! u (.-value obj))
              ;;FIXME クリアしない。
-            (set! (.-innerHTML obj) ""))} " 👍 "]]])])
+            (set! (.-innerHTML obj) ""))} "good!"]]])])
 
 ;; -------------------------
 ;; Goods
 
 (defonce goods (r/atom []))
+(defonce sents (r/atom []))
+
+(def users-all
+  #{"TyanA"
+    "Iota"
+    "user1"
+    "user2"
+    "user3"
+    "ashikari"
+    "hkimura"
+    "nobody"
+    "azangy"
+    "agdp5623"
+    "noppo"
+    "ryo"
+    "manzju"
+    "hide"
+    "yutaro"
+    "tomas"
+    "K4ZE"
+    "yuzu"
+    "io2"
+    "sy_607"
+    "kake"
+    "bigblue"
+    "noya04"
+    "yata"
+    "PASUTA"
+    "nagi"
+    "kyutech1"
+    "Acaciapc"
+    "okaneman"
+    "Kotarou"
+    "tatu"
+    "tairanto"
+    "tmkrshi"
+    "username"
+    "yossi"
+    "maron"
+    "mona"
+    "kunimon"
+    "yucaron"
+    "erida"
+    "meychan"
+    "ken"
+    "a1234"
+    "every"
+    "ri"
+    "ejieji"
+    "naru"
+    "pocchama"
+    "gagagajp"
+    "smallcat"
+    "yoneshan"
+    "thios238"
+    "Ke15"
+    "hono345"
+    "syotyan"
+    "hayato"
+    "mmkk"
+    "yuto"
+    "nanagawa"
+    "Rice"
+    "aira.4_"
+    "tommy"
+    "mikan"
+    "uuucha"
+    "da.vinch"
+    "so-so"
+    "soiya0"
+    "alto"
+    "omoti"
+    "ck"
+    "iree"
+    "Tokei"
+    "taro"
+    "paru7"
+    "mu"
+    "Ryuuuuuu"
+    "aki"
+    "sonnnshi"
+    "nya_ko"
+    "agdy7774"
+    "Kkoga"
+    "jrvj82g7"
+    "Watako"
+    "harapeko"
+    "inari"
+    "hisaka64"
+    "mikiya"
+    "sazaesan"
+    "ryusetsu"
+    "makiken"
+    "01pima"
+    "Asagi02"
+    "G.master"
+    "q"
+    "reishi"
+    "R"
+    "deees"
+    "magane3"
+    "ryoya121"
+    "lara"
+    "Feno"
+    "mntzksn"
+    "tikuwa"
+    "nyan5103"
+    "unknown"
+    "yakuoto"
+    "tanaka"
+    "konbu"
+    "AN"
+    "coron"
+    "AE86"
+    "U1"
+    "yusuke"
+    "Nagassy"
+    "yukinobu"
+    "otokoume"
+    "zjgg6h"
+    "zono"
+    "FK06"
+    "taro0"
+    "sabakan"
+    "Q-taro"
+    "kamera26"
+    "t_ryoya"
+    "tomato"
+    "koosee"
+    "kei"
+    "mejia"
+    "komatsu"
+    "nabe"
+    "ta-ku46"
+    "takuto"
+    "yuyuyu"
+    "yota"
+    "banane"
+    "Ellla"
+    "sa-mon"
+    "my"
+    "nanasi"
+    "ramenman"
+    "hibiscus"
+    "waaai"
+    "fd0213"
+    "WiMorio"
+    "dansa"
+    "Badmin"
+    "aryy6428"
+    "masatogn"
+    "hyotenup"
+    "yuuuuu"
+    "rayleigh"
+    "taneri"
+    "kitiden"
+    "cheese"
+    "sibuiwa"
+    "burger"
+    "matsusou"
+    "ochi3"
+    "John Doe"
+    "irohasu"
+    "rei"
+    "harahi"
+    "shiro"
+    "mh"
+    "593"
+    "nekoneko"
+    "abc"
+    "tanatana"
+    "marusou"
+    "sirokuma"
+    "tourzz"
+    "Tensen"
+    "monchi"
+    "kouta"
+    "yuchan"
+    "birdman"})
 
 (defn time-format [time]
- (let [s (str time)
-       date (subs s 28 39)
-       time (subs s 40 48)]
-   (str date " " time)))
+  (let [s (str time)
+        date (subs s 28 39)
+        time (subs s 40 48)]
+    (str date " " time)))
 
 (defn goods-page []
+  (let [not-yet ()])
   [:section.section>div.container>div.content
-   [:h2 "Goods to " js/login]
-   (for [[id g] (map-indexed vector @goods)]
-     [:p {:key id}
-      (time-format (:timestamp g))
-      [:br]
-      (:message g)])
-   [:h2 "Goods sent"]
-   [:p "under construction"]
-   [:h3 "Not Yet"]
-   [:p "under construction"]])
+   [:div.columns
+    [:div.column
+     [:h2 "Goods Received"]
+     (for [[id g] (map-indexed vector @goods)]
+       [:p {:key id}
+        (time-format (:timestamp g))
+        [:br]
+        (:message g)])]
+    [:div.column
+     [:h2 "Goods Sent"]
+     (for [[id s] (map-indexed vector @sents)]
+       [:p {:key id}
+        "To " (:rcv s) ", " (time-format (:timestamp s))
+        [:br]
+        (:message s)])]
+    [:div.column
+     [:h3 "Not Yet"]
+     (for [[i u] (map-indexed vector (sort (disj users-all @sents)))]
+       [:p {:key i} [:a {:href (report-url u)} u]])]]])
+
 ;; -------------------------
 ;; Pages
 
@@ -240,9 +445,15 @@
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "error:" %)}))
 
+(defn reset-sents! []
+  (GET (str "/api/sents/" js/login)
+    {:handler #(reset! sents %)
+     :error-handler #(.log js/console "error:" %)}))
+
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
   (reset-goods!)
+  (reset-sents!)
   (mount-components))
