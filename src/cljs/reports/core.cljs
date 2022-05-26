@@ -11,8 +11,8 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.6.4-SNAPSHOT")
-(def ^:private now "2022-05-25 18:04:32")
+(def ^:private version "0.6.4")
+(def ^:private now "2022-05-26 10:31:21")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
