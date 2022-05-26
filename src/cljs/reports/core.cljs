@@ -74,7 +74,7 @@
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]
-       " (" [:a {:href "#/histogram"} "histogram"] ")"]]]))
+       " (" [:a {:href "#/sent"} "histogram"] ")"]]]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -183,6 +183,7 @@
 
 ;;(defonce recvs (r/atom []))
 ;;(defonce sents (r/atom []))
+
 (defonce goods (r/atom []))
 
 ;; 2022-05-26 時点の select login from users;
@@ -405,11 +406,14 @@
 
 ;; -------------------------
 ;; Histgram
+
 (defn good-marks [n]
   (repeat n "🤗"))
 
 (defn abbrev [s]
- (concat (first s) (map (fn [_] "*") (rest s))))
+  (if (admin? js/login)
+   s
+   (concat (first s) (map (fn [_] "*") (rest s)))))
 
 (defn histogram [f]
   (map-indexed vector (->> (group-by f @goods)
@@ -418,14 +422,14 @@
 (defn histogram-received-page []
   [:section.section>div.container>div.content
    [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
-   [:p "誰が何通、「いいね」を受け取っているか。"]
+   [:p "誰が何通「いいね」を受け取っているか。"]
    (for [[id [nm ct]] (histogram :rcv)]
      [:p {:key id} (good-marks ct) " " (abbrev nm)])])
 
 (defn histogram-sent-page []
   [:section.section>div.container>div.content
    [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
-   [:p "誰が何通、「いいね」を送ってくれたか。"]
+   [:p "誰が何通「いいね」を送ってくれたか。"]
    (for [[id [nm ct]] (histogram :snd)]
      [:p {:key id} (good-marks ct) " " (abbrev nm)])])
 
@@ -462,9 +466,11 @@
        (reitit/match-by-path router)
        :data
        :name))
+
 ;; -------------------------
 ;; History
 ;; must be called after routes have been defined
+
 (defn hook-browser-navigation! []
   (doto (History.)
     (events/listen
