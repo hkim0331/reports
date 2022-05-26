@@ -1,12 +1,12 @@
 (ns reports.routes.home
   (:require
-   [hato.client :as hc]
+   ;;[hato.client :as hc]
    [reports.config :refer [env]]
-   [reports.db.core :as db]
+   ;;[reports.db.core :as db]
    [reports.layout :as layout]
    [reports.middleware :as middleware]
-   [ring.util.response]
-   [ring.util.http-response :as response]))
+   [ring.util.response]))
+   ;;[ring.util.http-response :as response]))
 
 (defn home-page [request]
   (if-let [login (get-in request [:session :identity])]

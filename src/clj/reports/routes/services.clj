@@ -3,7 +3,7 @@
    [clojure.java.io :as io]
    [clojure.java.shell :refer [sh]]
    [clojure.tools.logging :as log]
-   [hato.client :as hc]
+   ;;[hato.client :as hc]
    [reports.config :refer [env]]
    [reports.db.core :as db]
    [reports.layout :as layout]
@@ -40,13 +40,13 @@
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
 
-(defn logins [request]
+(defn logins [_]
   (let [ret (db/get-logins)]
     (response/ok ret)))
 
 (defn users
   "distinct users order by uploaded_at"
-  [request]
+  [_]
   (->> (db/logins-by-reverse-uploaded)
        (map :login)
        (distinct)
@@ -68,12 +68,12 @@
 
 (defn services-routes []
   ["/api"
-   {:middleware [;;middleware/wrap-restricted
+   {:middleware [middleware/wrap-restricted
                  middleware/wrap-csrf
                  middleware/wrap-formats]}
-   ["/ping" {:get (fn [_]
-                    (response/ok {:status 200
-                                  :body "pong"}))}]
+  ;;  ["/ping" {:get (fn [_]
+  ;;                   (response/ok {:status 200
+  ;;                                 :body "pong"}))}]
    ["/upload" {:post upload!}]
    ["/logins" {:get logins}]
    ["/users"  {:get users}]
