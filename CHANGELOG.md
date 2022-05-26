@@ -7,16 +7,24 @@
 - good 送信後の input フィールドのクリア
 - feedback upload
 - return key でメッセージ送信
-- list messages page
+- ADMIN: list messages all page
 - login 名の最大幅で div
-- windows の絵文字は美しくない
 - ERROR: XMLHttpRequest is not defined
-- reverse order good reveived/sent?
+- cljs repl
+; No available JS runtime.
+; See https://shadow-cljs.github.io/docs/UsersGuide.html#repl-troubleshooting
+今は reports プロジェクト内で clj/cljs を切り替えて作業できている。
+手順次第でできるようだ。
+
 
 ## 0.7.4-SNAPSHOT
 ### Changed
 - /api/goods/:me -> /api/goods-to/:user
 - /api/sends/:me -> /api/goods-from/:user
+- reverse order good reveived/sent
+- windows の絵文字は美しくない。favicon.ico 代えよう。
+### Added
+- /api/goods
 
 ## 0.7.3 - 2022-05-26
 - not yet sent to をシャッフル
