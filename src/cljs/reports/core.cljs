@@ -440,12 +440,12 @@
 
 (reset-users!)
 (defn reset-goods! []
-  (GET (str "/api/goods/" js/login)
+  (GET (str "/api/goods-to/" js/login)
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "error:" %)}))
 
 (defn reset-sents! []
-  (GET (str "/api/sents/" js/login)
+  (GET (str "/api/goods-from/" js/login)
     {:handler #(reset! sents %)
      :error-handler #(.log js/console "error:" %)}))
 
