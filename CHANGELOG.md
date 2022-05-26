@@ -12,9 +12,9 @@
 - windows の絵文字は美しくない
 - ERROR: XMLHttpRequest is not defined
 
-## 0.7.3-SNAPSHOT
+## 0.7.3 - 2022-05-26
 - not yet sent to をシャッフル
-
+- forget access restriction remove comment
 
 ## 0.7.2 - 2022-05-26
 - 0.7.1 は機能していない。
