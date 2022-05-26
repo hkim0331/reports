@@ -7,11 +7,25 @@
 - good 送信後の input フィールドのクリア
 - feedback upload
 - return key でメッセージ送信
+- list messages page
+- login 名の最大幅で div
+- windows の絵文字は美しくない
+- ERROR: XMLHttpRequest is not defined
+- reverse order good reveived/sent?
+
+## 0.7.4-SNAPSHOT
+### Changed
+- /api/goods/:me -> /api/goods-to/:user
+- /api/sends/:me -> /api/goods-from/:user
+
+## 0.7.3 - 2022-05-26
+- not yet sent to をシャッフル
+- forget access restriction remove comment
 
 ## 0.7.2 - 2022-05-26
 - 0.7.1 は機能していない。
 - get や contains ではなく、.indexOf
-- calva-cljs node repl 
+- calva-cljs node repl
 
 ## 0.7.1 - 2022-05-26
 - Goods: 未提出はリンクにしない。
