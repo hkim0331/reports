@@ -105,7 +105,7 @@
      [:ul
       [:li "アップロードはファイルひとつずつ。"]
       [:li "フォルダはアップロードできない。"]
-      [:li "*.html や *.css, *.png 等のアップロード先はそそれぞれ違います。"]
+      [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書きする。"]
       [:li "/js/ はやれる人用。授業では扱っていない。"]
       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
@@ -155,7 +155,7 @@
    [:br]
    (for [[i u] (map-indexed vector ((filters @random?) @users))]
      ;; ちょっと上下に開きすぎ
-     [:div.columns
+     [:div.columns {:key i}
       [:div.column.is-one-fifth
        [:a {:href (report-url u)} u]]
       [:div.column
@@ -171,8 +171,9 @@
 ;; -------------------------
 ;; Goods
 
-(defonce recvs (r/atom []))
-(defonce sents (r/atom []))
+;;(defonce recvs (r/atom []))
+;;(defonce sents (r/atom []))
+(defonce goods (r/atom []))
 
 ;; 2022-05-26 時点の select login from users;
 (def users-all
@@ -360,33 +361,34 @@
     (str date " " time)))
 
 (defn goods-page []
-  [:section.section>div.container>div.content
-   [:div.columns
-    [:div.column
-     [:h2 "Goods Received"]
-     [:p "[書かなくてもいいか。受け取った good! の内容。最近受け取ったものが上。]"]
-     (for [[id g] (map-indexed vector @recvs)]
-       [:p {:key (str "r" id)}
-        (time-format (:timestamp g))
-        [:br]
-        (:message g)])]
-    [:div.column
-     [:h2 "Goods Sent"]
-     [:p2 "[書かなくてもいいか。送った good! の内容。最近送ったものが上。]"]
-     (for [[id s] (map-indexed vector @sents)]
-       [:p {:key (str "g" id)}
-        "To " (:rcv s) ", " (time-format (:timestamp s))
-        [:br]
-        (:message s)])]
-    [:div.column
-     [:h2 "Not Yet Send To"]
-     [:p "[書かなくてもいいか。まだ good! を送ってないサイト。ランダム。]"]
-     (doall
-      (for [[id u] (map-indexed vector (shuffle (disj users-all @sents)))]
-        [:p {:key (str "n" id)}
-         (if (neg? (.indexOf @users u))
-           u
-           [:a {:href (report-url u)} u])]))]]])
+  (let [received (reverse (filter #(= js/login (:rcv %)) @goods))
+        sent     (reverse (filter #(= js/login (:snd %)) @goods))]
+    [:section.section>div.container>div.content
+     [:div.columns
+      [:div.column
+       [:h2 "Goods Received"]
+       (for [[id g] (map-indexed vector received)]
+         [:p {:key (str "r" id)}
+          (time-format (:timestamp g))
+          [:br]
+          (:message g)])]
+      [:div.column
+       [:h2 "Goods Sent"]
+       (for [[id s] (map-indexed vector sent)]
+         [:p {:key (str "g" id)}
+          "To " [:b (:rcv s)] ", " (time-format (:timestamp s))
+          [:br]
+          (:message s)])]
+      [:div.column
+       [:h2 "Not Yet Send To"]
+       (doall
+        (for [[id u] (map-indexed vector
+                                  (shuffle (disj users-all
+                                                 (map #(:snd %) sent))))]
+          [:p {:key (str "n" id)}
+           (if (neg? (.indexOf @users u))
+             u
+             [:a {:href (report-url u)} u])]))]]]))
 
 ;; -------------------------
 ;; Pages
@@ -440,21 +442,27 @@
     {:handler #(reset! users %)}
     {:error-handler #(.log js/console "error:" %)}))
 
-(reset-users!)
-(defn reset-recvs! []
-  (GET (str "/api/goods-to/" js/login)
-    {:handler #(reset! recvs %)
-     :error-handler #(.log js/console "error:" %)}))
+;; (reset-users!)
+;; (defn reset-recvs! []
+;;   (GET (str "/api/goods-to/" js/login)
+;;     {:handler #(reset! recvs %)
+;;      :error-handler #(.log js/console "error:" %)}))
 
-(defn reset-sents! []
-  (GET (str "/api/goods-from/" js/login)
-    {:handler #(reset! sents %)
-     :error-handler #(.log js/console "error:" %)}))
+;; (defn reset-sents! []
+;;   (GET (str "/api/goods-from/" js/login)
+;;     {:handler #(reset! sents %)
+;;      :error-handler #(.log js/console "error:" %)}))
+
+(defn reset-goods! []
+  (GET (str "/api/goods")
+    {:handler #(reset! goods %)
+     :error-handler #(.log js/console "reset-goods! error:" %)}))
 
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
-  (reset-recvs!)
-  (reset-sents!)
+  ;; (reset-recvs!)
+  ;; (reset-sents!)
+  (reset-goods!)
   (mount-components))

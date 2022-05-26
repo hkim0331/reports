@@ -15,7 +15,6 @@
 ; See https://shadow-cljs.github.io/docs/UsersGuide.html#repl-troubleshooting
 今は reports プロジェクト内で clj/cljs を切り替えて作業できている。手順次第でできるようだ。
 タブを選択するだけで repl が切り替わっている(m2)
-
 - goods をダウンロードしておき、使い回す。
 - hot に時刻表示
 
@@ -27,6 +26,7 @@
 - reverse order good reveived/sent
 - windows の絵文字は美しくない。favicon.ico 代えよう。
 - renamed r/atom goods -> r/atom recvs
+- To [:b user],
 ### Added
 - /api/goods
 
