@@ -126,7 +126,7 @@
            :params {:snd js/login
                     :rcv recv
                     :message mesg}
-           :handler #(js/alert (str recv " に " mesg "を送った。"))
+           :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
            :error-handler #(.log js/console (str %))})))
 
 (defonce random? (r/atom false))
@@ -359,13 +359,12 @@
         time (subs s 40 48)]
     (str date " " time)))
 
-;; (contains? @users  u) の @users が展開できない。
-;; id が重複している。
 (defn goods-page []
   [:section.section>div.container>div.content
    [:div.columns
     [:div.column
      [:h2 "Goods Received"]
+     [:p "[書かなくてもいいか。受け取った good! の内容。最近受け取ったものが上。]"]
      (for [[id g] (map-indexed vector @goods)]
        [:p {:key (str "r" id)}
         (time-format (:timestamp g))
@@ -373,6 +372,7 @@
         (:message g)])]
     [:div.column
      [:h2 "Goods Sent"]
+     [:p2 "[書かなくてもいいか。送った good! の内容。最近送ったものが上。]"]
      (for [[id s] (map-indexed vector @sents)]
        [:p {:key (str "g" id)}
         "To " (:rcv s) ", " (time-format (:timestamp s))
@@ -380,6 +380,7 @@
         (:message s)])]
     [:div.column
      [:h2 "Not Yet Send To"]
+     [:p "[書かなくてもいいか。まだ good! を送ってないサイト。ランダム。]"]
      (doall
       (for [[id u] (map-indexed vector (shuffle (disj users-all @sents)))]
         [:p {:key (str "n" id)}

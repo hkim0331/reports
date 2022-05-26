@@ -13,8 +13,11 @@
 - cljs repl
 ; No available JS runtime.
 ; See https://shadow-cljs.github.io/docs/UsersGuide.html#repl-troubleshooting
-今は reports プロジェクト内で clj/cljs を切り替えて作業できている。
-手順次第でできるようだ。
+今は reports プロジェクト内で clj/cljs を切り替えて作業できている。手順次第でできるようだ。
+タブを選択するだけで repl が切り替わっている(m2)
+
+- goods をダウンロードしておき、使い回す。
+- hot に時刻表示
 
 
 ## 0.7.4-SNAPSHOT
