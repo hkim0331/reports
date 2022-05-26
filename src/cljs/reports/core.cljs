@@ -171,7 +171,7 @@
 ;; -------------------------
 ;; Goods
 
-(defonce goods (r/atom []))
+(defonce recvs (r/atom []))
 (defonce sents (r/atom []))
 
 ;; 2022-05-26 時点の select login from users;
@@ -365,7 +365,7 @@
     [:div.column
      [:h2 "Goods Received"]
      [:p "[書かなくてもいいか。受け取った good! の内容。最近受け取ったものが上。]"]
-     (for [[id g] (map-indexed vector @goods)]
+     (for [[id g] (map-indexed vector @recvs)]
        [:p {:key (str "r" id)}
         (time-format (:timestamp g))
         [:br]
@@ -433,7 +433,7 @@
 
 (defn ^:dev/after-load mount-components []
   (rdom/render [#'navbar] (.getElementById js/document "navbar"))
-  (rdom/render [#'page] (.getElementById js/document "app")))
+  (rdom/render [#'page]   (.getElementById js/document "app")))
 
 (defn reset-users! []
   (GET "/api/users"
@@ -441,9 +441,9 @@
     {:error-handler #(.log js/console "error:" %)}))
 
 (reset-users!)
-(defn reset-goods! []
+(defn reset-recvs! []
   (GET (str "/api/goods-to/" js/login)
-    {:handler #(reset! goods %)
+    {:handler #(reset! recvs %)
      :error-handler #(.log js/console "error:" %)}))
 
 (defn reset-sents! []
@@ -455,6 +455,6 @@
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
-  (reset-goods!)
+  (reset-recvs!)
   (reset-sents!)
   (mount-components))
