@@ -11,8 +11,10 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "0.7.2")
-(def ^:private now "2022-05-26 13:26:27")
+;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
+
+(def ^:private version "0.7.3-SNAPSHOT")
+(def ^:private now "2022-05-26 14:45:38")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
@@ -28,8 +30,6 @@
     [:nav.navbar.is-info>div.container
      [:div.navbar-brand
       [:a.navbar-item {:href "#/" :style {:font-weight :bold}} "Reports"]
-      ;; 不細工だからやめよう
-      ;;[:span "Reports"]
       [:span.navbar-burger.burger
        {:data-target :nav-menu
         :on-click #(swap! expanded? not)
@@ -39,10 +39,6 @@
       {:class (when @expanded? :is-active)}
       [:div.navbar-start
        [nav-link "#/" "Home" :home]
-      ;; ちょっとうるさい
-      ;;  [nav-link "#/upload" "Upload" :upload]
-      ;;  [nav-link "#/browse" "Browse" :browse]
-      ;;  [nav-link "#/goods"  "Goods" :goods]
        [nav-link "/login" "Login"]
        [nav-link "/logout" "Logout"]
        [nav-link "#/about" "About" :about]]]]))
@@ -145,7 +141,7 @@
    [:h2 "Browse"]
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
     (str (count @users))
-    " 人。"]
+    " 人。残りはいったい？"]
    [:div
     [:input {:type "radio"
              :checked (not @random?)
@@ -168,7 +164,7 @@
         {:on-click
          #(let [obj (.getElementById js/document i)]
             (send-message! u (.-value obj))
-             ;;FIXME クリアしない。
+             ;; クリアしないが、その方が誰にコメントしたかわかる。
             (set! (.-innerHTML obj) ""))} "good!"]]])])
 
 ;; -------------------------
@@ -384,7 +380,7 @@
     [:div.column
      [:h2 "Not Yet Send To"]
      (doall
-      (for [[id u] (map-indexed vector (sort (disj users-all @sents)))]
+      (for [[id u] (map-indexed vector (shuffle (disj users-all @sents)))]
         [:p {:key (str "n" id)}
          (if (neg? (.indexOf @users u))
            u
@@ -460,4 +456,3 @@
   (reset-goods!)
   (reset-sents!)
   (mount-components))
-
