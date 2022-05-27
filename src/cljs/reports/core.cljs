@@ -184,7 +184,7 @@
          #(let [obj (.getElementById js/document i)]
             (send-message! u (.-value obj))
              ;; クリアしないが、その方が誰にコメントしたかわかる。
-            (set! (.-innerHTML obj) ""))} "good!"]]])])
+            (set! (.-innerHTML obj) ""))} "good"]]])])
 
 ;; -------------------------
 ;; Goods
@@ -411,7 +411,7 @@
 ;; Histgram
 
 (defn good-marks [n]
-  (repeat n "🤗"))
+  (repeat n "✨"))
 
 (defn abbrev [s]
   (if (admin? js/login)

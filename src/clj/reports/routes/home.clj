@@ -15,8 +15,7 @@
     (layout/render [request] "error.html")))
 
 (defn home-routes []
-  ["/r"
-   {:middleware [middleware/wrap-restricted
-                 middleware/wrap-csrf
-                 middleware/wrap-formats]}
+  ["/r" {:middleware [middleware/wrap-restricted
+                      middleware/wrap-csrf
+                      middleware/wrap-formats]}
    ["/" {:get home-page}]])
