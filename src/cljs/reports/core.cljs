@@ -153,6 +153,7 @@
     " 人。残りは？"
     "やっつけでいけると思っていたら、それは誤解です。"
     "ページが出ません、イメージ出ません、リンクできませんってなるだろう。"
+    "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
     "大好きな「平常点」も毎日失ってることにも気づこうな。"
     "平常点は平常につくんだ。"]
    [:div
@@ -431,7 +432,7 @@
 (defn histogram-sent-page []
   [:section.section>div.container>div.content
    [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
-   [:p "誰が何通「いいね」を送ってくれたか。"]
+   [:p "誰が何通「いいね」を送ってくれたか。Safari は Sent の後ろに []。バグ？"]
    (for [[id [nm ct]] (histogram :snd)]
      [:p {:key id} (abbrev nm) " " (good-marks ct)])])
 
