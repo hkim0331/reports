@@ -22,12 +22,16 @@ INSERT INTO goods
 (snd, rcv, message)
 VALUES (:snd, :rcv, :message)
 
--- :name goods :? :*
+-- :name rcvs :? :*
 -- :doc messages received by rcv
 SELECT * FROM goods
-WHERE rcv = :rcv
+WHERE rcv = :rcv order by id desc
 
--- :name sents :? :*
+-- :name snds :? :*
 -- :doc messages sent by snd
 SELECT * FROM goods
-WHERE snd = :snd
+WHERE snd = :snd order by id desc
+
+-- :name goods :? :*
+-- :doc retrieve goods all
+SELECT * FROM goods

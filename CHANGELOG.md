@@ -2,21 +2,42 @@
 
 ## Unreleased
 - with-let の使い方
+- ERROR: XMLHttpRequest is not defined
+- error Access to /r/ is not authorized を
+  /login にリダイレクトする
 - button.is-primary.is-small でも大きすぎる
 - is-fifth でも大きすぎる。
 - good 送信後の input フィールドのクリア
 - feedback upload
 - return key でメッセージ送信
-- list messages page
 - login 名の最大幅で div
-- windows の絵文字は美しくない
-- ERROR: XMLHttpRequest is not defined
-- reverse order good reveived/sent?
+- hot に時刻表示
 
-## 0.7.4-SNAPSHOT
+## 0.8.1 - 2022-05-27
+- goods sent/received を別ページに。
+- admin でログイン時、sent/received をログイン名で表示、
+  一般アカウントでログイン時は abbrev.
+
+## 0.8.0 - 2022-05-27
+- define `core.cljs` private functions using `defn-`
+- histogram(?)
+- cljs repl
+  今は reports プロジェクト内で clj/cljs を切り替えて作業できている。
+  手順次第でできるようだ。タブを選択するだけで repl が切り替わっている(m2)
+- Warning: validateDOMNesting(...): <div> cannot appear as a descendant of <p>.
+
+## 0.7.4 - 2022-05-26
 ### Changed
 - /api/goods/:me -> /api/goods-to/:user
 - /api/sends/:me -> /api/goods-from/:user
+- /api/goods-to, goods-from -> まとめて /api/goods
+- reverse order good reveived/sent
+- windows の絵文字は美しくない。favicon.ico 代えよう。
+- renamed r/atom goods -> r/atom recvs
+- To [:b user],
+- goods をダウンロードしておき、使い回す。
+### Added
+- /api/goods
 
 ## 0.7.3 - 2022-05-26
 - not yet sent to をシャッフル

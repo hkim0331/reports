@@ -13,11 +13,17 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.7.3")
-(def ^:private now "2022-05-26 15:06:33")
+(def ^:private version "0.8.1")
+(def ^:private now "2022-05-27 09:00:01")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
+
+(defn- admin?
+  "cljs のため。
+   本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
+  [user]
+  (= "hkimura" user))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -67,9 +73,10 @@
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
-      [:li [:a {:href "#/goods"}  "Goods"]]]]))
+      [:li [:a {:href "#/goods"}  "Goods"]
+       " (" [:a {:href "#/sent"} "histogram"] ")"]]]))
 
-(defn hidden-field [name value]
+(defn- hidden-field [name value]
   [:input {:type "hidden"
            :name name
            :value value}])
@@ -78,7 +85,7 @@
 ;; Uploads
 
 ;; not ajax. form.
-(defn upload-column [s1 s2 type]
+(defn- upload-column [s1 s2 type]
   [:form {:method "post"
           :action "/api/upload"
           :enc-type "multipart/form-data"}
@@ -95,17 +102,17 @@
     (.log js/console "url:" url)
     [:section.section>div.container>div.content
      [:h2 "Upload"]
-     [:p
+     [:div
       [upload-column (str js/login) "/ " "html"]
       [upload-column "" "/css/ " "css"]
       [upload-column "" "/images/ " "images"]
       [upload-column "" "/js/ " "js"]]
-     [:p "check your uploads => "
+     [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
       [:li "アップロードはファイルひとつずつ。"]
       [:li "フォルダはアップロードできない。"]
-      [:li "*.html や *.css, *.png 等のアップロード先はそそれぞれ違います。"]
+      [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書きする。"]
       [:li "/js/ はやれる人用。授業では扱っていない。"]
       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
@@ -113,7 +120,7 @@
 ;; -------------------------
 ;; Browse
 
-(def min-mesg 20)
+(def ^:private min-mesg 20)
 
 (defn send-message! [recv mesg]
   (cond (< (count mesg) min-mesg)
@@ -126,14 +133,13 @@
            :params {:snd js/login
                     :rcv recv
                     :message mesg}
-           :handler #(js/alert (str recv " に " mesg "を送った。"))
+           :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
            :error-handler #(.log js/console (str %))})))
 
 (defonce random? (r/atom false))
+(def ^:private filters {true identity false shuffle})
 
-(def filters {true identity false shuffle})
-
-(defn report-url [user]
+(defn- report-url [user]
   (str js/hp_url user))
 
 (defn browse-page []
@@ -141,7 +147,12 @@
    [:h2 "Browse"]
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
     (str (count @users))
-    " 人。残りはいったい？"]
+    " 人。残りは？"
+    "やっつけでいけると思ってるのかな。"
+    "ページが出ません、イメージ出ません、リンクできませんってなって"
+    "できあがらないぞ。"
+    "大好きな「平常点」も毎日失ってるってことにも気づこうな。"
+    "平常点は平常につくんだ。"]
    [:div
     [:input {:type "radio"
              :checked (not @random?)
@@ -154,7 +165,7 @@
    [:br]
    (for [[i u] (map-indexed vector ((filters @random?) @users))]
      ;; ちょっと上下に開きすぎ
-     [:div.columns
+     [:div.columns {:key i}
       [:div.column.is-one-fifth
        [:a {:href (report-url u)} u]]
       [:div.column
@@ -170,11 +181,13 @@
 ;; -------------------------
 ;; Goods
 
+;;(defonce recvs (r/atom []))
+;;(defonce sents (r/atom []))
+
 (defonce goods (r/atom []))
-(defonce sents (r/atom []))
 
 ;; 2022-05-26 時点の select login from users;
-(def users-all
+(def ^:private users-all
   #{"TyanA"
     "Iota"
     "user1"
@@ -352,39 +365,73 @@
     "yuchan"
     "birdman"})
 
-(defn time-format [time]
+(defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
         time (subs s 40 48)]
     (str date " " time)))
 
-;; (contains? @users  u) の @users が展開できない。
-;; id が重複している。
+(defn- filter-goods-by [f]
+  (reverse (filter #(= js/login (f %)) @goods)))
+
 (defn goods-page []
+  (let [received (filter-goods-by :rcv)
+        sent     (filter-goods-by :snd)]
+    [:section.section>div.container>div.content
+     [:div.columns
+      [:div.column
+       [:h2 "Goods Received"]
+       (for [[id g] (map-indexed vector received)]
+         [:p {:key (str "r" id)}
+          (time-format (:timestamp g))
+          [:br]
+          (:message g)])]
+      [:div.column
+       [:h2 "Goods Sent"]
+       (for [[id s] (map-indexed vector sent)]
+         [:p {:key (str "g" id)}
+          "to " [:b (:rcv s)] ", " (time-format (:timestamp s))
+          [:br]
+          (:message s)])]
+      [:div.column
+       [:h2 "Not Yet Send To"]
+       (doall
+        (for [[id u] (map-indexed
+                      vector
+                      (shuffle (disj users-all (map #(:snd %) sent))))]
+          [:p {:key (str "n" id)}
+           (if (neg? (.indexOf @users u))
+             u
+             [:a {:href (report-url u)} u])]))]]]))
+
+;; -------------------------
+;; Histgram
+
+(defn good-marks [n]
+  (repeat n "🤗"))
+
+(defn abbrev [s]
+  (if (admin? js/login)
+   s
+   (concat (first s) (map (fn [_] "*") (rest s)))))
+
+(defn histogram [f]
+  (map-indexed vector (->> (group-by f @goods)
+                           (map (fn [x] [(first x) (count (second x))])))))
+
+(defn histogram-received-page []
   [:section.section>div.container>div.content
-   [:div.columns
-    [:div.column
-     [:h2 "Goods Received"]
-     (for [[id g] (map-indexed vector @goods)]
-       [:p {:key (str "r" id)}
-        (time-format (:timestamp g))
-        [:br]
-        (:message g)])]
-    [:div.column
-     [:h2 "Goods Sent"]
-     (for [[id s] (map-indexed vector @sents)]
-       [:p {:key (str "g" id)}
-        "To " (:rcv s) ", " (time-format (:timestamp s))
-        [:br]
-        (:message s)])]
-    [:div.column
-     [:h2 "Not Yet Send To"]
-     (doall
-      (for [[id u] (map-indexed vector (shuffle (disj users-all @sents)))]
-        [:p {:key (str "n" id)}
-         (if (neg? (.indexOf @users u))
-           u
-           [:a {:href (report-url u)} u])]))]]])
+   [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
+   [:p "誰が何通「いいね」を受け取っているか。"]
+   (for [[id [nm ct]] (histogram :rcv)]
+     [:p {:key id} (good-marks ct) " " (abbrev nm)])])
+
+(defn histogram-sent-page []
+  [:section.section>div.container>div.content
+   [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
+   [:p "誰が何通「いいね」を送ってくれたか。"]
+   (for [[id [nm ct]] (histogram :snd)]
+     [:p {:key id} (good-marks ct) " " (abbrev nm)])])
 
 ;; -------------------------
 ;; Pages
@@ -394,7 +441,9 @@
    :about  #'about-page
    :upload #'upload-page
    :browse #'browse-page
-   :goods  #'goods-page})
+   :goods  #'goods-page
+   :histogram-sent #'histogram-sent-page
+   :histogram-received #'histogram-received-page})
 
 (defn page []
   [(pages (:page @session))])
@@ -408,16 +457,20 @@
     ["/about"  :about]
     ["/upload" :upload]
     ["/browse" :browse]
-    ["/goods"  :goods]]))
+    ["/goods"  :goods]
+    ["/sent" :histogram-sent]
+    ["/received" :histogram-received]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")
        (reitit/match-by-path router)
        :data
        :name))
+
 ;; -------------------------
 ;; History
 ;; must be called after routes have been defined
+
 (defn hook-browser-navigation! []
   (doto (History.)
     (events/listen
@@ -431,28 +484,34 @@
 
 (defn ^:dev/after-load mount-components []
   (rdom/render [#'navbar] (.getElementById js/document "navbar"))
-  (rdom/render [#'page] (.getElementById js/document "app")))
+  (rdom/render [#'page]   (.getElementById js/document "app")))
 
-(defn reset-users! []
+(defn- reset-users! []
   (GET "/api/users"
     {:handler #(reset! users %)}
     {:error-handler #(.log js/console "error:" %)}))
 
-(reset-users!)
-(defn reset-goods! []
-  (GET (str "/api/goods-to/" js/login)
-    {:handler #(reset! goods %)
-     :error-handler #(.log js/console "error:" %)}))
+;; (reset-users!)
+;; (defn reset-recvs! []
+;;   (GET (str "/api/goods-to/" js/login)
+;;     {:handler #(reset! recvs %)
+;;      :error-handler #(.log js/console "error:" %)}))
 
-(defn reset-sents! []
-  (GET (str "/api/goods-from/" js/login)
-    {:handler #(reset! sents %)
-     :error-handler #(.log js/console "error:" %)}))
+;; (defn reset-sents! []
+;;   (GET (str "/api/goods-from/" js/login)
+;;     {:handler #(reset! sents %)
+;;      :error-handler #(.log js/console "error:" %)}))
+
+(defn- reset-goods! []
+  (GET (str "/api/goods")
+    {:handler #(reset! goods %)
+     :error-handler #(.log js/console "reset-goods! error:" %)}))
 
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
+  ;; (reset-recvs!)
+  ;; (reset-sents!)
   (reset-goods!)
-  (reset-sents!)
   (mount-components))

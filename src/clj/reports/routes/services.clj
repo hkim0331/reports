@@ -40,9 +40,9 @@
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
 
-(defn logins [_]
-  (let [ret (db/get-logins)]
-    (response/ok ret)))
+;; (defn logins [_]
+;;   (let [ret (db/get-logins)]
+;;     (response/ok ret)))
 
 (defn users
   "distinct users order by uploaded_at"
@@ -59,11 +59,14 @@
                      :message message})
   (response/ok "sent"))
 
-(defn goods-to [{{:keys [user]} :path-params}]
-  (response/ok (db/goods {:rcv user})))
+;; (defn goods-to [{{:keys [user]} :path-params}]
+;;   (response/ok (db/rcvs {:rcv user})))
 
-(defn goods-from [{{:keys [user]} :path-params}]
-   (response/ok (db/sents {:snd user})))
+;; (defn goods-from [{{:keys [user]} :path-params}]
+;;   (response/ok (db/snds {:snd user})))
+
+(defn goods [_]
+  (response/ok (db/goods)))
 
 (defn services-routes []
   ["/api"
@@ -74,10 +77,11 @@
                     (response/ok {:status 200
                                   :body "pong"}))}]
    ["/upload" {:post upload!}]
-   ["/logins" {:get logins}]
+  ;;  ["/logins" {:get logins}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
-   ["/goods-to/:user"   {:get goods-to}]
-   ["/goods-from/:user" {:get goods-from}]])
+  ;;  ["/goods-to/:user"   {:get goods-to}]
+  ;;  ["/goods-from/:user" {:get goods-from}]
+   ["/goods" {:get goods}]])
    ;;["/users-hot"    {:get users-hot}]
    ;;["/users-random" {:get users-random}]])
