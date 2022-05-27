@@ -13,6 +13,9 @@
 - login 名の最大幅で div
 - hot に時刻表示
 
+## 0.8.2-SNAPSHOT
+- いいねとユーザの順番を sent/receive で変える。
+
 ## 0.8.1 - 2022-05-27
 - goods sent/received を別ページに。
 - admin でログイン時、sent/received をログイン名で表示、
