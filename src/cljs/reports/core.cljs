@@ -74,9 +74,9 @@
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]
-       " "
+       " | "
        [:a {:href "#/sent"} "histogram"]
-       " "
+       " | "
        [:a {:href "#/recv-sent"} "under_construction"]]]]))
 
 (defn- hidden-field [name value]
@@ -431,7 +431,7 @@
 
 (defn histogram-sent-page []
   [:section.section>div.container>div.content
-   [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
+   [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
    [:p "誰が何通「いいね」を送ってくれたか。Safari は Sent の後ろに []。バグ？"]
    (for [[id [nm ct]] (histogram :snd)]
      [:p {:key id} (abbrev nm) " " (good-marks ct)])])
