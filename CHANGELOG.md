@@ -7,7 +7,7 @@
   /login にリダイレクトする
 - button.is-primary.is-small でも大きすぎる
 - is-fifth でも大きすぎる。
-- good 送信後の input フィールドのクリア
+- good 送信後の input フィールドのクリア(クリアしない方がいい)
 - feedback upload
 - return key でメッセージ送信
 - login 名の最大幅で div
@@ -16,6 +16,7 @@
 ## 0.8.2-SNAPSHOT
 - いいねとユーザの順番を sent/receive で変える。
 - both が良くないか？
+- refactor: ルーティング整理
 ### Removed
 - 使わなくなった関数、アップデート前にコメントアウトした関数を削除した。
 

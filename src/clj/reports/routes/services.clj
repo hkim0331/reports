@@ -3,7 +3,6 @@
    [clojure.java.io :as io]
    [clojure.java.shell :refer [sh]]
    [clojure.tools.logging :as log]
-   ;;[hato.client :as hc]
    [reports.config :refer [env]]
    [reports.db.core :as db]
    [reports.layout :as layout]
@@ -20,10 +19,9 @@
 (defn mkdir-p [dir]
   (sh "mkdir" "-p" dir))
 
-;; destructuring
 (defn upload!
   "受け取った multiplart-params を login/{id}/filename にセーブする。
-   id = html の時は login 直下とする。[need polish up]"
+   id = html の時は login 直下とする。"
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)]
@@ -59,11 +57,9 @@
   (response/ok (db/goods)))
 
 (defn services-routes []
-  ["/api"
-   {:middleware [middleware/wrap-restricted
-                 middleware/wrap-csrf
-                 middleware/wrap-formats]}
-   ["/ping" {:get #(response/ok {:status 200 :body "pong"})}]
+  ["/api" {:middleware [middleware/wrap-restricted
+                        middleware/wrap-csrf
+                        middleware/wrap-formats]}
    ["/upload" {:post upload!}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
