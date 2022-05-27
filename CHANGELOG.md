@@ -11,11 +11,13 @@
 - feedback upload
 - return key でメッセージ送信
 - login 名の最大幅で div
-- hot に時刻表示
+- hot に時刻表示 -> get /users で最近アップデートの時刻をくっつけて持って来れれば可能。
 
 ## 0.8.2-SNAPSHOT
 - いいねとユーザの順番を sent/receive で変える。
 - both が良くないか？
+### Removed
+- 使わなくなった関数、アップデート前にコメントアウトした関数を削除した。
 
 ## 0.8.1 - 2022-05-27
 - goods sent/received を別ページに。

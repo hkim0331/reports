@@ -17,7 +17,14 @@
 (def ^:private now "2022-05-27 10:07:05")
 
 (defonce session (r/atom {:page :home}))
+
+;; サイトアクセス時にデータベースから取ってくる。
 (defonce users (r/atom []))
+(defonce goods (r/atom []))
+
+;; browse ページローカル。random と shuffle のどちらを表示するか。
+;; 初期値はどっち？
+(defonce random? (r/atom true))
 
 (defn- admin?
   "cljs のため。
@@ -139,8 +146,7 @@
            :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
            :error-handler #(.log js/console (str %))})))
 
-(defonce random? (r/atom false))
-(def ^:private filters {true identity false shuffle})
+(def ^:private filters {true shuffle false identity})
 
 (defn- report-url [user]
   (str js/hp_url user))
@@ -158,16 +164,15 @@
     "平常点は平常につくんだ。"]
    [:div
     [:input {:type "radio"
-             :checked (not @random?)
+             :checked @random?
              :on-change #(swap! random? not)}]
     " random "
     [:input {:type "radio"
-             :checked @random?
+             :checked (not @random?)
              :on-change #(swap! random? not)}]
     " hot "]
    [:br]
    (for [[i u] (map-indexed vector ((filters @random?) @users))]
-     ;; ちょっと上下に開きすぎ
      [:div.columns {:key i}
       [:div.column.is-one-fifth
        [:a {:href (report-url u)} u]]
@@ -183,11 +188,6 @@
 
 ;; -------------------------
 ;; Goods
-
-;;(defonce recvs (r/atom []))
-;;(defonce sents (r/atom []))
-
-(defonce goods (r/atom []))
 
 ;; 2022-05-26 時点の select login from users;
 (def ^:private users-all
@@ -415,8 +415,8 @@
 
 (defn abbrev [s]
   (if (admin? js/login)
-   s
-   (concat (first s) (map (fn [_] "*") (rest s)))))
+    s
+    (concat (first s) (map (fn [_] "?") (rest s)))))
 
 (defn histogram [f]
   (map-indexed vector (->> (group-by f @goods)
@@ -504,17 +504,6 @@
     {:handler #(reset! users %)}
     {:error-handler #(.log js/console "error:" %)}))
 
-;; (reset-users!)
-;; (defn reset-recvs! []
-;;   (GET (str "/api/goods-to/" js/login)
-;;     {:handler #(reset! recvs %)
-;;      :error-handler #(.log js/console "error:" %)}))
-
-;; (defn reset-sents! []
-;;   (GET (str "/api/goods-from/" js/login)
-;;     {:handler #(reset! sents %)
-;;      :error-handler #(.log js/console "error:" %)}))
-
 (defn- reset-goods! []
   (GET (str "/api/goods")
     {:handler #(reset! goods %)
@@ -524,7 +513,5 @@
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
-  ;; (reset-recvs!)
-  ;; (reset-sents!)
   (reset-goods!)
   (mount-components))
