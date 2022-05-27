@@ -2,17 +2,21 @@
 
 ## Unreleased
 - with-let の使い方
+- ERROR: XMLHttpRequest is not defined
+- error Access to /r/ is not authorized を
+  /login にリダイレクトする
 - button.is-primary.is-small でも大きすぎる
 - is-fifth でも大きすぎる。
 - good 送信後の input フィールドのクリア
 - feedback upload
 - return key でメッセージ送信
-- ADMIN: list messages all page
 - login 名の最大幅で div
-- ERROR: XMLHttpRequest is not defined
 - hot に時刻表示
-- error Access to /r/ is not authorized を
-  /login にリダイレクトする
+
+## 0.8.1 - 2022-05-27
+- goods sent/received を別ページに。
+- admin でログイン時、sent/received をログイン名で表示、
+  一般アカウントでログイン時は abbrev.
 
 ## 0.8.0 - 2022-05-27
 - define `core.cljs` private functions using `defn-`

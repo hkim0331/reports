@@ -13,11 +13,17 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.0")
-(def ^:private now "2022-05-27 00:34:03")
+(def ^:private version "0.8.1")
+(def ^:private now "2022-05-27 09:00:01")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
+
+(defn- admin?
+  "cljs のため。
+   本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
+  [user]
+  (= "hkimura" user))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -67,8 +73,8 @@
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
-      [:li [:a {:href "#/goods"}  "Goods"] 
-           " (" [:a {:href "#/histogram"} "histogram"] ")"]]]))
+      [:li [:a {:href "#/goods"}  "Goods"]
+       " (" [:a {:href "#/sent"} "histogram"] ")"]]]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -141,8 +147,12 @@
    [:h2 "Browse"]
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
     (str (count @users))
-    " 人。残りはいったい？"
-    "大好きな「平常点」、失ってるって気づけよ。平常点は平常につく。"]
+    " 人。残りは？"
+    "やっつけでいけると思ってるのかな。"
+    "ページが出ません、イメージ出ません、リンクできませんってなって"
+    "できあがらないぞ。"
+    "大好きな「平常点」も毎日失ってるってことにも気づこうな。"
+    "平常点は平常につくんだ。"]
    [:div
     [:input {:type "radio"
              :checked (not @random?)
@@ -173,6 +183,7 @@
 
 ;;(defonce recvs (r/atom []))
 ;;(defonce sents (r/atom []))
+
 (defonce goods (r/atom []))
 
 ;; 2022-05-26 時点の select login from users;
@@ -361,7 +372,7 @@
     (str date " " time)))
 
 (defn- filter-goods-by [f]
- (reverse (filter #(= js/login (f %)) @goods)))
+  (reverse (filter #(= js/login (f %)) @goods)))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
@@ -370,7 +381,6 @@
      [:div.columns
       [:div.column
        [:h2 "Goods Received"]
-
        (for [[id g] (map-indexed vector received)]
          [:p {:key (str "r" id)}
           (time-format (:timestamp g))
@@ -386,9 +396,9 @@
       [:div.column
        [:h2 "Not Yet Send To"]
        (doall
-        (for [[id u] (map-indexed vector
-                                  (shuffle (disj users-all
-                                                 (map #(:snd %) sent))))]
+        (for [[id u] (map-indexed
+                      vector
+                      (shuffle (disj users-all (map #(:snd %) sent))))]
           [:p {:key (str "n" id)}
            (if (neg? (.indexOf @users u))
              u
@@ -396,25 +406,32 @@
 
 ;; -------------------------
 ;; Histgram
+
 (defn good-marks [n]
- (repeat n "🤗"))
+  (repeat n "🤗"))
 
 (defn abbrev [s]
- (concat (first s) (map (fn [x] "*") (rest s))))
+  (if (admin? js/login)
+   s
+   (concat (first s) (map (fn [_] "*") (rest s)))))
 
 (defn histogram [f]
- (map-indexed vector (->> (group-by f @goods)
-                          (map (fn [x] [(first x) (count (second x))])))))
+  (map-indexed vector (->> (group-by f @goods)
+                           (map (fn [x] [(first x) (count (second x))])))))
 
-(defn histogram-page []
+(defn histogram-received-page []
   [:section.section>div.container>div.content
-   [:h2 "Goods Sent"]
-   (for [[id [nm ct]] (histogram :snd)]
-     [:p {:key id} (good-marks ct) " " (abbrev nm)])
-   [:h2 "Goods Received"]
+   [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
+   [:p "誰が何通「いいね」を受け取っているか。"]
    (for [[id [nm ct]] (histogram :rcv)]
      [:p {:key id} (good-marks ct) " " (abbrev nm)])])
 
+(defn histogram-sent-page []
+  [:section.section>div.container>div.content
+   [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
+   [:p "誰が何通「いいね」を送ってくれたか。"]
+   (for [[id [nm ct]] (histogram :snd)]
+     [:p {:key id} (good-marks ct) " " (abbrev nm)])])
 
 ;; -------------------------
 ;; Pages
@@ -425,7 +442,8 @@
    :upload #'upload-page
    :browse #'browse-page
    :goods  #'goods-page
-   :histogram #'histogram-page})
+   :histogram-sent #'histogram-sent-page
+   :histogram-received #'histogram-received-page})
 
 (defn page []
   [(pages (:page @session))])
@@ -440,16 +458,19 @@
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]
-    ["/histogram" :histogram]]))
+    ["/sent" :histogram-sent]
+    ["/received" :histogram-received]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")
        (reitit/match-by-path router)
        :data
        :name))
+
 ;; -------------------------
 ;; History
 ;; must be called after routes have been defined
+
 (defn hook-browser-navigation! []
   (doto (History.)
     (events/listen
