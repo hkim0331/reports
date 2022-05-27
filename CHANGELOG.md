@@ -12,10 +12,10 @@
 - return key でメッセージ送信
 - login 名の最大幅で div
 - hot に時刻表示
-- sent/received/both
 
 ## 0.8.2-SNAPSHOT
 - いいねとユーザの順番を sent/receive で変える。
+- both が良くないか？
 
 ## 0.8.1 - 2022-05-27
 - goods sent/received を別ページに。

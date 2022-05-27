@@ -14,7 +14,7 @@
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
 (def ^:private version "0.8.2-SNAPSHOT")
-(def ^:private now "2022-05-27 09:27:30")
+(def ^:private now "2022-05-27 10:07:05")
 
 (defonce session (r/atom {:page :home}))
 (defonce users (r/atom []))
@@ -74,7 +74,10 @@
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]
-       " (" [:a {:href "#/sent"} "histogram"] ")"]]]))
+       " "
+       [:a {:href "#/sent"} "histogram"]
+       " "
+       [:a {:href "#/recv-sent"} "under_construction"]]]]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -432,6 +435,14 @@
    (for [[id [nm ct]] (histogram :snd)]
      [:p {:key id} (abbrev nm) " " (good-marks ct)])])
 
+;; under construction
+;; 送信、受信の片方がゼロのユーザもいる
+(defn histogram-both []
+  [:section.section>div.container>div.content
+   [:h2 "Goods (reveived <<login>> sent)"]
+   [:p "誰が何通「いいね」を受け取り、送信したか。" [:br]
+    "送っていても受け取りゼロの人もいる。その反対も。どうプログラムしようか。"]])
+
 ;; -------------------------
 ;; Pages
 
@@ -442,7 +453,8 @@
    :browse #'browse-page
    :goods  #'goods-page
    :histogram-sent #'histogram-sent-page
-   :histogram-received #'histogram-received-page})
+   :histogram-received #'histogram-received-page
+   :histogram-both #'histogram-both})
 
 (defn page []
   [(pages (:page @session))])
@@ -458,7 +470,8 @@
     ["/browse" :browse]
     ["/goods"  :goods]
     ["/sent" :histogram-sent]
-    ["/received" :histogram-received]]))
+    ["/received" :histogram-received]
+    ["/recv-sent" :histogram-both]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")
