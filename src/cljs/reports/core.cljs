@@ -13,8 +13,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.4-SNAPSHOT")
-(def ^:private now "2022-05-28 15:15:55")
+(def ^:private version "0.8.4")
+(def ^:private now "2022-05-28 20:43:31")
 
 (defonce session (r/atom {:page :home}))
 
@@ -77,10 +77,10 @@
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]
+      ;;  " | "
+      ;;  [:a {:href "#/sent"} "histogram"]
        " | "
-       [:a {:href "#/sent"} "histogram"]
-       " | "
-       [:a {:href "#/recv-sent"} "under_construction"]]]]))
+       [:a {:href "#/recv-sent"} "graph"]]]]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -451,26 +451,24 @@
   (goods-f :snd)
   (group-by :id (concat (goods-f :rcv) (goods-f :snd))))
 
-
 (defn get-count [v key]
   (cond
     (empty? v) 0
     (get (first v) key) (get (first v) key)
     :else (get-count (rest v) key)))
 
+;; FIXME: too complex. make this simpler.
 (defn histogram-both []
   [:section.section>div.container>div.content
-   [:h2 "Goods (Reveived -> Login -> Sent)"]
+   [:h2 "Goods (Reveived → Who → Sent)"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
-     [:p {:key "good"} "goods" [:br] (str goods)]
      (for [[i g] (map-indexed vector goods)]
        (let [name (abbrev (key g))
              r (-> g val (get-count :rcv) good-marks)
              s (-> g val (get-count :snd) good-marks)]
-         [:p {:key i} r " -> " name " -> " s])))])
-
+         [:p {:key i} r " → " name " → " s])))])
 
 ;; -------------------------
 ;; Pages
