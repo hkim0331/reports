@@ -134,20 +134,22 @@
 ;; send-message! と browse-page で参照する。
 (def ^:private min-mesg 10)
 
+(defn- post-message [sender receiver message]
+  (POST "/api/save-message"
+          {:headers {"x-csrf-field" js/csrfToken}
+           :params {:snd js/login
+                    :rcv receiver
+                    :message message}
+           :handler #(js/alert (str "メッセージ「" message "」を送りました。"))
+           :error-handler #(.log js/console (str %))}))
+
 (defn send-message! [recv mesg]
   (cond (< (count mesg) min-mesg)
         (js/alert (str "メッセージは " min-mesg "文字以上です。"))
-        ;; debug
         (= recv js/login)
         (js/alert "自分自身へのメッセージは送れません。")
         :else
-        (POST "/api/save-message"
-          {:headers {"x-csrf-field" js/csrfToken}
-           :params {:snd js/login
-                    :rcv recv
-                    :message mesg}
-           :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
-           :error-handler #(.log js/console (str %))})))
+        (post-message js/login recv mesg)))
 
 (defn- report-url [user]
   (str js/hp_url user))
@@ -381,10 +383,10 @@
   (reverse (filter #(= js/login (f %)) @goods)))
 
 (defn- reply? [sender]
- (when-let [msg (js/prompt "reply?")]
-   (if (empty? msg)
-    (js/alert "メッセージが空です。")
-    (.log js/console msg " " sender))))
+  (when-let [msg (js/prompt "reply?")]
+    (if (empty? msg)
+       (js/alert "メッセージが空です。")
+       (post-message js/login sender msg))))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
@@ -398,7 +400,8 @@
           (time-format (:timestamp g))
           [:br]
           (:message g)
-          [:button
+          [:br]
+          [:button.button.is-success.is-small
            {:on-click #(reply? (:snd g))}
            "reply"]])]
       [:div.column
@@ -430,9 +433,9 @@
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
 
-(defn histogram [f]
-  (map-indexed vector (->> (group-by f @goods)
-                           (map (fn [x] [(first x) (count (second x))])))))
+;; (defn histogram [f]
+;;   (map-indexed vector (->> (group-by f @goods)
+;;                            (map (fn [x] [(first x) (count (second x))])))))
 
 ;; (defn- histogram-received-page []
 ;;   [:section.section>div.container>div.content
