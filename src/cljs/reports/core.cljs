@@ -13,18 +13,14 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.3")
-(def ^:private now "2022-05-28 11:23:35")
+(def ^:private version "0.8.4")
+(def ^:private now "2022-05-28 20:43:31")
 
 (defonce session (r/atom {:page :home}))
 
 ;; サイトアクセス時にデータベースから取ってくる。
 (defonce users (r/atom []))
 (defonce goods (r/atom []))
-
-;; browse ページローカル。random と shuffle のどちらを表示するか。
-;; 関数にローカルにできないか？
-(defonce random? (r/atom true))
 
 (defn- admin?
   "cljs のため。
@@ -81,10 +77,10 @@
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]
+      ;;  " | "
+      ;;  [:a {:href "#/sent"} "histogram"]
        " | "
-       [:a {:href "#/sent"} "histogram"]
-       " | "
-       [:a {:href "#/recv-sent"} "under_construction"]]]]))
+       [:a {:href "#/recv-sent"} "graph"]]]]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -130,6 +126,12 @@
 ;; -------------------------
 ;; Browse
 
+;; browse ページローカル。random と shuffle のどちらを表示するか。
+;; 関数にローカルにできないか？
+(defonce random? (r/atom false))
+(def ^:private filters {true shuffle false identity})
+
+;; send-message! と browse-page で参照する。
 (def ^:private min-mesg 10)
 
 (defn send-message! [recv mesg]
@@ -147,9 +149,6 @@
            :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
            :error-handler #(.log js/console (str %))})))
 
-;; FIXME: 関数ローカルに。
-(def ^:private filters {true shuffle false identity})
-
 (defn- report-url [user]
   (str js/hp_url user))
 
@@ -164,7 +163,6 @@
     "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
     "大好きな「平常点」も毎日失ってることにも気づこうな。"
     "平常点は平常につくんだ。"]
-
    [:div
     [:input {:type "radio"
              :checked @random?
@@ -183,13 +181,13 @@
        " "
        [:input {:id i
                 :placeholder (str min-mesg " 文字以上のメッセージ")
-                :size 60}]
+                :size 80}]
        [:button
         {:on-click
          #(let [obj (.getElementById js/document i)]
             (send-message! u (.-value obj))
-             ;; クリアしないが、その方が誰にコメントしたかわかる。
-            (set! (.-innerHTML obj) ""))} "good"]]])])
+             ;; クリアしない方が誰にコメントしたかわかる。
+            #_(set! (.-innerHTML obj) ""))} "good"]]])])
 
 ;; -------------------------
 ;; Goods
@@ -442,12 +440,35 @@
      [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
 
 ;; under construction
-;; 送信、受信の片方がゼロのユーザもいる
+
+(defn goods-f [f]
+  (->> (group-by f @goods)
+       (map (fn [x] {:id (first x) f (count (second x))}))))
+
+(comment
+  @goods
+  (goods-f :rcv)
+  (goods-f :snd)
+  (group-by :id (concat (goods-f :rcv) (goods-f :snd))))
+
+(defn get-count [v key]
+  (cond
+    (empty? v) 0
+    (get (first v) key) (get (first v) key)
+    :else (get-count (rest v) key)))
+
+;; FIXME: too complex. make this simpler.
 (defn histogram-both []
   [:section.section>div.container>div.content
-   [:h2 "Goods (reveived <<login>> sent)"]
-   [:p "誰が何通「いいね」を受け取り、送信したか。" [:br]
-    "送っていても受け取りゼロの人もいる。その反対も。どうプログラムしようか。"]])
+   [:h2 "Goods (Reveived → Who → Sent)"]
+   (let [snd (goods-f :snd)
+         rcv (goods-f :rcv)
+         goods (group-by :id (concat snd rcv))]
+     (for [[i g] (map-indexed vector goods)]
+       (let [name (abbrev (key g))
+             r (-> g val (get-count :rcv) good-marks)
+             s (-> g val (get-count :snd) good-marks)]
+         [:p {:key i} r " → " name " → " s])))])
 
 ;; -------------------------
 ;; Pages
