@@ -453,13 +453,16 @@
 
 (defn histogram-both []
   [:section.section>div.container>div.content
-   [:h2 "Goods (reveived <<login>> sent)"]
+   [:h2 "Goods (Reveived Login Sent)"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
      [:p (str goods)]
      (for [[i g] (map-indexed vector goods)]
-      [:p {:key i} (str (key g)) (str (val g))]))])
+       (let [name (abbrev (key g))
+             rmks (good-marks (:rcv (val g)))
+             smks (good-marks (:snd (val g)))]
+         [:p {:key i} rmks name smks])))])
 
 
 ;; -------------------------
