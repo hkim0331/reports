@@ -136,8 +136,8 @@
   (cond (< (count mesg) min-mesg)
         (js/alert (str "メッセージは " min-mesg "文字以上です。"))
         ;; debug
-        ;; (= recv js/login)
-        ;; (js/alert "自分自身へのメッセージは送れません。")
+        (= recv js/login)
+        (js/alert "自分自身へのメッセージは送れません。")
         :else
         (POST "/api/save-message"
           {:headers {"x-csrf-field" js/csrfToken}
@@ -415,7 +415,7 @@
 ;; Histgram
 
 (defn good-marks [n]
-  (repeat n "✨"))
+  (repeat n "👍"))
 
 (defn abbrev [s]
   (if (admin? js/login)
@@ -431,14 +431,14 @@
    [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
    [:p "誰が何通「いいね」を受け取っているか。"]
    (for [[id [nm ct]] (histogram :rcv)]
-     [:p {:key id} (good-marks ct) "→" (abbrev nm)])])
+     [:p {:key id} (good-marks ct) " → " (abbrev nm)])])
 
 (defn histogram-sent-page []
   [:section.section>div.container>div.content
    [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
-   [:p "誰が何通「いいね」を送ってくれたか。Safari は Sent の後ろに []。バグ？"]
+   [:p "誰が何通「いいね」を送ってくれたか。"]
    (for [[id [nm ct]] (histogram :snd)]
-     [:p {:key id} (abbrev nm) "→" (good-marks ct)])])
+     [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
 
 ;; under construction
 ;; 送信、受信の片方がゼロのユーザもいる
