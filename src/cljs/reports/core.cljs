@@ -22,9 +22,6 @@
 (defonce users (r/atom []))
 (defonce goods (r/atom []))
 
-;; browse ページローカル。random と shuffle のどちらを表示するか。
-;; 関数にローカルにできないか？
-(defonce random? (r/atom true))
 
 (defn- admin?
   "cljs のため。
@@ -130,6 +127,12 @@
 ;; -------------------------
 ;; Browse
 
+;; browse ページローカル。random と shuffle のどちらを表示するか。
+;; 関数にローカルにできないか？
+(defonce random? (r/atom false))
+(def ^:private filters {true shuffle false identity})
+
+;; send-message! と browse-page で参照する。
 (def ^:private min-mesg 10)
 
 (defn send-message! [recv mesg]
@@ -147,8 +150,7 @@
            :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
            :error-handler #(.log js/console (str %))})))
 
-;; FIXME: 関数ローカルに。
-(def ^:private filters {true shuffle false identity})
+
 
 (defn- report-url [user]
   (str js/hp_url user))
@@ -164,7 +166,6 @@
     "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
     "大好きな「平常点」も毎日失ってることにも気づこうな。"
     "平常点は平常につくんだ。"]
-
    [:div
     [:input {:type "radio"
              :checked @random?
