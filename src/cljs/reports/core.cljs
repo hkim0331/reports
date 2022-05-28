@@ -380,6 +380,12 @@
 (defn- filter-goods-by [f]
   (reverse (filter #(= js/login (f %)) @goods)))
 
+(defn- reply? [sender]
+ (when-let [msg (js/prompt "reply?")]
+   (if (empty? msg)
+    (js/alert "メッセージが空です。")
+    (.log js/console msg " " sender))))
+
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
         sent     (filter-goods-by :snd)]
@@ -391,7 +397,10 @@
          [:p {:key (str "r" id)}
           (time-format (:timestamp g))
           [:br]
-          (:message g)])]
+          (:message g)
+          [:button
+           {:on-click #(reply? (:snd g))}
+           "reply"]])]
       [:div.column
        [:h2 "Goods Sent"]
        (for [[id s] (map-indexed vector sent)]
@@ -425,33 +434,25 @@
   (map-indexed vector (->> (group-by f @goods)
                            (map (fn [x] [(first x) (count (second x))])))))
 
-(defn histogram-received-page []
-  [:section.section>div.container>div.content
-   [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
-   [:p "誰が何通「いいね」を受け取っているか。"]
-   (for [[id [nm ct]] (histogram :rcv)]
-     [:p {:key id} (good-marks ct) " → " (abbrev nm)])])
+;; (defn- histogram-received-page []
+;;   [:section.section>div.container>div.content
+;;    [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
+;;    [:p "誰が何通「いいね」を受け取っているか。"]
+;;    (for [[id [nm ct]] (histogram :rcv)]
+;;      [:p {:key id} (good-marks ct) " → " (abbrev nm)])])
 
-(defn histogram-sent-page []
-  [:section.section>div.container>div.content
-   [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
-   [:p "誰が何通「いいね」を送ってくれたか。"]
-   (for [[id [nm ct]] (histogram :snd)]
-     [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
+;; (defn- histogram-sent-page []
+;;   [:section.section>div.container>div.content
+;;    [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
+;;    [:p "誰が何通「いいね」を送ってくれたか。"]
+;;    (for [[id [nm ct]] (histogram :snd)]
+;;      [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
 
-;; under construction
-
-(defn goods-f [f]
+(defn- goods-f [f]
   (->> (group-by f @goods)
        (map (fn [x] {:id (first x) f (count (second x))}))))
 
-(comment
-  @goods
-  (goods-f :rcv)
-  (goods-f :snd)
-  (group-by :id (concat (goods-f :rcv) (goods-f :snd))))
-
-(defn get-count [v key]
+(defn- get-count [v key]
   (cond
     (empty? v) 0
     (get (first v) key) (get (first v) key)
@@ -479,8 +480,8 @@
    :upload #'upload-page
    :browse #'browse-page
    :goods  #'goods-page
-   :histogram-sent #'histogram-sent-page
-   :histogram-received #'histogram-received-page
+  ;;  :histogram-sent #'histogram-sent-page
+  ;;  :histogram-received #'histogram-received-page
    :histogram-both #'histogram-both})
 
 (defn page []
@@ -496,8 +497,8 @@
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]
-    ["/sent" :histogram-sent]
-    ["/received" :histogram-received]
+    ;; ["/sent" :histogram-sent]
+    ;; ["/received" :histogram-received]
     ["/recv-sent" :histogram-both]]))
 
 (defn match-route [uri]
