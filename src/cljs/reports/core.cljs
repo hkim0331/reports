@@ -22,7 +22,6 @@
 (defonce users (r/atom []))
 (defonce goods (r/atom []))
 
-
 (defn- admin?
   "cljs のため。
    本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
@@ -149,8 +148,6 @@
                     :message mesg}
            :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
            :error-handler #(.log js/console (str %))})))
-
-
 
 (defn- report-url [user]
   (str js/hp_url user))
@@ -443,12 +440,27 @@
      [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
 
 ;; under construction
-;; 送信、受信の片方がゼロのユーザもいる
+
+(defn goods-f [f]
+  (->> (group-by f @goods)
+       (map (fn [x] {:id (first x) f (count (second x))}))))
+
+(comment
+  @goods
+  (goods-f :rcv)
+  (goods-f :snd)
+  (group-by :id (concat (goods-f :rcv) (goods-f :snd))))
+
 (defn histogram-both []
   [:section.section>div.container>div.content
    [:h2 "Goods (reveived <<login>> sent)"]
-   [:p "誰が何通「いいね」を受け取り、送信したか。" [:br]
-    "送っていても受け取りゼロの人もいる。その反対も。どうプログラムしようか。"]])
+   (let [snd (goods-f :snd)
+         rcv (goods-f :rcv)
+         goods (group-by :id (concat snd rcv))]
+     [:p (str goods)]
+     (for [[i g] (map-indexed vector goods)]
+      [:p {:key i} (str (key g)) (str (val g))]))])
+
 
 ;; -------------------------
 ;; Pages
