@@ -13,8 +13,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.2")
-(def ^:private now "2022-05-28 10:10:37")
+(def ^:private version "0.8.3-BUGFIX")
+(def ^:private now "2022-05-28 10:47:30")
 
 (defonce session (r/atom {:page :home}))
 
@@ -130,11 +130,12 @@
 ;; -------------------------
 ;; Browse
 
-(def ^:private min-mesg 20)
+(def ^:private min-mesg 10)
 
 (defn send-message! [recv mesg]
   (cond (< (count mesg) min-mesg)
         (js/alert (str "メッセージは " min-mesg "文字以上です。"))
+        ;; debug
         (= recv js/login)
         (js/alert "自分自身へのメッセージは送れません。")
         :else
@@ -154,17 +155,14 @@
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-
-   [:p "「いいね」送れないようです。5/27午後の作業でバグ混入させた模様。
-        今、目が痒くてイライラ状態なので、しっかり睡眠とって、明日、直します。"]
-   #_[:p "リストにあるのはアップロードを一度以上実行した人。合計 "
-      (str (count @users))
-      " 人。残りは？"
-      "やっつけでいけると思っていたら、それは誤解です。"
-      "ページが出ません、イメージ出ません、リンクできませんって必ずなるだろう。"
-      "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
-      "大好きな「平常点」も毎日失ってることにも気づこうな。"
-      "平常点は平常につくんだ。"]
+   [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
+    (str (count @users))
+    " 人。残りは？"
+    "やっつけでいけると思っていたら、それは誤解です。"
+    "ページが出ません、イメージ出ません、リンクできませんって必ずなるだろう。"
+    "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
+    "大好きな「平常点」も毎日失ってることにも気づこうな。"
+    "平常点は平常につくんだ。"]
 
    [:div
     [:input {:type "radio"
@@ -182,7 +180,9 @@
        [:a {:href (report-url u)} u]]
       [:div.column
        " "
-       [:input {:id i :placeholder "message" :size 60}]
+       [:input {:id i
+                :placeholder (str min-mesg " 文字以上のメッセージ") 
+                :size 60}]
        [:button
         {:on-click
          #(let [obj (.getElementById js/document i)]
@@ -415,7 +415,7 @@
 ;; Histgram
 
 (defn good-marks [n]
-  (repeat n "✨"))
+  (repeat n "👍"))
 
 (defn abbrev [s]
   (if (admin? js/login)
@@ -431,14 +431,14 @@
    [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
    [:p "誰が何通「いいね」を受け取っているか。"]
    (for [[id [nm ct]] (histogram :rcv)]
-     [:p {:key id} (good-marks ct) "→" (abbrev nm)])])
+     [:p {:key id} (good-marks ct) " → " (abbrev nm)])])
 
 (defn histogram-sent-page []
   [:section.section>div.container>div.content
    [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
-   [:p "誰が何通「いいね」を送ってくれたか。Safari は Sent の後ろに []。バグ？"]
+   [:p "誰が何通「いいね」を送ってくれたか。"]
    (for [[id [nm ct]] (histogram :snd)]
-     [:p {:key id} (abbrev nm) "→" (good-marks ct)])])
+     [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
 
 ;; under construction
 ;; 送信、受信の片方がゼロのユーザもいる
