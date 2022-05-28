@@ -75,7 +75,7 @@
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
-      [:li [:a {:href "#/browse"} "Browse"]]
+      [:li [:a {:href "#/browse"} "Browse & Comments"]]
       [:li [:a {:href "#/goods"}  "Goods"]
       ;;  " | "
       ;;  [:a {:href "#/sent"} "histogram"]
@@ -156,7 +156,7 @@
 
 (defn browse-page []
   [:section.section>div.container>div.content
-   [:h2 "Browse"]
+   [:h2 "Browse & Comments"]
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
     (str (count @users))
     " 人。残りは？"
