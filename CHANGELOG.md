@@ -7,11 +7,26 @@
   /login にリダイレクトする
 - button.is-primary.is-small でも大きすぎる
 - is-fifth でも大きすぎる。
-- good 送信後の input フィールドのクリア
+- good 送信後の input フィールドのクリア(クリアしない方がいい)
+- login 名の最大幅で div
 - feedback upload
 - return key でメッセージ送信
-- login 名の最大幅で div
-- hot に時刻表示
+- hot に時刻表示 -> get /users で最近アップデートの時刻をくっつけて持って来れれば可能だが。。。
+
+
+## 0.8.3 - 2022-05-28
+### Fixed
+- goods が送れなかった理由はなんだ？ hkimura だけ？
+  -> ブラウザのキャッシュか？
+- Browse の random で上から何番目につけた goods が hot のその番目で出てしまう。
+  -> max-index の仕方を変更して対応した。
+
+## 0.8.2 - 2022-05-27
+- いいねとユーザの順番を sent/receive で変える。
+- both が良くないか？
+- refactor: ルーティング整理
+### Removed
+- 使わなくなった関数、アップデート前にコメントアウトした関数を削除した。
 
 ## 0.8.1 - 2022-05-27
 - goods sent/received を別ページに。

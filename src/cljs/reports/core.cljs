@@ -13,11 +13,18 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.1")
-(def ^:private now "2022-05-27 09:00:01")
+(def ^:private version "0.8.3")
+(def ^:private now "2022-05-28 11:23:35")
 
 (defonce session (r/atom {:page :home}))
+
+;; サイトアクセス時にデータベースから取ってくる。
 (defonce users (r/atom []))
+(defonce goods (r/atom []))
+
+;; browse ページローカル。random と shuffle のどちらを表示するか。
+;; 関数にローカルにできないか？
+(defonce random? (r/atom true))
 
 (defn- admin?
   "cljs のため。
@@ -74,7 +81,10 @@
       [:li [:a {:href "#/upload"} "Upload"]]
       [:li [:a {:href "#/browse"} "Browse"]]
       [:li [:a {:href "#/goods"}  "Goods"]
-       " (" [:a {:href "#/sent"} "histogram"] ")"]]]))
+       " | "
+       [:a {:href "#/sent"} "histogram"]
+       " | "
+       [:a {:href "#/recv-sent"} "under_construction"]]]]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -120,11 +130,12 @@
 ;; -------------------------
 ;; Browse
 
-(def ^:private min-mesg 20)
+(def ^:private min-mesg 10)
 
 (defn send-message! [recv mesg]
   (cond (< (count mesg) min-mesg)
         (js/alert (str "メッセージは " min-mesg "文字以上です。"))
+        ;; debug
         (= recv js/login)
         (js/alert "自分自身へのメッセージは送れません。")
         :else
@@ -136,8 +147,8 @@
            :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
            :error-handler #(.log js/console (str %))})))
 
-(defonce random? (r/atom false))
-(def ^:private filters {true identity false shuffle})
+;; FIXME: 関数ローカルに。
+(def ^:private filters {true shuffle false identity})
 
 (defn- report-url [user]
   (str js/hp_url user))
@@ -148,43 +159,40 @@
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
     (str (count @users))
     " 人。残りは？"
-    "やっつけでいけると思ってるのかな。"
-    "ページが出ません、イメージ出ません、リンクできませんってなって"
-    "できあがらないぞ。"
-    "大好きな「平常点」も毎日失ってるってことにも気づこうな。"
+    "やっつけでいけると思っていたら、それは誤解です。"
+    "ページが出ません、イメージ出ません、リンクできませんって必ずなるだろう。"
+    "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
+    "大好きな「平常点」も毎日失ってることにも気づこうな。"
     "平常点は平常につくんだ。"]
+
    [:div
-    [:input {:type "radio"
-             :checked (not @random?)
-             :on-change #(swap! random? not)}]
-    " random "
     [:input {:type "radio"
              :checked @random?
              :on-change #(swap! random? not)}]
+    " random "
+    [:input {:type "radio"
+             :checked (not @random?)
+             :on-change #(swap! random? not)}]
     " hot "]
    [:br]
-   (for [[i u] (map-indexed vector ((filters @random?) @users))]
-     ;; ちょっと上下に開きすぎ
+   (for [[i u] ((filters @random?) (map-indexed vector @users))]
      [:div.columns {:key i}
       [:div.column.is-one-fifth
        [:a {:href (report-url u)} u]]
       [:div.column
        " "
-       [:input {:id i :placeholder "message" :size 60}]
+       [:input {:id i
+                :placeholder (str min-mesg " 文字以上のメッセージ")
+                :size 60}]
        [:button
         {:on-click
          #(let [obj (.getElementById js/document i)]
             (send-message! u (.-value obj))
              ;; クリアしないが、その方が誰にコメントしたかわかる。
-            (set! (.-innerHTML obj) ""))} "good!"]]])])
+            (set! (.-innerHTML obj) ""))} "good"]]])])
 
 ;; -------------------------
 ;; Goods
-
-;;(defonce recvs (r/atom []))
-;;(defonce sents (r/atom []))
-
-(defonce goods (r/atom []))
 
 ;; 2022-05-26 時点の select login from users;
 (def ^:private users-all
@@ -408,12 +416,12 @@
 ;; Histgram
 
 (defn good-marks [n]
-  (repeat n "🤗"))
+  (repeat n "👍"))
 
 (defn abbrev [s]
   (if (admin? js/login)
-   s
-   (concat (first s) (map (fn [_] "*") (rest s)))))
+    s
+    (concat (first s) (map (fn [_] "?") (rest s)))))
 
 (defn histogram [f]
   (map-indexed vector (->> (group-by f @goods)
@@ -424,14 +432,22 @@
    [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
    [:p "誰が何通「いいね」を受け取っているか。"]
    (for [[id [nm ct]] (histogram :rcv)]
-     [:p {:key id} (good-marks ct) " " (abbrev nm)])])
+     [:p {:key id} (good-marks ct) " → " (abbrev nm)])])
 
 (defn histogram-sent-page []
   [:section.section>div.container>div.content
-   [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
+   [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
    [:p "誰が何通「いいね」を送ってくれたか。"]
    (for [[id [nm ct]] (histogram :snd)]
-     [:p {:key id} (good-marks ct) " " (abbrev nm)])])
+     [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
+
+;; under construction
+;; 送信、受信の片方がゼロのユーザもいる
+(defn histogram-both []
+  [:section.section>div.container>div.content
+   [:h2 "Goods (reveived <<login>> sent)"]
+   [:p "誰が何通「いいね」を受け取り、送信したか。" [:br]
+    "送っていても受け取りゼロの人もいる。その反対も。どうプログラムしようか。"]])
 
 ;; -------------------------
 ;; Pages
@@ -443,7 +459,8 @@
    :browse #'browse-page
    :goods  #'goods-page
    :histogram-sent #'histogram-sent-page
-   :histogram-received #'histogram-received-page})
+   :histogram-received #'histogram-received-page
+   :histogram-both #'histogram-both})
 
 (defn page []
   [(pages (:page @session))])
@@ -459,7 +476,8 @@
     ["/browse" :browse]
     ["/goods"  :goods]
     ["/sent" :histogram-sent]
-    ["/received" :histogram-received]]))
+    ["/received" :histogram-received]
+    ["/recv-sent" :histogram-both]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")
@@ -491,17 +509,6 @@
     {:handler #(reset! users %)}
     {:error-handler #(.log js/console "error:" %)}))
 
-;; (reset-users!)
-;; (defn reset-recvs! []
-;;   (GET (str "/api/goods-to/" js/login)
-;;     {:handler #(reset! recvs %)
-;;      :error-handler #(.log js/console "error:" %)}))
-
-;; (defn reset-sents! []
-;;   (GET (str "/api/goods-from/" js/login)
-;;     {:handler #(reset! sents %)
-;;      :error-handler #(.log js/console "error:" %)}))
-
 (defn- reset-goods! []
   (GET (str "/api/goods")
     {:handler #(reset! goods %)
@@ -511,7 +518,5 @@
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
-  ;; (reset-recvs!)
-  ;; (reset-sents!)
   (reset-goods!)
   (mount-components))

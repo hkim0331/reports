@@ -3,7 +3,6 @@
    [clojure.java.io :as io]
    [clojure.java.shell :refer [sh]]
    [clojure.tools.logging :as log]
-   ;;[hato.client :as hc]
    [reports.config :refer [env]]
    [reports.db.core :as db]
    [reports.layout :as layout]
@@ -20,10 +19,9 @@
 (defn mkdir-p [dir]
   (sh "mkdir" "-p" dir))
 
-;; destructuring
 (defn upload!
   "受け取った multiplart-params を login/{id}/filename にセーブする。
-   id = html の時は login 直下とする。[need polish up]"
+   id = html の時は login 直下とする。"
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)]
@@ -40,10 +38,6 @@
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
 
-;; (defn logins [_]
-;;   (let [ret (db/get-logins)]
-;;     (response/ok ret)))
-
 (defn users
   "distinct users order by uploaded_at"
   [_]
@@ -59,29 +53,14 @@
                      :message message})
   (response/ok "sent"))
 
-;; (defn goods-to [{{:keys [user]} :path-params}]
-;;   (response/ok (db/rcvs {:rcv user})))
-
-;; (defn goods-from [{{:keys [user]} :path-params}]
-;;   (response/ok (db/snds {:snd user})))
-
 (defn goods [_]
   (response/ok (db/goods)))
 
 (defn services-routes []
-  ["/api"
-   {:middleware [middleware/wrap-restricted
-                 middleware/wrap-csrf
-                 middleware/wrap-formats]}
-   ["/ping" {:get (fn [_]
-                    (response/ok {:status 200
-                                  :body "pong"}))}]
+  ["/api" {:middleware [middleware/wrap-restricted
+                        middleware/wrap-csrf
+                        middleware/wrap-formats]}
    ["/upload" {:post upload!}]
-  ;;  ["/logins" {:get logins}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
-  ;;  ["/goods-to/:user"   {:get goods-to}]
-  ;;  ["/goods-from/:user" {:get goods-from}]
    ["/goods" {:get goods}]])
-   ;;["/users-hot"    {:get users-hot}]
-   ;;["/users-random" {:get users-random}]])
