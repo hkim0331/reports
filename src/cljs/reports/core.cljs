@@ -130,13 +130,14 @@
 ;; -------------------------
 ;; Browse
 
-(def ^:private min-mesg 20)
+(def ^:private min-mesg 10)
 
 (defn send-message! [recv mesg]
   (cond (< (count mesg) min-mesg)
         (js/alert (str "メッセージは " min-mesg "文字以上です。"))
-        (= recv js/login)
-        (js/alert "自分自身へのメッセージは送れません。")
+        ;; debug
+        ;; (= recv js/login)
+        ;; (js/alert "自分自身へのメッセージは送れません。")
         :else
         (POST "/api/save-message"
           {:headers {"x-csrf-field" js/csrfToken}
