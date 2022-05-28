@@ -1,4 +1,4 @@
-(defproject reports "0.8.2-SNAPSHOT"
+(defproject reports "0.8.3-BUGFIX"
 
   :description "reports for literacy 2022"
   :url "https://rp.melt.kyutech.ac.jp"

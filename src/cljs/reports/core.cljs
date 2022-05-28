@@ -13,8 +13,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.2-SNAPSHOT")
-(def ^:private now "2022-05-27 10:07:05")
+(def ^:private version "0.8.3-BUGFIX")
+(def ^:private now "2022-05-28 10:47:30")
 
 (defonce session (r/atom {:page :home}))
 
@@ -155,17 +155,14 @@
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse"]
-
-   #_[:p "「いいね」送れないようです。5/27午後の作業でバグ混入させた模様。
-        今、目が痒くてイライラ状態なので、しっかり睡眠とって、明日、直します。"]
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
-     (str (count @users))
-     " 人。残りは？"
-     "やっつけでいけると思っていたら、それは誤解です。"
-     "ページが出ません、イメージ出ません、リンクできませんって必ずなるだろう。"
-     "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
-     "大好きな「平常点」も毎日失ってることにも気づこうな。"
-     "平常点は平常につくんだ。"]
+    (str (count @users))
+    " 人。残りは？"
+    "やっつけでいけると思っていたら、それは誤解です。"
+    "ページが出ません、イメージ出ません、リンクできませんって必ずなるだろう。"
+    "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
+    "大好きな「平常点」も毎日失ってることにも気づこうな。"
+    "平常点は平常につくんだ。"]
 
    [:div
     [:input {:type "radio"
@@ -183,7 +180,9 @@
        [:a {:href (report-url u)} u]]
       [:div.column
        " "
-       [:input {:id i :placeholder "message" :size 60}]
+       [:input {:id i
+                :placeholder (str min-mesg " 文字以上のメッセージ") 
+                :size 60}]
        [:button
         {:on-click
          #(let [obj (.getElementById js/document i)]

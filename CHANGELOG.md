@@ -13,9 +13,8 @@
 - login 名の最大幅で div
 - hot に時刻表示 -> get /users で最近アップデートの時刻をくっつけて持って来れれば可能。
 
-## 0.8.3-SNAPSHOT
-### debug
-- can not send goods
+## 0.8.3-BUGFIX
+
 
 ## 0.8.2 - 2022-05-27
 - いいねとユーザの順番を sent/receive で変える。
