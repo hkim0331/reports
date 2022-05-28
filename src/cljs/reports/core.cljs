@@ -451,18 +451,25 @@
   (goods-f :snd)
   (group-by :id (concat (goods-f :rcv) (goods-f :snd))))
 
+
+(defn get-count [v key]
+  (cond
+    (empty? v) 0
+    (get (first v) key) (get (first v) key)
+    :else (get-count (rest v) key)))
+
 (defn histogram-both []
   [:section.section>div.container>div.content
-   [:h2 "Goods (Reveived Login Sent)"]
+   [:h2 "Goods (Reveived -> Login -> Sent)"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
-     [:p (str goods)]
+     [:p {:key "good"} "goods" [:br] (str goods)]
      (for [[i g] (map-indexed vector goods)]
        (let [name (abbrev (key g))
-             rmks (good-marks (:rcv (val g)))
-             smks (good-marks (:snd (val g)))]
-         [:p {:key i} rmks name smks])))])
+             r (-> g val (get-count :rcv) good-marks)
+             s (-> g val (get-count :snd) good-marks)]
+         [:p {:key i} r " -> " name " -> " s])))])
 
 
 ;; -------------------------
