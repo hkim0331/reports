@@ -181,7 +181,7 @@
       [:div.column
        " "
        [:input {:id i
-                :placeholder (str min-mesg " 文字以上のメッセージ") 
+                :placeholder (str min-mesg " 文字以上のメッセージ")
                 :size 60}]
        [:button
         {:on-click

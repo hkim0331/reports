@@ -12,11 +12,10 @@
 - return key でメッセージ送信
 - login 名の最大幅で div
 - hot に時刻表示 -> get /users で最近アップデートの時刻をくっつけて持って来れれば可能。
-
-- バグ: Browse の random で上から何番目につけた goods が hot のその番目で出てしまう。
-  原因: id をループのインデックスにしているため
-  解決策: @users を [{:id id :login "login"} ...] で返したらどうか？
-  影響: @users = ["str" ...] として扱っている部分全部。
+- bug: Browse の random で上から何番目につけた goods が hot のその番目で出てしまう。
+原因: id をループのインデックスにしているため
+解決策: @users を [{:id id :login "login"} ...] で返したらどうか？
+影響: @users = ["str" ...] として扱っている部分全部。
 
 
 ## 0.8.3-BUGFIX
