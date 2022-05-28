@@ -183,13 +183,13 @@
        " "
        [:input {:id i
                 :placeholder (str min-mesg " 文字以上のメッセージ")
-                :size 60}]
+                :size 80}]
        [:button
         {:on-click
          #(let [obj (.getElementById js/document i)]
             (send-message! u (.-value obj))
-             ;; クリアしないが、その方が誰にコメントしたかわかる。
-            (set! (.-innerHTML obj) ""))} "good"]]])])
+             ;; クリアしない方が誰にコメントしたかわかる。
+            #_(set! (.-innerHTML obj) ""))} "good"]]])])
 
 ;; -------------------------
 ;; Goods
