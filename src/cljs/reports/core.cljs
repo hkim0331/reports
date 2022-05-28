@@ -13,8 +13,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.4")
-(def ^:private now "2022-05-28 20:43:31")
+(def ^:private version "0.8.5")
+(def ^:private now "2022-05-28 23:24:01")
 
 (defonce session (r/atom {:page :home}))
 
@@ -134,20 +134,22 @@
 ;; send-message! と browse-page で参照する。
 (def ^:private min-mesg 10)
 
+(defn- post-message [sender receiver message]
+  (POST "/api/save-message"
+          {:headers {"x-csrf-field" js/csrfToken}
+           :params {:snd js/login
+                    :rcv receiver
+                    :message message}
+           :handler #(js/alert (str "メッセージ「" message "」を送りました。"))
+           :error-handler #(.log js/console (str %))}))
+
 (defn send-message! [recv mesg]
   (cond (< (count mesg) min-mesg)
         (js/alert (str "メッセージは " min-mesg "文字以上です。"))
-        ;; debug
         (= recv js/login)
         (js/alert "自分自身へのメッセージは送れません。")
         :else
-        (POST "/api/save-message"
-          {:headers {"x-csrf-field" js/csrfToken}
-           :params {:snd js/login
-                    :rcv recv
-                    :message mesg}
-           :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
-           :error-handler #(.log js/console (str %))})))
+        (post-message js/login recv mesg)))
 
 (defn- report-url [user]
   (str js/hp_url user))
@@ -380,6 +382,12 @@
 (defn- filter-goods-by [f]
   (reverse (filter #(= js/login (f %)) @goods)))
 
+(defn- reply? [sender]
+  (when-let [msg (js/prompt "reply?")]
+    (if (empty? msg)
+       (js/alert "メッセージが空です。")
+       (post-message js/login sender msg))))
+
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
         sent     (filter-goods-by :snd)]
@@ -391,7 +399,11 @@
          [:p {:key (str "r" id)}
           (time-format (:timestamp g))
           [:br]
-          (:message g)])]
+          (:message g)
+          [:br]
+          [:button.button.is-success.is-small
+           {:on-click #(reply? (:snd g))}
+           "reply"]])]
       [:div.column
        [:h2 "Goods Sent"]
        (for [[id s] (map-indexed vector sent)]
@@ -421,37 +433,29 @@
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
 
-(defn histogram [f]
-  (map-indexed vector (->> (group-by f @goods)
-                           (map (fn [x] [(first x) (count (second x))])))))
+;; (defn histogram [f]
+;;   (map-indexed vector (->> (group-by f @goods)
+;;                            (map (fn [x] [(first x) (count (second x))])))))
 
-(defn histogram-received-page []
-  [:section.section>div.container>div.content
-   [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
-   [:p "誰が何通「いいね」を受け取っているか。"]
-   (for [[id [nm ct]] (histogram :rcv)]
-     [:p {:key id} (good-marks ct) " → " (abbrev nm)])])
+;; (defn- histogram-received-page []
+;;   [:section.section>div.container>div.content
+;;    [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
+;;    [:p "誰が何通「いいね」を受け取っているか。"]
+;;    (for [[id [nm ct]] (histogram :rcv)]
+;;      [:p {:key id} (good-marks ct) " → " (abbrev nm)])])
 
-(defn histogram-sent-page []
-  [:section.section>div.container>div.content
-   [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
-   [:p "誰が何通「いいね」を送ってくれたか。"]
-   (for [[id [nm ct]] (histogram :snd)]
-     [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
+;; (defn- histogram-sent-page []
+;;   [:section.section>div.container>div.content
+;;    [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
+;;    [:p "誰が何通「いいね」を送ってくれたか。"]
+;;    (for [[id [nm ct]] (histogram :snd)]
+;;      [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
 
-;; under construction
-
-(defn goods-f [f]
+(defn- goods-f [f]
   (->> (group-by f @goods)
        (map (fn [x] {:id (first x) f (count (second x))}))))
 
-(comment
-  @goods
-  (goods-f :rcv)
-  (goods-f :snd)
-  (group-by :id (concat (goods-f :rcv) (goods-f :snd))))
-
-(defn get-count [v key]
+(defn- get-count [v key]
   (cond
     (empty? v) 0
     (get (first v) key) (get (first v) key)
@@ -479,8 +483,8 @@
    :upload #'upload-page
    :browse #'browse-page
    :goods  #'goods-page
-   :histogram-sent #'histogram-sent-page
-   :histogram-received #'histogram-received-page
+  ;;  :histogram-sent #'histogram-sent-page
+  ;;  :histogram-received #'histogram-received-page
    :histogram-both #'histogram-both})
 
 (defn page []
@@ -496,8 +500,8 @@
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]
-    ["/sent" :histogram-sent]
-    ["/received" :histogram-received]
+    ;; ["/sent" :histogram-sent]
+    ;; ["/received" :histogram-received]
     ["/recv-sent" :histogram-both]]))
 
 (defn match-route [uri]
