@@ -23,7 +23,7 @@
 (defonce goods (r/atom []))
 
 ;; browse ページローカル。random と shuffle のどちらを表示するか。
-;; 初期値はどっち？
+;; 関数にローカルにできないか？
 (defonce random? (r/atom true))
 
 (defn- admin?
@@ -147,6 +147,7 @@
            :handler #(js/alert (str recv " にメッセージ「" mesg "」を送りました。"))
            :error-handler #(.log js/console (str %))})))
 
+;; FIXME: 関数ローカルに。
 (def ^:private filters {true shuffle false identity})
 
 (defn- report-url [user]
@@ -174,7 +175,7 @@
              :on-change #(swap! random? not)}]
     " hot "]
    [:br]
-   (for [[i u] (map-indexed vector ((filters @random?) @users))]
+   (for [[i u] ((filters @random?) (map-indexed vector @users))]
      [:div.columns {:key i}
       [:div.column.is-one-fifth
        [:a {:href (report-url u)} u]]
