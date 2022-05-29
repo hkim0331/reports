@@ -18,12 +18,27 @@
   hkimura より上にある人が前回のチェックの後に更新あった人ってわかる。
 - Goods/graph から各レポートをリンク（リンク先がバレる。嫌がるか？）
 - 再読み込みの後じゃないと good! が出ていかないことがある。
-- graph 表示される REPLY を除く。
+- graph に表示される REPLY を除く。
+  -> 簡単にやるにはループの内側で。
+  -> 効率を考えるにはループの前にフィルタする。
+- reports ページが下に長すぎ。head で切って、more? とかやるか？
+- 誰から誰にをすべて隠して、メッセージ本文だけ時系列で表示する。
+
+## 0.8.8 - 2022-05-29
+- users-all を l22.melt/api/logins から読む。
+  l22 もこの対応で 0.4.5.
+### Removed
+- 古い histogram 関連、users-all をハードコーディングしていた過去のコードを削除。
+### Fixme
+- CORS に抵触するのだが、
+  #"https://rp.melt.kyutech.ac.jp" だと許可されるのに、
+  #"https://rp.melt.kyutech.ac.jp.*" がダメっつう理由がわからない。
+
 
 ## 0.8.7 - 2022-05-29
 ### Fixed
-- Not Yet Send To バグ
-  -> disj じゃなく set/difference
+- Not Yet Send To バグ
+  -> core/disj じゃなく set/difference でした。
 ### Changed
 - deply.sh は `lein uberjar` を含む。
 

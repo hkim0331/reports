@@ -14,14 +14,16 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.7")
-(def ^:private now "2022-05-29 12:09:56")
+(def ^:private version "0.8.8")
+(def ^:private now "2022-05-29 14:14:20")
 
 (defonce session (r/atom {:page :home}))
 
 ;; サイトアクセス時にデータベースから取ってくる。
-(defonce users (r/atom []))
-(defonce goods (r/atom []))
+;; atom だと、ブラウザの reload で消えちゃう。
+(defonce users     (r/atom []))
+(defonce goods     (r/atom []))
+(defonce users-all (r/atom []))
 
 (defn- admin?
   "cljs のため。
@@ -81,7 +83,9 @@
       ;;  " | "
       ;;  [:a {:href "#/sent"} "histogram"]
        " | "
-       [:a {:href "#/recv-sent"} "graph"]]]]))
+       [:a {:href "#/recv-sent"} "graph"]
+       " | "
+       [:a {:href "#/messages"} "all messages"]]]]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -140,12 +144,12 @@
 
 (defn- post-message [sender receiver message & reply?]
   (POST "/api/save-message"
-          {:headers {"x-csrf-field" js/csrfToken}
-           :params {:snd (if reply? "REPLY" js/login)
-                    :rcv receiver
-                    :message message}
-           :handler #(js/alert (str "メッセージ「" message "」を送りました。"))
-           :error-handler #(.log js/console (str %))}))
+    {:headers {"x-csrf-field" js/csrfToken}
+     :params {:snd (if reply? "REPLY" js/login)
+              :rcv receiver
+              :message message}
+     :handler #(js/alert (str "メッセージ「" message "」を送りました。"))
+     :error-handler #(.log js/console (str %))}))
 
 (defn send-message! [recv mesg]
   (cond (< (count mesg) min-mesg)
@@ -202,185 +206,6 @@
 ;; -------------------------
 ;; Goods
 
-;; 2022-05-26 時点の select login from users;
-(def ^:private users-all
-  #{"TyanA"
-    "Iota"
-    "user1"
-    "user2"
-    "user3"
-    "ashikari"
-    "hkimura"
-    "nobody"
-    "azangy"
-    "agdp5623"
-    "noppo"
-    "ryo"
-    "manzju"
-    "hide"
-    "yutaro"
-    "tomas"
-    "K4ZE"
-    "yuzu"
-    "io2"
-    "sy_607"
-    "kake"
-    "bigblue"
-    "noya04"
-    "yata"
-    "PASUTA"
-    "nagi"
-    "kyutech1"
-    "Acaciapc"
-    "okaneman"
-    "Kotarou"
-    "tatu"
-    "tairanto"
-    "tmkrshi"
-    "username"
-    "yossi"
-    "maron"
-    "mona"
-    "kunimon"
-    "yucaron"
-    "erida"
-    "meychan"
-    "ken"
-    "a1234"
-    "every"
-    "ri"
-    "ejieji"
-    "naru"
-    "pocchama"
-    "gagagajp"
-    "smallcat"
-    "yoneshan"
-    "thios238"
-    "Ke15"
-    "hono345"
-    "syotyan"
-    "hayato"
-    "mmkk"
-    "yuto"
-    "nanagawa"
-    "Rice"
-    "aira.4_"
-    "tommy"
-    "mikan"
-    "uuucha"
-    "da.vinch"
-    "so-so"
-    "soiya0"
-    "alto"
-    "omoti"
-    "ck"
-    "iree"
-    "Tokei"
-    "taro"
-    "paru7"
-    "mu"
-    "Ryuuuuuu"
-    "aki"
-    "sonnnshi"
-    "nya_ko"
-    "agdy7774"
-    "Kkoga"
-    "jrvj82g7"
-    "Watako"
-    "harapeko"
-    "inari"
-    "hisaka64"
-    "mikiya"
-    "sazaesan"
-    "ryusetsu"
-    "makiken"
-    "01pima"
-    "Asagi02"
-    "G.master"
-    "q"
-    "reishi"
-    "R"
-    "deees"
-    "magane3"
-    "ryoya121"
-    "lara"
-    "Feno"
-    "mntzksn"
-    "tikuwa"
-    "nyan5103"
-    "unknown"
-    "yakuoto"
-    "tanaka"
-    "konbu"
-    "AN"
-    "coron"
-    "AE86"
-    "U1"
-    "yusuke"
-    "Nagassy"
-    "yukinobu"
-    "otokoume"
-    "zjgg6h"
-    "zono"
-    "FK06"
-    "taro0"
-    "sabakan"
-    "Q-taro"
-    "kamera26"
-    "t_ryoya"
-    "tomato"
-    "koosee"
-    "kei"
-    "mejia"
-    "komatsu"
-    "nabe"
-    "ta-ku46"
-    "takuto"
-    "yuyuyu"
-    "yota"
-    "banane"
-    "Ellla"
-    "sa-mon"
-    "my"
-    "nanasi"
-    "ramenman"
-    "hibiscus"
-    "waaai"
-    "fd0213"
-    "WiMorio"
-    "dansa"
-    "Badmin"
-    "aryy6428"
-    "masatogn"
-    "hyotenup"
-    "yuuuuu"
-    "rayleigh"
-    "taneri"
-    "kitiden"
-    "cheese"
-    "sibuiwa"
-    "burger"
-    "matsusou"
-    "ochi3"
-    "John Doe"
-    "irohasu"
-    "rei"
-    "harahi"
-    "shiro"
-    "mh"
-    "593"
-    "nekoneko"
-    "abc"
-    "tanatana"
-    "marusou"
-    "sirokuma"
-    "tourzz"
-    "Tensen"
-    "monchi"
-    "kouta"
-    "yuchan"
-    "birdman"})
-
 (defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
@@ -393,8 +218,8 @@
 (defn- reply? [sender]
   (when-let [msg (js/prompt "reply?")]
     (if (empty? msg)
-       (js/alert "メッセージが空です。")
-       (post-message js/login sender (str "(REPLY) " msg) true))))
+      (js/alert "メッセージが空です。")
+      (post-message js/login sender (str "(REPLY) " msg) true))))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
@@ -433,7 +258,7 @@
        (doall
         (for [[id u] (map-indexed
                       vector
-                      (difference users-all
+                      (difference @users-all
                                   (set (map #(:rcv %) sent))))]
           [:p {:key (str "n" id)}
            (if (neg? (.indexOf @users u))
@@ -450,24 +275,6 @@
   (if (admin? js/login)
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
-
-;; (defn histogram [f]
-;;   (map-indexed vector (->> (group-by f @goods)
-;;                            (map (fn [x] [(first x) (count (second x))])))))
-
-;; (defn- histogram-received-page []
-;;   [:section.section>div.container>div.content
-;;    [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
-;;    [:p "誰が何通「いいね」を受け取っているか。"]
-;;    (for [[id [nm ct]] (histogram :rcv)]
-;;      [:p {:key id} (good-marks ct) " → " (abbrev nm)])])
-
-;; (defn- histogram-sent-page []
-;;   [:section.section>div.container>div.content
-;;    [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
-;;    [:p "誰が何通「いいね」を送ってくれたか。"]
-;;    (for [[id [nm ct]] (histogram :snd)]
-;;      [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
 
 (defn- goods-f [f]
   (->> (group-by f @goods)
@@ -493,6 +300,13 @@
              s (-> g val (get-count :snd) good-marks)]
          [:p {:key i} r " → " name " → " s])))])
 
+(defn messages []
+ [:section.section>div.container>div.content
+  [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
+  [:p "作成中。"]
+  [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
+       その影響をしばらく確認する。"]
+  [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
 ;; -------------------------
 ;; Pages
 
@@ -502,9 +316,8 @@
    :upload #'upload-page
    :browse #'browse-page
    :goods  #'goods-page
-  ;;  :histogram-sent #'histogram-sent-page
-  ;;  :histogram-received #'histogram-received-page
-   :histogram-both #'histogram-both})
+   :histogram-both #'histogram-both
+   :messages #'messages})
 
 (defn page []
   [(pages (:page @session))])
@@ -519,9 +332,8 @@
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]
-    ;; ["/sent" :histogram-sent]
-    ;; ["/received" :histogram-received]
-    ["/recv-sent" :histogram-both]]))
+    ["/recv-sent" :histogram-both]
+    ["/messages"  :messages]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (replace uri #"^.*#" "")) "/")
@@ -558,9 +370,16 @@
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "reset-goods! error:" %)}))
 
+(defn- reset-users-all! []
+  (GET "https://l22.melt.kyutech.ac.jp/api/logins"
+    {:headers {"Accept" "application/json"}
+     :handler #(reset! users-all (set %))
+     :error-handler #(println (str "error:" %))}))
+
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
   (reset-users!)
   (reset-goods!)
+  (reset-users-all!)
   (mount-components))
