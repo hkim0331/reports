@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.7-SNAPSHOT")
-(def ^:private now "2022-05-29 10:11:08")
+(def ^:private version "0.8.7")
+(def ^:private now "2022-05-29 12:09:56")
 
 (defonce session (r/atom {:page :home}))
 
@@ -404,11 +404,9 @@
       [:li "Goods Received に表示される good! には reply で返信できます。"]
       [:li "返信のメッセージは Goods Sent に記録されない。"]
       [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
-            reply ボタンがない。"]
-      [:li "Not Yet Send To は自分が一度も good! を出してない人のリスト。
-            バグってるな。good! した人をフィルタ忘れているかな？"]
+            reply ボタンないはず。"]
+      [:li "Not Yet Send To は自分が一度も good! を出してない人のリスト。"]
       [:li "青色のリンクで表示されるのは一度以上アップロードした人。
-            アップロードがエラーになっても青になる。
             黒はまだ何もアップロードしない人。"]]
      [:div.columns
       [:div.column

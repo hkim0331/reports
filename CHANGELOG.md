@@ -18,12 +18,14 @@
   hkimura より上にある人が前回のチェックの後に更新あった人ってわかる。
 - Goods/graph から各レポートをリンク（リンク先がバレる。嫌がるか？）
 - 再読み込みの後じゃないと good! が出ていかないことがある。
-- graph に REPLY が表示されている。
+- graph 表示される REPLY を除く。
 
-## 0.8.7-SNAPSHOT
+## 0.8.7 - 2022-05-29
 ### Fixed
 - Not Yet Send To バグ
   -> disj じゃなく set/difference
+### Changed
+- deply.sh は `lein uberjar` を含む。
 
 ## 0.8.6 - 2022-05-29
 ### Added
