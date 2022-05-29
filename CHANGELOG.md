@@ -20,7 +20,7 @@
 - 再読み込みの後じゃないと good! が出ていかないことがある。
 - graph に REPLY が表示されている。
 
-## 0.8.7-SNAPSHOT
+## 0.8.7 - 2022-05-29
 ### Fixed
 - Not Yet Send To バグ
   -> disj じゃなく set/difference
