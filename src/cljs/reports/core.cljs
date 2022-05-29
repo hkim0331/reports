@@ -13,8 +13,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.6")
-(def ^:private now "2022-05-29 09:51:58")
+(def ^:private version "0.8.7-SNAPSHOT")
+(def ^:private now "2022-05-29 10:11:08")
 
 (defonce session (r/atom {:page :home}))
 
@@ -393,10 +393,11 @@
         sent     (filter-goods-by :snd)]
     [:section.section>div.container>div.content
      [:ul
+      [:li "good! が飛ばない時はページを再読み込みしてからやり直し（ゴメンの絵文字）"]
       [:li "good! に reply で返信できます。"]
       [:li "返信のメッセージには (REPLY) がつき、
             Goods Sent に記録されず、再返信できません。"]
-      [:li "Not Yet Send To は一度も出してない人のリストだけど、バグってる？"]]
+      [:li "Not Yet Send To は自分が一度も good! を出してない人のリスト。バグってるな。"]]
      [:div.columns
       [:div.column
        [:h2 "Goods Received"]
