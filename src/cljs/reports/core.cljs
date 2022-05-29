@@ -1,7 +1,7 @@
 (ns reports.core
   (:require
    [ajax.core :refer [GET POST]]
-   [clojure.string :as string]
+   [clojure.string :refer [replace starts-with?]]
    ;;[markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
@@ -13,8 +13,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.5")
-(def ^:private now "2022-05-28 23:24:01")
+(def ^:private version "0.8.6")
+(def ^:private now "2022-05-29 09:51:58")
 
 (defonce session (r/atom {:page :home}))
 
@@ -75,7 +75,7 @@
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
       [:li [:a {:href "#/upload"} "Upload"]]
-      [:li [:a {:href "#/browse"} "Browse"]]
+      [:li [:a {:href "#/browse"} "Browse & Comments"]]
       [:li [:a {:href "#/goods"}  "Goods"]
       ;;  " | "
       ;;  [:a {:href "#/sent"} "histogram"]
@@ -134,10 +134,10 @@
 ;; send-message! と browse-page で参照する。
 (def ^:private min-mesg 10)
 
-(defn- post-message [sender receiver message]
+(defn- post-message [sender receiver message & reply?]
   (POST "/api/save-message"
           {:headers {"x-csrf-field" js/csrfToken}
-           :params {:snd js/login
+           :params {:snd (if reply? "REPLY" js/login)
                     :rcv receiver
                     :message message}
            :handler #(js/alert (str "メッセージ「" message "」を送りました。"))
@@ -156,7 +156,7 @@
 
 (defn browse-page []
   [:section.section>div.container>div.content
-   [:h2 "Browse"]
+   [:h2 "Browse & Comments"]
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
     (str (count @users))
     " 人。残りは？"
@@ -386,12 +386,17 @@
   (when-let [msg (js/prompt "reply?")]
     (if (empty? msg)
        (js/alert "メッセージが空です。")
-       (post-message js/login sender msg))))
+       (post-message js/login sender (str "(REPLY) " msg) true))))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
         sent     (filter-goods-by :snd)]
     [:section.section>div.container>div.content
+     [:ul
+      [:li "good! に reply で返信できます。"]
+      [:li "返信のメッセージには (REPLY) がつき、
+            Goods Sent に記録されず、再返信できません。"]
+      [:li "Not Yet Send To は一度も出してない人のリストだけど、バグってる？"]]
      [:div.columns
       [:div.column
        [:h2 "Goods Received"]
@@ -401,9 +406,10 @@
           [:br]
           (:message g)
           [:br]
-          [:button.button.is-success.is-small
-           {:on-click #(reply? (:snd g))}
-           "reply"]])]
+          (when-not (starts-with? (:message g) "(REPLY)")
+            [:button.button.is-success.is-small
+             {:on-click #(reply? (:snd g))}
+             "reply"])])]
       [:div.column
        [:h2 "Goods Sent"]
        (for [[id s] (map-indexed vector sent)]
@@ -505,7 +511,7 @@
     ["/recv-sent" :histogram-both]]))
 
 (defn match-route [uri]
-  (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")
+  (->> (or (not-empty (replace uri #"^.*#" "")) "/")
        (reitit/match-by-path router)
        :data
        :name))
