@@ -304,8 +304,9 @@
  [:section.section>div.container>div.content
   [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
   [:p "作成中。"]
-  [:p "この前の users-all の変更(0.8.8)が大きかったので、その影響をしばらく確認する。"]])
-
+  [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
+       その影響をしばらく確認する。"]
+  [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
 ;; -------------------------
 ;; Pages
 
@@ -369,11 +370,10 @@
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "reset-goods! error:" %)}))
 
-(def users-test (r/atom []))
-
 (defn- reset-users-all! []
   (GET "https://l22.melt.kyutech.ac.jp/api/logins"
-    {:handler #(reset! users-all (set %))
+    {:headers {"Accept" "application/json"}
+     :handler #(reset! users-all (set %))
      :error-handler #(println (str "error:" %))}))
 
 (defn init! []

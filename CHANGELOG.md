@@ -29,11 +29,16 @@
   l22 もこの対応で 0.4.5.
 ### Removed
 - 古い histogram 関連、users-all をハードコーディングしていた過去のコードを削除。
+### Fixme
+- CORS に抵触するのだが、
+  #"https://rp.melt.kyutech.ac.jp" だと許可されるのに、
+  #"https://rp.melt.kyutech.ac.jp.*" がダメっつう理由がわからない。
+
 
 ## 0.8.7 - 2022-05-29
 ### Fixed
-- Not Yet Send To バグ
-  -> disj じゃなく set/difference
+- Not Yet Send To バグ
+  -> core/disj じゃなく set/difference でした。
 ### Changed
 - deply.sh は `lein uberjar` を含む。
 
