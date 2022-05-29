@@ -206,32 +206,6 @@
 ;; -------------------------
 ;; Goods
 
-;; 2022-05-26 時点の select login from users;
-;; FIXME: ファイルから読むなどできないか？
-;; (def ^:private users-all
-;;   #{"TyanA" "Iota" "user1" "user2" "user3" "ashikari" "hkimura" "nobody"
-;;     "azangy" "agdp5623" "noppo" "ryo" "manzju" "hide" "yutaro" "tomas" "K4ZE"
-;;     "yuzu" "io2" "sy_607" "kake" "bigblue" "noya04" "yata" "PASUTA" "nagi"
-;;     "kyutech1" "Acaciapc" "okaneman" "Kotarou" "tatu" "tairanto" "tmkrshi"
-;;     "username" "yossi" "maron" "mona" "kunimon" "yucaron" "erida" "meychan"
-;;     "ken" "a1234" "every" "ri" "ejieji" "naru" "pocchama" "gagagajp" "smallcat"
-;;     "yoneshan" "thios238" "Ke15" "hono345" "syotyan" "hayato" "mmkk" "yuto"
-;;     "nanagawa" "Rice" "aira.4_" "tommy" "mikan" "uuucha" "da.vinch" "so-so"
-;;     "soiya0" "alto" "omoti" "ck" "iree" "Tokei" "taro" "paru7" "mu"
-;;     "Ryuuuuuu" "aki" "sonnnshi" "nya_ko" "agdy7774" "Kkoga" "jrvj82g7"
-;;     "Watako" "harapeko" "inari" "hisaka64" "mikiya" "sazaesan" "ryusetsu"
-;;     "makiken" "01pima" "Asagi02" "G.master" "q" "reishi" "R" "deees" "magane3"
-;;     "ryoya121" "lara" "Feno" "mntzksn" "tikuwa" "nyan5103" "unknown" "yakuoto"
-;;     "tanaka" "konbu" "AN" "coron" "AE86" "U1" "yusuke" "Nagassy" "yukinobu"
-;;     "otokoume" "zjgg6h" "zono" "FK06" "taro0" "sabakan" "Q-taro""kamera26"
-;;     "t_ryoya" "tomato" "koosee" "kei" "mejia" "komatsu" "nabe" "ta-ku46"
-;;     "takuto" "yuyuyu" "yota" "banane" "Ellla" "sa-mon" "my" "nanasi"
-;;     "ramenman" "hibiscus" "waaai" "fd0213" "WiMorio" "dansa" "Badmin"
-;;     "aryy6428" "masatogn" "hyotenup" "yuuuuu" "rayleigh" "taneri" "kitiden"
-;;     "cheese" "sibuiwa" "burger" "matsusou" "ochi3" "John Doe" "irohasu" "rei"
-;;     "harahi" "shiro" "mh" "593" "nekoneko" "abc" "tanatana" "marusou"
-;;     "sirokuma" "tourzz" "Tensen" "monchi" "kouta" "yuchan" "birdman"})
-
 (defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
@@ -302,24 +276,6 @@
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
 
-;; (defn histogram [f]
-;;   (map-indexed vector (->> (group-by f @goods)
-;;                            (map (fn [x] [(first x) (count (second x))])))))
-
-;; (defn- histogram-received-page []
-;;   [:section.section>div.container>div.content
-;;    [:h2 "Goods " [:a {:href "/r/#/sent"} "Sent"] "/Received"]
-;;    [:p "誰が何通「いいね」を受け取っているか。"]
-;;    (for [[id [nm ct]] (histogram :rcv)]
-;;      [:p {:key id} (good-marks ct) " → " (abbrev nm)])])
-
-;; (defn- histogram-sent-page []
-;;   [:section.section>div.container>div.content
-;;    [:h2 "Goods Sent/" [:a {:href "/r/#/received"} "Received"]]
-;;    [:p "誰が何通「いいね」を送ってくれたか。"]
-;;    (for [[id [nm ct]] (histogram :snd)]
-;;      [:p {:key id} (abbrev nm) " → " (good-marks ct)])])
-
 (defn- goods-f [f]
   (->> (group-by f @goods)
        (map (fn [x] {:id (first x) f (count (second x))}))))
@@ -344,6 +300,12 @@
              s (-> g val (get-count :snd) good-marks)]
          [:p {:key i} r " → " name " → " s])))])
 
+(defn messages []
+ [:section.section>div.container>div.content
+  [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
+  [:p "作成中。"]
+  [:p "この前の users-all の変更(0.8.8)が大きかったので、その影響をしばらく確認する。"]])
+
 ;; -------------------------
 ;; Pages
 
@@ -353,9 +315,8 @@
    :upload #'upload-page
    :browse #'browse-page
    :goods  #'goods-page
-  ;;  :histogram-sent #'histogram-sent-page
-  ;;  :histogram-received #'histogram-received-page
-   :histogram-both #'histogram-both})
+   :histogram-both #'histogram-both
+   :messages #'messages})
 
 (defn page []
   [(pages (:page @session))])
@@ -370,9 +331,8 @@
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]
-    ;; ["/sent" :histogram-sent]
-    ;; ["/received" :histogram-received]
-    ["/recv-sent" :histogram-both]]))
+    ["/recv-sent" :histogram-both]
+    ["/messages"  :messages]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (replace uri #"^.*#" "")) "/")
