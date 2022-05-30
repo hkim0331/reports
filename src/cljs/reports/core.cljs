@@ -190,7 +190,9 @@
    (for [[i u] ((filters @random?) (map-indexed vector @users))]
      [:div.columns {:key i}
       [:div.column.is-one-fifth
-       [:a {:href (report-url u)} u]]
+       [:a {:href (report-url u)
+            :class (if (= u js/login) "x" "y")}
+           u]]
       [:div.column
        " "
        [:input {:id i
