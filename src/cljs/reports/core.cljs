@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.8")
-(def ^:private now "2022-05-29 14:14:20")
+(def ^:private version "0.8.9")
+(def ^:private now "2022-05-30 22:27:51")
 
 (defonce session (r/atom {:page :home}))
 
@@ -190,7 +190,9 @@
    (for [[i u] ((filters @random?) (map-indexed vector @users))]
      [:div.columns {:key i}
       [:div.column.is-one-fifth
-       [:a {:href (report-url u)} u]]
+       [:a {:href (report-url u)
+            :class (if (= u js/login) "x" "y")}
+           u]]
       [:div.column
        " "
        [:input {:id i
@@ -290,7 +292,13 @@
 (defn histogram-both []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
-   [:p "ログイン名、伏せ字にしない方が良くね？人気のページにリンクで飛ばしたい。"]
+   [:p "ログイン名、伏せ字にしない方が良くね？"
+    "伏字のまま人気のページにリンクで飛ばしたいんだけど、"
+    "ユーザ名、リンク先でわかっちゃうんだよね。"
+    "授業で学生番号や名前わかんないようにしててそれでも不十分かね？"
+    "俺はそういう匿名の使い方は悪と思う。"
+    "自分の作品に自信のある人は実名で、実名出せない、うしろめたい理由がある人は匿名にする？"
+    "いいのはどっちか？"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
