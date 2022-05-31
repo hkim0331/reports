@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.9")
-(def ^:private now "2022-05-30 22:27:51")
+(def ^:private version "0.8.10")
+(def ^:private now "2022-05-31 09:22:41")
 
 (defonce session (r/atom {:page :home}))
 
@@ -191,7 +191,7 @@
      [:div.columns {:key i}
       [:div.column.is-one-fifth
        [:a {:href (report-url u)
-            :class (if (= u "hkimura") "x" "y")}
+            :class (if (= u "hkimura") "hkimura" "other")}
            u]]
       [:div.column
        " "
