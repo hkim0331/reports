@@ -33,3 +33,5 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+a.x { color: red;}
+a.x:hover {font-size:larger;}
