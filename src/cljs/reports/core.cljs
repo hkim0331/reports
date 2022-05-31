@@ -85,7 +85,9 @@
        " | "
        [:a {:href "#/recv-sent"} "graph"]
        " | "
-       [:a {:href "#/messages"} "all messages"]]]]))
+       [:a {:href "#/messages"} "all messages"]]]
+     [:hr]
+     "hkimura, " version]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
