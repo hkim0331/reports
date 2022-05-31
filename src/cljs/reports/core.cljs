@@ -191,7 +191,7 @@
      [:div.columns {:key i}
       [:div.column.is-one-fifth
        [:a {:href (report-url u)
-            :class (if (= u js/login) "x" "y")}
+            :class (if (= u "hkimura") "x" "y")}
            u]]
       [:div.column
        " "
