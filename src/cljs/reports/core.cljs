@@ -217,11 +217,13 @@
 (defn- filter-goods-by [f]
   (reverse (filter #(= js/login (f %)) @goods)))
 
-(defn- reply? [sender]
+(defn- reply? [{:keys [snd message]}]
   (when-let [msg (js/prompt "reply?")]
     (if (empty? msg)
       (js/alert "メッセージが空です。")
-      (post-message js/login sender (str "(REPLY) " msg) true))))
+      (post-message js/login
+                    snd
+                    (str "(REPLY) " msg "(Re: " message ")") true))))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
@@ -246,7 +248,7 @@
           [:br]
           (when-not (starts-with? (:message g) "(REPLY)")
             [:button.button.is-success.is-small
-             {:on-click #(reply? (:snd g))}
+             {:on-click #(reply? g)}
              "reply"])])]
       [:div.column
        [:h2 "Goods Sent"]
