@@ -1,4 +1,4 @@
-(defproject reports "0.8.1"
+(defproject reports "0.9.0"
 
   :description "reports for literacy 2022"
   :url "https://rp.melt.kyutech.ac.jp"
@@ -60,7 +60,6 @@
 
   :profiles
   {:uberjar {:omit-source true
-
              :prep-tasks ["compile" ["run" "-m" "shadow.cljs.devtools.cli" "release" "app"]]
              :aot :all
              :uberjar-name "reports.jar"
@@ -90,6 +89,5 @@
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:jvm-opts ["-Dconf=test-config.edn"]
                   :resource-paths ["env/test/resources"]}
-
    :profiles/dev {}
    :profiles/test {}})

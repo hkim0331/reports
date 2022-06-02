@@ -33,3 +33,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+a.hkimura       { color: red;}
+a.hkimura:hover { font-size: larger;
+                  color: white;
+                  background-color: red;}

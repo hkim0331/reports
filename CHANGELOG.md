@@ -7,11 +7,107 @@
   /login にリダイレクトする
 - button.is-primary.is-small でも大きすぎる
 - is-fifth でも大きすぎる。
-- good 送信後の input フィールドのクリア
+- good 送信後の input フィールドのクリア(クリアしない方がいい)
+- login 名の最大幅で div
 - feedback upload
 - return key でメッセージ送信
-- login 名の最大幅で div
 - hot に時刻表示
+  -> get /users で最近アップデートの時刻をくっつけて持って来れれば可能だが、
+  0.8.3 のソリューションが影響を受ける。やめとこ。
+  -> hkimura が毎日数回以上、レポートページを更新すると、hot にしたときに
+  hkimura より上にある人が前回のチェックの後に更新あった人ってわかる。
+- Goods/graph から各レポートをリンク（リンク先がバレる。嫌がるか？）
+- 再読み込みの後じゃないと good! が出ていかないことがある。
+- graph に表示される REPLY を除く。
+  -> 簡単にやるにはループの内側で。
+  -> 効率を考えるにはループの前にフィルタする。
+- reports ページが下に長すぎ。head で切って、more? とかやるか？
+- 誰から誰にをすべて隠して、メッセージ本文だけ時系列で表示する。
+
+- TDD
+- db/functions の引数
+
+## 0.9.0 - 2022-06-02
+- l.melt にデプロイ
+- タイトルを login のリンクの横に表示する
+  -> title 書いてる人少ない。やめるか。
+
+## 0.9.0-SNAPSHOT
+- dswcj 通りの (migrate) は期待通りに行かず、
+  lein run migrate 20220602044123 を
+  実行した。
+- core.clj/upsert
+- /api/titles
+- display titles
+
+## 0.8.12 - 2022-05-31
+### Added
+- about 見ないでも login したらバージョンわかるように。
+- コミットしたら core.clj は上書きされてしまうか(vscode)
+  -> しない。やっぱ、何かのショートカットキーをミスって打ってるんじゃないかなあ。
+- REPLY に元メッセージを引用する。
+- 自分のリンクは赤表示。
+
+## 0.8.11 - 2022-05-31
+### Added
+- reply メッセージにオリジナルメッセージを (Re: ) で囲んでアペンド。
+
+## 0.8.10 - 2022-05-31
+### Changed
+- 0.8.9 を変更。hkimura のみ赤色で。
+
+## 0.8.9 - 2022-05-30
+### Changed
+- Browse & Comments 自分のリンクを赤で、ホバリングしたら larger
+
+## 0.8.8 - 2022-05-29
+- users-all を l22.melt/api/logins から読む。
+  l22 もこの対応で 0.4.5.
+### Removed
+- 古い histogram 関連、users-all をハードコーディングしていた過去のコードを削除。
+### Fixme
+- CORS に抵触するのだが、
+  #"https://rp.melt.kyutech.ac.jp" だと許可されるのに、
+  #"https://rp.melt.kyutech.ac.jp.*" がダメっつう理由がわからない。
+
+
+## 0.8.7 - 2022-05-29
+### Fixed
+- Not Yet Send To バグ
+  -> core/disj じゃなく set/difference でした。
+### Changed
+- deply.sh は `lein uberjar` を含む。
+
+## 0.8.6 - 2022-05-29
+### Added
+- 緑のリプライするとオリジナルメッセージの送信者がわかってしまう。
+  返事しない限り、わからないんで、OK にしとこ。anonymous などにするのは可能。
+  先にユーザアカウント作っておくか。
+  -> 送信者 REPLY にする。
+- REPLY メッセージへの reply はできないこととする。
+
+## 0.8.5 - 2022-05-28
+- goods received に返事書きたい。誰が送信したかを分からないままで返信
+  -> CLJS の js/propt で実装。
+
+## 0.8.4 - 2022-05-28
+- browse-page は hot をデフォルトにする。
+- Goods | graph, sent/received 別ページよりも both がいい。
+  内容に対してコードが複雑すぎる。再帰が敗北感を感じる。
+
+## 0.8.3 - 2022-05-28
+### Fixed
+- goods が送れなかった理由はなんだ？ hkimura だけ？
+  -> ブラウザのキャッシュか？
+- Browse の random で上から何番目につけた goods が hot のその番目で出てしまう。
+  -> max-index の仕方を変更して対応した。
+
+## 0.8.2 - 2022-05-27
+- いいねとユーザの順番を sent/receive で変える。
+- both が良くないか？
+- refactor: ルーティング整理
+### Removed
+- 使わなくなった関数、アップデート前にコメントアウトした関数を削除した。
 
 ## 0.8.1 - 2022-05-27
 - goods sent/received を別ページに。

@@ -3,7 +3,6 @@
    [clojure.java.io :as io]
    [clojure.java.shell :refer [sh]]
    [clojure.tools.logging :as log]
-   ;;[hato.client :as hc]
    [reports.config :refer [env]]
    [reports.db.core :as db]
    [reports.layout :as layout]
@@ -17,35 +16,53 @@
       (str public "/" login)
       (str public "/" login "/" subdir))))
 
-(defn mkdir-p [dir]
-  (sh "mkdir" "-p" dir))
+;; (defn mkdir-p [dir]
+;;   (sh "mkdir" "-p" dir))
 
-;; destructuring
+(defn find-title
+  "テキストファイル f 中の <title> ~ </title> に挟まれる文字列を返す。
+   取れないときは戻りは空文字列。一般化する？"
+  [f]
+  (try
+    (-> (re-find #"<title>[^<]*" (slurp f))
+        (subs (count "<title>")))
+    (catch Exception _ "")))
+
+(defn upsert! [login title]
+ (if-let [_ (db/find-title {:login login})]
+   (db/update-title! {:login login :title title})
+   (db/insert-title! {:login login :title title})))
+
 (defn upload!
   "受け取った multiplart-params を login/{id}/filename にセーブする。
-   id = html の時は login 直下とする。[need polish up]"
+   id = html の時は login 直下とする。"
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)]
     (log/debug login type filename tempfile size)
     (log/debug dir)
     (try
-      (mkdir-p dir)
       (when (empty? filename)
         (throw (Exception. "did not select a file.")))
+      (sh "mkdir" "-p" dir)
       (io/copy tempfile (io/file (str dir "/" filename)))
       (db/create-upload! {:login login :filename filename})
+
+      ;; 0.9.0, insert title into `titles` table
+      (when (= "index.html" filename)
+        (log/debug "when")
+        (when-let [title (find-title tempfile)]
+          (log/debug  "when-let")
+          (upsert! login title)))
+
+      ;; is this flash displayed?
       (-> (response/found "/r/#/upload")
           (assoc :flash (str "uploaded " filename)))
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
 
-;; (defn logins [_]
-;;   (let [ret (db/get-logins)]
-;;     (response/ok ret)))
-
 (defn users
-  "distinct users order by uploaded_at"
+  "distinct users order by `uploaded_at`"
   [_]
   (->> (db/logins-by-reverse-uploaded)
        (map :login)
@@ -59,29 +76,18 @@
                      :message message})
   (response/ok "sent"))
 
-;; (defn goods-to [{{:keys [user]} :path-params}]
-;;   (response/ok (db/rcvs {:rcv user})))
-
-;; (defn goods-from [{{:keys [user]} :path-params}]
-;;   (response/ok (db/snds {:snd user})))
-
 (defn goods [_]
   (response/ok (db/goods)))
 
+(defn titles [_]
+  (response/ok (db/titles)))
+
 (defn services-routes []
-  ["/api"
-   {:middleware [middleware/wrap-restricted
-                 middleware/wrap-csrf
-                 middleware/wrap-formats]}
-   ["/ping" {:get (fn [_]
-                    (response/ok {:status 200
-                                  :body "pong"}))}]
+  ["/api" {:middleware [middleware/wrap-restricted
+                        middleware/wrap-csrf
+                        middleware/wrap-formats]}
    ["/upload" {:post upload!}]
-  ;;  ["/logins" {:get logins}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
-  ;;  ["/goods-to/:user"   {:get goods-to}]
-  ;;  ["/goods-from/:user" {:get goods-from}]
-   ["/goods" {:get goods}]])
-   ;;["/users-hot"    {:get users-hot}]
-   ;;["/users-random" {:get users-random}]])
+   ["/goods"  {:get goods}]
+   ["/titles" {:get titles}]])

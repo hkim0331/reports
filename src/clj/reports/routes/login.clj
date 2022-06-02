@@ -32,11 +32,12 @@
       ;;(dissoc :session))) ; NG. マジで？ マジのようだ。
 
 (defn login-routes []
-  [""
-   {:middleware [middleware/wrap-csrf
-                 middleware/wrap-formats]}
+  ["" {:middleware [middleware/wrap-csrf
+                    middleware/wrap-formats]}
    ["/" {:get please-login-page}] ;; login-page にするとエラーの理由は？
+   ["/ping" {:get (fn [_] response/ok {:status 200
+                                       :body {:ping "pong"}})}]
    ["/login"  {:get  login-page
                :post login!}]
-   ["/logout" {:get logout!}]])
+   ["/logout" {:get  logout!}]])
 
