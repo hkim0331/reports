@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.8.10")
-(def ^:private now "2022-05-31 09:22:41")
+(def ^:private version "0.8.12")
+(def ^:private now "2022-05-31 20:52:36")
 
 (defonce session (r/atom {:page :home}))
 
@@ -85,7 +85,9 @@
        " | "
        [:a {:href "#/recv-sent"} "graph"]
        " | "
-       [:a {:href "#/messages"} "all messages"]]]]))
+       [:a {:href "#/messages"} "all messages"]]]
+     [:hr]
+     "hkimura, " version]))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -217,11 +219,13 @@
 (defn- filter-goods-by [f]
   (reverse (filter #(= js/login (f %)) @goods)))
 
-(defn- reply? [sender]
+(defn- reply? [{:keys [snd message]}]
   (when-let [msg (js/prompt "reply?")]
     (if (empty? msg)
       (js/alert "メッセージが空です。")
-      (post-message js/login sender (str "(REPLY) " msg) true))))
+      (post-message js/login
+                    snd
+                    (str "(REPLY) " msg "(Re: " message ")") true))))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
@@ -246,7 +250,7 @@
           [:br]
           (when-not (starts-with? (:message g) "(REPLY)")
             [:button.button.is-success.is-small
-             {:on-click #(reply? (:snd g))}
+             {:on-click #(reply? g)}
              "reply"])])]
       [:div.column
        [:h2 "Goods Sent"]
@@ -292,13 +296,10 @@
 (defn histogram-both []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
-   [:p "ログイン名、伏せ字にしない方が良くね？"
-    "伏字のまま人気のページにリンクで飛ばしたいんだけど、"
-    "ユーザ名、リンク先でわかっちゃうんだよね。"
-    "授業で学生番号や名前わかんないようにしててそれでも不十分かね？"
-    "俺はそういう匿名の使い方は悪と思う。"
-    "自分の作品に自信のある人は実名で、実名出せない、うしろめたい理由がある人は匿名にする？"
-    "いいのはどっちか？"]
+   [:p "ログイン名、希望により伏せ字なんだが、どうですか？
+        人気のページがどんなページか見たくない？
+        たくさん good! をつけてくれる優しいお兄さんお姉さんのページ、見たくない？
+        そういうの、刺激になると思うんだけどなあ。"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
