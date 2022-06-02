@@ -12,8 +12,6 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-
-
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
 (def ^:private version "0.9.0")
@@ -33,6 +31,11 @@
    本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
   [user]
   (= "hkimura" user))
+
+(defn- abbrev [s]
+  (if (admin? js/login)
+    s
+    (concat (first s) (map (fn [_] "?") (rest s)))))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -147,10 +150,10 @@
 ;; send-message! と browse-page で参照する。
 (def ^:private min-mesg 10)
 
-(defn- post-message [sender receiver message & reply?]
+(defn- post-message [sender receiver message]
   (POST "/api/save-message"
     {:headers {"x-csrf-field" js/csrfToken}
-     :params {:snd (if reply? "REPLY" js/login)
+     :params {:snd sender
               :rcv receiver
               :message message}
      :handler #(js/alert (str "メッセージ「" message "」を送りました。"))
@@ -230,7 +233,7 @@
       (js/alert "メッセージが空です。")
       (post-message js/login
                     snd
-                    (str "(REPLY) " msg "(Re: " message ")") true))))
+                    (str msg "(Re: " message ")")))))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
@@ -241,27 +244,26 @@
       [:li "返信のメッセージは Goods Sent に記録されない。"]
       [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
             reply ボタンないはず。"]
-      [:li "Not Yet Send To は自分が一度も good! を出してない人のリスト。"]
-      [:li "青色のリンクで表示されるのは一度以上アップロードした人。
+      [:li "Not Yet Send To は自分が一度も good! を出してない人のリスト。
+            青色のリンクで表示されるのは一度以上アップロードした人。
             黒はまだ何もアップロードしない人。"]]
      [:div.columns
       [:div.column
        [:h2 "Goods Received"]
        (for [[id g] (map-indexed vector received)]
          [:p {:key (str "r" id)}
-          (time-format (:timestamp g))
+          "from " [:b (abbrev (:snd g))] ", " (time-format (:timestamp g)) ","
           [:br]
           (:message g)
           [:br]
-          (when-not (starts-with? (:message g) "(REPLY)")
-            [:button.button.is-success.is-small
-             {:on-click #(reply? g)}
-             "reply"])])]
+          [:button.button.is-success.is-small
+            {:on-click #(reply? g)}
+            "reply"]])]
       [:div.column
        [:h2 "Goods Sent"]
        (for [[id s] (map-indexed vector sent)]
          [:p {:key (str "g" id)}
-          "to " [:b (:rcv s)] ", " (time-format (:timestamp s))
+          "to " [:b (:rcv s)] ", " (time-format (:timestamp s)) ","
           [:br]
           (:message s)])]
       [:div.column
@@ -282,10 +284,7 @@
 (defn good-marks [n]
   (repeat n "👍"))
 
-(defn abbrev [s]
-  (if (admin? js/login)
-    s
-    (concat (first s) (map (fn [_] "?") (rest s)))))
+
 
 (defn- goods-f [f]
   (->> (group-by f @goods)
