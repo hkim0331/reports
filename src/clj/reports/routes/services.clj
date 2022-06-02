@@ -19,6 +19,20 @@
 ;; (defn mkdir-p [dir]
 ;;   (sh "mkdir" "-p" dir))
 
+(defn find-title
+  "テキストファイル f 中の <title> ~ </title> に挟まれる文字列を返す。
+   取れないときは戻りは空文字列。一般化する？"
+  [f]
+  (try
+    (-> (re-find #"<title>[^<]*" (slurp f))
+        (subs (count "<title>")))
+    (catch Exception _ "")))
+
+(defn upsert! [login title]
+ (if-let [_ (db/find-title login)]
+   (db/update-title! {:login login :title title})
+   (db/insert-title! {:login login :title title})))
+
 (defn upload!
   "受け取った multiplart-params を login/{id}/filename にセーブする。
    id = html の時は login 直下とする。"
@@ -33,7 +47,11 @@
       (sh "mkdir" "-p" dir)
       (io/copy tempfile (io/file (str dir "/" filename)))
       (db/create-upload! {:login login :filename filename})
-
+      ;; 0.9.0
+      (when (= "index.html" filename)
+        (when-let [title (find-title tempfile)]
+          (upsert! login title)))
+      ;; is this flash displayed?
       (-> (response/found "/r/#/upload")
           (assoc :flash (str "uploaded " filename)))
       (catch Exception e

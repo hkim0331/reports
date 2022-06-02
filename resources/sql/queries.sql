@@ -35,3 +35,19 @@ WHERE snd = :snd order by id desc
 -- :name goods :? :*
 -- :doc retrieve goods all
 SELECT * FROM goods
+
+-- :name insert-title! :! :n
+-- :doc insert login's report title
+INSERT INTO titles
+(login, title)
+VALUES (:login, :title)
+
+-- :name update-title! :! :n
+-- :doc update login's existing report title
+UPDATE titles SET title = :title
+WHERE login = :login
+
+-- :name find-title :? :1
+-- :doc find login's report title
+SELECT * FROM titles
+WHERE login = :login

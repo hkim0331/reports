@@ -29,6 +29,11 @@
 - db/functions の引数
 
 
+## 0.9.0-SNAPSHOT
+- dswcj 通りの (migrate) は期待通りに行かず、
+  lein run migrate 20220602044123 を
+  実行した。
+
 ## 0.8.12 - 2022-05-31
 ### Added
 - about 見ないでも login したらバージョンわかるように。
