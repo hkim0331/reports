@@ -36,6 +36,13 @@ WHERE snd = :snd order by id desc
 -- :doc retrieve goods all
 SELECT * FROM goods
 
+-----------------------------------
+  titles
+-----------------------------------
+-- :name titles
+-- :doc fetch all titles
+SELECT * FROM titles
+
 -- :name insert-title! :! :n
 -- :doc insert login's report title
 INSERT INTO titles

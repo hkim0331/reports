@@ -33,6 +33,9 @@
 - dswcj 通りの (migrate) は期待通りに行かず、
   lein run migrate 20220602044123 を
   実行した。
+- core.clj/upsert
+- /api/titles
+- display titles
 
 ## 0.8.12 - 2022-05-31
 ### Added

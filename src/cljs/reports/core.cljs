@@ -12,6 +12,8 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
+
+
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
 (def ^:private version "0.9.0-SNAPSHOT")
@@ -24,6 +26,7 @@
 (defonce users     (r/atom []))
 (defonce goods     (r/atom []))
 (defonce users-all (r/atom []))
+(defonce titles    (r/atom {}))
 
 (defn- admin?
   "cljs のため。
@@ -194,7 +197,9 @@
       [:div.column.is-one-fifth
        [:a {:href (report-url u)
             :class (if (= u "hkimura") "hkimura" "other")}
-           u]]
+           u]
+       " "
+       (get @titles u)]
       [:div.column
        " "
        [:input {:id i
@@ -379,6 +384,16 @@
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "reset-goods! error:" %)}))
 
+(defn- setup-titles! [m]
+  (.log js/console (str m))
+  (doseq [{:keys [login title]} m]
+    (swap! titles merge {login title})))
+
+(defn- reset-titles! []
+ (GET (str "/api/titles")
+    {:handler #(setup-titles! %)
+     :error-handler #(.log js/console "reset-titles! error:" %)}))
+
 (defn- reset-users-all! []
   (GET "https://l22.melt.kyutech.ac.jp/api/logins"
     {:headers {"Accept" "application/json"}
@@ -390,5 +405,6 @@
   (hook-browser-navigation!)
   (reset-users!)
   (reset-goods!)
+  (reset-titles!)
   (reset-users-all!)
   (mount-components))

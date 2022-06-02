@@ -48,7 +48,7 @@
       (io/copy tempfile (io/file (str dir "/" filename)))
       (db/create-upload! {:login login :filename filename})
 
-      ;; 0.9.0
+      ;; 0.9.0, insert title into `titles` table
       (when (= "index.html" filename)
         (log/debug "when")
         (when-let [title (find-title tempfile)]
@@ -79,6 +79,9 @@
 (defn goods [_]
   (response/ok (db/goods)))
 
+(defn titles [_]
+  (response/ok (db/titles)))
+
 (defn services-routes []
   ["/api" {:middleware [middleware/wrap-restricted
                         middleware/wrap-csrf
@@ -86,4 +89,5 @@
    ["/upload" {:post upload!}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
-   ["/goods" {:get goods}]])
+   ["/goods"  {:get goods}]
+   ["/titles" {:get titles}]])
