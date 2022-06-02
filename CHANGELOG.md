@@ -27,6 +27,9 @@
 - db/functions の引数
 - reagent, マップの場所はそこか？
 
+## 0.9.2-mikan - 2022-06-02
+- goods sent を message に '(Re:' が入っていたら reply とし、
+  sender 名 を abbrev する。
 
 ## 0.9.1 - 2022-06-02
 - mikan's advice
