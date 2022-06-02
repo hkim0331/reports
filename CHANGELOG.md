@@ -28,6 +28,8 @@
 - TDD
 - db/functions の引数
 
+## 0.9.0 - 2022-06-02
+- l.melt にデプロイ
 
 ## 0.9.0-SNAPSHOT
 - dswcj 通りの (migrate) は期待通りに行かず、
