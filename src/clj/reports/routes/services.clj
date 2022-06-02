@@ -33,13 +33,14 @@
       (sh "mkdir" "-p" dir)
       (io/copy tempfile (io/file (str dir "/" filename)))
       (db/create-upload! {:login login :filename filename})
+
       (-> (response/found "/r/#/upload")
           (assoc :flash (str "uploaded " filename)))
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
 
 (defn users
-  "distinct users order by uploaded_at"
+  "distinct users order by `uploaded_at`"
   [_]
   (->> (db/logins-by-reverse-uploaded)
        (map :login)
