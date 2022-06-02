@@ -29,7 +29,7 @@
     (catch Exception _ "")))
 
 (defn upsert! [login title]
- (if-let [_ (db/find-title login)]
+ (if-let [_ (db/find-title {:login login})]
    (db/update-title! {:login login :title title})
    (db/insert-title! {:login login :title title})))
 
@@ -47,10 +47,14 @@
       (sh "mkdir" "-p" dir)
       (io/copy tempfile (io/file (str dir "/" filename)))
       (db/create-upload! {:login login :filename filename})
+
       ;; 0.9.0
       (when (= "index.html" filename)
+        (log/debug "when")
         (when-let [title (find-title tempfile)]
+          (log/debug  "when-let")
           (upsert! login title)))
+
       ;; is this flash displayed?
       (-> (response/found "/r/#/upload")
           (assoc :flash (str "uploaded " filename)))
