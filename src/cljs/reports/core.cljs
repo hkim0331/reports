@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.9.2-mikan")
-(def ^:private now "2022-06-02 20:09:26")
+(def ^:private version "0.9.3-mikan")
+(def ^:private now "2022-06-02 23:34:12")
 
 (defonce session (r/atom {:page :home}))
 
@@ -236,10 +236,10 @@
                     (str msg "(Re: " message ")")))))
 
 (defn- abbrev-if-contains-re [s]
-  (let [sender (:snd s)]
+  (let [receiver (:rcv s)]
     (if (re-find #"\(Re:" (:message s))
-      (abbrev sender)
-      sender)))
+      (abbrev receiver)
+      receiver)))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
@@ -247,11 +247,11 @@
     [:section.section>div.container>div.content
      [:ul
       [:li "Goods Received に表示される good! には reply で返信できます。"]
-      [:li "返信のメッセージは Goods Sent に記録されない。"]
-      [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
-            reply ボタンないはず。"]
+      ;; [:li "返信のメッセージは Goods Sent に記録されない。"]
+      ;; [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
+      ;;       reply ボタンないはず。"]
       [:li "Not Yet Send To は自分が一度も good! を出してない人のリスト。
-            青色のリンクで表示されるのは一度以上アップロードした人。
+            青色のリンクで表示されるのは一度以上アップロードした人（見えるとは限らない）。
             黒はまだ何もアップロードしない人。"]]
      [:div.columns
       [:div.column
@@ -290,8 +290,6 @@
 (defn good-marks [n]
   (repeat n "👍"))
 
-
-
 (defn- goods-f [f]
   (->> (group-by f @goods)
        (map (fn [x] {:id (first x) f (count (second x))}))))
@@ -317,7 +315,7 @@
        (let [name (abbrev (key g))
              r (-> g val (get-count :rcv) good-marks)
              s (-> g val (get-count :snd) good-marks)]
-         [:p {:key i} r " → " name " → " s])))])
+         [:p {:key i} r " → " [:b name] " → " s])))])
 
 (defn messages []
  [:section.section>div.container>div.content
