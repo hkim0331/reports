@@ -236,10 +236,10 @@
                     (str msg "(Re: " message ")")))))
 
 (defn- abbrev-if-contains-re [s]
-  (let [sender (:snd s)]
+  (let [receiver (:rcv s)]
     (if (re-find #"\(Re:" (:message s))
-      (abbrev sender)
-      sender)))
+      (abbrev receiver)
+      receiver)))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
