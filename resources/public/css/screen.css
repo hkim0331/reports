@@ -34,4 +34,7 @@ body {
 }
 
 a.hkimura       { color: red;}
-a.hkimura:hover { font-size: larger;}
+
+a.hkimura:hover { font-size: larger;
+                  color: white;
+                  background-color: red;}
