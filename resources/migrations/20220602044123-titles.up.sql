@@ -3,4 +3,3 @@ CREATE TABLE titles (
   login VARCHAR(20) NOT NULL,
   title VARCHAR(64),
   timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
-  
