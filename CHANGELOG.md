@@ -30,6 +30,7 @@
 ## 0.9.2-mikan - 2022-06-02
 - goods sent を message に '(Re:' が入っていたら reply とし、
   sender 名 を abbrev する。
+- received -> name -> send の name を太字に。
 
 ## 0.9.1 - 2022-06-02
 - mikan's advice
