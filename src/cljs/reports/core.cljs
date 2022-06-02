@@ -195,9 +195,9 @@
    (for [[i u] ((filters @random?) (map-indexed vector @users))]
      [:div.columns {:key i}
       [:div.column.is-one-quarter
-       [:a {:href (report-url u)}
-            :class (if (= u "hkimura") "hkimura" "other")
-           u]
+       [:a {:href (report-url u)
+            :class (if (= u "hkimura") "hkimura" "other")}
+        u]
        " "
        (get @titles u)]
       [:div.column
