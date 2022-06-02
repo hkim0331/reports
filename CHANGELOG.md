@@ -23,9 +23,17 @@
   -> 効率を考えるにはループの前にフィルタする。
 - reports ページが下に長すぎ。head で切って、more? とかやるか？
 - 誰から誰にをすべて隠して、メッセージ本文だけ時系列で表示する。
-
 - TDD
 - db/functions の引数
+- reagent, マップの場所はそこか？
+
+## 0.9.2-mikan - 2022-06-02
+- goods sent を message に '(Re:' が入っていたら reply とし、
+  sender 名 を abbrev する。
+
+## 0.9.1 - 2022-06-02
+- mikan's advice
+  goods received 表示だけ abbrev
 
 ## 0.9.0 - 2022-06-02
 - l.melt にデプロイ
