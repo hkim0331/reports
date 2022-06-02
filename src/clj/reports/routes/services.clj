@@ -16,8 +16,8 @@
       (str public "/" login)
       (str public "/" login "/" subdir))))
 
-(defn mkdir-p [dir]
-  (sh "mkdir" "-p" dir))
+;; (defn mkdir-p [dir]
+;;   (sh "mkdir" "-p" dir))
 
 (defn upload!
   "受け取った multiplart-params を login/{id}/filename にセーブする。
@@ -28,9 +28,9 @@
     (log/debug login type filename tempfile size)
     (log/debug dir)
     (try
-      (mkdir-p dir)
       (when (empty? filename)
         (throw (Exception. "did not select a file.")))
+      (sh "mkdir" "-p" dir)
       (io/copy tempfile (io/file (str dir "/" filename)))
       (db/create-upload! {:login login :filename filename})
       (-> (response/found "/r/#/upload")
