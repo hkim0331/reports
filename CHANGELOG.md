@@ -26,8 +26,11 @@
 - TDD
 - db/functions の引数
 - reagent, マップの場所はそこか？
-- goods received 表示だけ abbrev
 
+
+## 0.9.1 - 2022-06-02
+- mikan's advice
+  goods received 表示だけ abbrev
 
 ## 0.9.0 - 2022-06-02
 - l.melt にデプロイ
