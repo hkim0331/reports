@@ -1,5 +1,7 @@
 #!/bin/sh
 # 2022-05-07 --last option
+#
+# --last? --latest? どっち？
 
 DB=reports
 
