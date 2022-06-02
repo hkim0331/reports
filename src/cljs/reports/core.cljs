@@ -235,6 +235,12 @@
                     snd
                     (str msg "(Re: " message ")")))))
 
+(defn- abbrev-if-contains-re [s]
+  (let [sender (:snd s)]
+    (if (re-find #"\(Re:" (:message s))
+      (abbrev sender)
+      sender)))
+
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
         sent     (filter-goods-by :snd)]
@@ -263,7 +269,7 @@
        [:h2 "Goods Sent"]
        (for [[id s] (map-indexed vector sent)]
          [:p {:key (str "g" id)}
-          "to " [:b (:rcv s)] ", " (time-format (:timestamp s)) ","
+          "to " [:b (abbrev-if-contains-re s)] ", " (time-format (:timestamp s)) ","
           [:br]
           (:message s)])]
       [:div.column
