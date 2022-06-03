@@ -118,7 +118,7 @@
 
 (defn upload-page []
   (let [url (str js/hp_url js/login)]
-    (.log js/console "url:" url)
+    ;;(.log js/console "url:" url)
     [:section.section>div.container>div.content
      [:h2 "Upload"]
      [:div
@@ -388,7 +388,7 @@
      :error-handler #(.log js/console "reset-goods! error:" %)}))
 
 (defn- setup-titles! [m]
-  (.log js/console (str m))
+  ;;(.log js/console (str m))
   (doseq [{:keys [login title]} m]
     (swap! titles merge {login title})))
 
