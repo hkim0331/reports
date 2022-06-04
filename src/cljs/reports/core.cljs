@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.9.3-mikan")
-(def ^:private now "2022-06-02 23:34:12")
+(def ^:private version "0.9.4")
+(def ^:private now "2022-06-04 22:03:16")
 
 (defonce session (r/atom {:page :home}))
 
@@ -89,9 +89,9 @@
       ;;  " | "
       ;;  [:a {:href "#/sent"} "histogram"]
        " | "
-       [:a {:href "#/recv-sent"} "graph"]
-       " | "
-       [:a {:href "#/messages"} "all messages"]]]
+       [:a {:href "#/recv-sent"} "Received & Sent"]]]
+      ;;  " | "
+      ;;  [:a {:href "#/messages"} "all messages"]]]
      [:hr]
      "hkimura, " version]))
 
@@ -118,7 +118,7 @@
 
 (defn upload-page []
   (let [url (str js/hp_url js/login)]
-    (.log js/console "url:" url)
+    ;;(.log js/console "url:" url)
     [:section.section>div.container>div.content
      [:h2 "Upload"]
      [:div
@@ -133,9 +133,6 @@
       [:li "フォルダはアップロードできない。"]
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書きする。"]
-      #_[:li "up ボタン押した後、
-            Choose.. で選んだファイル名が No file.. に戻ったらアップロード完了。
-            ただし、正しい場所にアップロードするのはユーザの責任。"]
       [:li "/js/ はやれる人用。授業では扱っていない。"]
       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
 
@@ -184,7 +181,8 @@
    [:ul
     [:li "good を押したあと「送信しました」が表示されない時、
         ページを再読み込みして good し直してください🙏
-        再読み込みの前にメッセージはコピーしとくといいぞ。"]]
+        再読み込みの前にメッセージはコピーしとくと吉。"]
+    [:li "タイトルは人目を引くようなものがいいやろな。自己紹介は印象に残るか？"]]
    [:div
     [:input {:type "radio"
              :checked @random?
@@ -388,7 +386,7 @@
      :error-handler #(.log js/console "reset-goods! error:" %)}))
 
 (defn- setup-titles! [m]
-  (.log js/console (str m))
+  ;;(.log js/console (str m))
   (doseq [{:keys [login title]} m]
     (swap! titles merge {login title})))
 
