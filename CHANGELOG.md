@@ -27,6 +27,8 @@
 - db/functions の引数
 - reagent, マップの場所はそこか？
 
+## 0.9.4 - 2022-06-04
+- chaged home menu
 
 ## 0.9.3-mikan - 2022-06-22
 ### Fixed

@@ -89,9 +89,9 @@
       ;;  " | "
       ;;  [:a {:href "#/sent"} "histogram"]
        " | "
-       [:a {:href "#/recv-sent"} "graph"]
-       " | "
-       [:a {:href "#/messages"} "all messages"]]]
+       [:a {:href "#/recv-sent"} "Received & Sent"]]]
+      ;;  " | "
+      ;;  [:a {:href "#/messages"} "all messages"]]]
      [:hr]
      "hkimura, " version]))
 
