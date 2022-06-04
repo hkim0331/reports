@@ -302,11 +302,11 @@
 (defn histogram-both []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
-   [:p "ログイン名、希望により伏せ字なんだが、どうですか？
+   #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
         人気のページがどんなページか見たくない？
         たくさん good! をつけてくれる優しいお兄さんお姉さんのページ、見たくない？
         そういうの、刺激になると思うんだけどなあ。"]
-   [:p [:b "[全 " (count @goods) " goods]"]]
+   [:p "全 " (count @goods) " goods"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
@@ -314,7 +314,8 @@
        (let [name (abbrev (key g))
              r (-> g val (get-count :rcv) good-marks)
              s (-> g val (get-count :snd) good-marks)]
-         [:p {:key i} r " → " [:b name] " → " s])))])
+         (when-not (= "REPLY" name)
+           [:p {:key i} r " → " [:b name] " → " s]))))])
 
 (defn messages []
  [:section.section>div.container>div.content
@@ -323,6 +324,7 @@
   [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
        その影響をしばらく確認する。"]
   [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
+
 ;; -------------------------
 ;; Pages
 
