@@ -26,6 +26,9 @@
 - TDD
 - db/functions の引数
 - reagent, マップの場所はそこか？
+- goods 総数を表示する。
+
+## 0.9.5
 
 ## 0.9.4 - 2022-06-04
 - chaged home menu

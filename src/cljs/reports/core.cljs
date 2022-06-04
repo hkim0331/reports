@@ -248,12 +248,12 @@
       ;; [:li "返信のメッセージは Goods Sent に記録されない。"]
       ;; [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
       ;;       reply ボタンないはず。"]
-      [:li "Not Yet Send To は自分が一度も good! を出してない人のリスト。
+      [:li "Not Yet は自分が一度も good! を出してない人のリスト。
             青色のリンクで表示されるのは一度以上アップロードした人（見えるとは限らない）。
             黒はまだ何もアップロードしない人。"]]
      [:div.columns
       [:div.column
-       [:h2 "Goods Received"]
+       [:h2 "Goods Received (" (count received) ")"]
        (for [[id g] (map-indexed vector received)]
          [:p {:key (str "r" id)}
           "from " [:b (abbrev (:snd g))] ", " (time-format (:timestamp g)) ","
@@ -264,14 +264,14 @@
             {:on-click #(reply? g)}
             "reply"]])]
       [:div.column
-       [:h2 "Goods Sent"]
+       [:h2 "Goods Sent (" (count sent) ")"]
        (for [[id s] (map-indexed vector sent)]
          [:p {:key (str "g" id)}
           "to " [:b (abbrev-if-contains-re s)] ", " (time-format (:timestamp s)) ","
           [:br]
           (:message s)])]
       [:div.column
-       [:h2 "Not Yet Send To"]
+       [:h2 "Not Yet"]
        (doall
         (for [[id u] (map-indexed
                       vector
@@ -306,6 +306,7 @@
         人気のページがどんなページか見たくない？
         たくさん good! をつけてくれる優しいお兄さんお姉さんのページ、見たくない？
         そういうの、刺激になると思うんだけどなあ。"]
+   [:p [:b "[全 " (count @goods) " goods]"]]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
