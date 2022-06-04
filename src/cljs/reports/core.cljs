@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.9.4")
-(def ^:private now "2022-06-04 22:03:16")
+(def ^:private version "0.10.0")
+(def ^:private now "2022-06-05 08:06:30")
 
 (defonce session (r/atom {:page :home}))
 
@@ -248,12 +248,12 @@
       ;; [:li "返信のメッセージは Goods Sent に記録されない。"]
       ;; [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
       ;;       reply ボタンないはず。"]
-      [:li "Not Yet Send To は自分が一度も good! を出してない人のリスト。
+      [:li "Not Yet は自分が一度も good! を出してない人のリスト。
             青色のリンクで表示されるのは一度以上アップロードした人（見えるとは限らない）。
             黒はまだ何もアップロードしない人。"]]
      [:div.columns
       [:div.column
-       [:h2 "Goods Received"]
+       [:h2 "Goods Received (" (count received) ")"]
        (for [[id g] (map-indexed vector received)]
          [:p {:key (str "r" id)}
           "from " [:b (abbrev (:snd g))] ", " (time-format (:timestamp g)) ","
@@ -264,14 +264,14 @@
             {:on-click #(reply? g)}
             "reply"]])]
       [:div.column
-       [:h2 "Goods Sent"]
+       [:h2 "Goods Sent (" (count sent) ")"]
        (for [[id s] (map-indexed vector sent)]
          [:p {:key (str "g" id)}
           "to " [:b (abbrev-if-contains-re s)] ", " (time-format (:timestamp s)) ","
           [:br]
           (:message s)])]
       [:div.column
-       [:h2 "Not Yet Send To"]
+       [:h2 "Not Yet"]
        (doall
         (for [[id u] (map-indexed
                       vector
@@ -302,10 +302,11 @@
 (defn histogram-both []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
-   [:p "ログイン名、希望により伏せ字なんだが、どうですか？
+   #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
         人気のページがどんなページか見たくない？
         たくさん good! をつけてくれる優しいお兄さんお姉さんのページ、見たくない？
         そういうの、刺激になると思うんだけどなあ。"]
+   [:p "全 " (count @goods) " goods"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
@@ -313,7 +314,8 @@
        (let [name (abbrev (key g))
              r (-> g val (get-count :rcv) good-marks)
              s (-> g val (get-count :snd) good-marks)]
-         [:p {:key i} r " → " [:b name] " → " s])))])
+         (when-not (= "REPLY" name)
+           [:p {:key i} r " → " [:b name] " → " s]))))])
 
 (defn messages []
  [:section.section>div.container>div.content
@@ -322,6 +324,7 @@
   [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
        その影響をしばらく確認する。"]
   [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
+
 ;; -------------------------
 ;; Pages
 

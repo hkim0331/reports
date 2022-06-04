@@ -27,6 +27,13 @@
 - db/functions の引数
 - reagent, マップの場所はそこか？
 
+
+## 0.10.0 - 2022-06-05
+### Added
+- goods 総数を表示する。
+### Changed
+- REPLY をグラフから外す
+
 ## 0.9.4 - 2022-06-04
 - chaged home menu
 
