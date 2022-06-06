@@ -15,11 +15,11 @@
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
 <<<<<<< HEAD
-(def ^:private version "0.11.1-SNAPSHOT")
-(def ^:private now "2022-06-06 11:52:23")
+(def ^:private version "0.11.2")
+(def ^:private now "2022-06-06 12:13:09")
 =======
-(def ^:private version "upload-records")
-(def ^:private now "2022-06-06 10:18:50")
+(def ^:private version "0.11.2")
+(def ^:private now "2022-06-06 12:13:09")
 >>>>>>> feature/upload-records
 
 (defonce session (r/atom {:page :home}))

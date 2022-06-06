@@ -1,7 +1,7 @@
 <<<<<<< HEAD
-(defproject reports "0.11.1-SNAPSHOT"
+(defproject reports "0.11.2"
 =======
-(defproject reports "upload-records"
+(defproject reports "0.11.2"
 >>>>>>> feature/upload-records
 
   :description "reports for literacy 2022"
