@@ -1,461 +1,326 @@
-(ns reports.core
-  (:require
-   [ajax.core :refer [GET POST]]
-   [clojure.string :refer [replace starts-with?]]
-   [clojure.set :refer [difference]]
-   [markdown.core :refer [md->html]]
-   [reagent.core :as r]
-   [reagent.dom :as rdom]
-   [reitit.core :as reitit]
-   [reports.ajax :as ajax]
-   [goog.events :as events]
-   [goog.history.EventType :as HistoryEventType])
-  (:import goog.History))
+# Reports
 
-;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
+## Unreleased
+- with-let の使い方
+- ERROR: XMLHttpRequest is not defined
+- error Access to /r/ is not authorized を
+  /login にリダイレクトする
+- button.is-primary.is-small でも大きすぎる
+- is-fifth でも大きすぎる。
+- good 送信後の input フィールドのクリア(クリアしない方がいい)
+- login 名の最大幅で div
+- feedback upload
+- return key でメッセージ送信
+- hot に時刻表示
+  -> get /users で最近アップデートの時刻をくっつけて持って来れれば可能だが、
+  0.8.3 のソリューションが影響を受ける。やめとこ。
+  -> hkimura が毎日数回以上、レポートページを更新すると、hot にしたときに
+  hkimura より上にある人が前回のチェックの後に更新あった人ってわかる。
+- Goods/graph から各レポートをリンク（リンク先がバレる。嫌がるか？）
+- 再読み込みの後じゃないと good! が出ていかないことがある。
+- graph に表示される REPLY を除く。
+  -> 簡単にやるにはループの内側で。
+  -> 効率を考えるにはループの前にフィルタする。
+- reports ページが下に長すぎ。head で切って、more? とかやるか？
+- 誰から誰にをすべて隠して、メッセージ本文だけ時系列で表示する。
+- TDD
+- db/functions の引数
+- reagent, マップの場所はそこか？
+- キャッシュのクリアをしないでも、0.11.2 の内容が見えるように。
+- warning
+  127 |      [:p (str (.-rep (:date r)) "," (:count r))]
+  ---------------------^-----------------------------------------------
+  Cannot infer target type in expression (. (:date r) -rep)
+- markdown table
 
-(def ^:private version "0.11.2")
-(def ^:private now "2022-06-06 12:13:09")
+## 0.11.2 - 2022-06-06
+- <meta http-equiv="Pragma" content="no-cache"> は効果あるか？
 
-(defonce session (r/atom {:page :home}))
+## 0.11.0 - 2022-06-06
+### Added
+- Upload のページに uploaded のセクション追加。
+  * 全体
+  * 自分
+  * hkimura
 
-;; サイトアクセス時にデータベースから取ってくる。
-;; atom だと、ブラウザの reload で消えちゃう。
-(defonce users     (r/atom []))
-(defonce goods     (r/atom []))
-(defonce users-all (r/atom []))
-(defonce titles    (r/atom {}))
+## 0.10.0 - 2022-06-05
+### Added
+- goods 総数を表示する。
+### Changed
+- REPLY をグラフから外す
 
-(defonce records-all    (r/atom []))
-(defonce record-hkimura (r/atom []))
-(defonce record-login   (r/atom []))
+## 0.9.4 - 2022-06-04
+- chaged home menu
 
-(defn- admin?
-  "cljs のため。
-   本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
-  [user]
-  (= "hkimura" user))
+## 0.9.3-mikan - 2022-06-22
+### Fixed
+- sender/receiver を間違えた。
 
-(defn- abbrev [s]
-  (if (admin? js/login)
-    s
-    (concat (first s) (map (fn [_] "?") (rest s)))))
+## 0.9.2-mikan - 2022-06-02
+- goods sent を message に '(Re:' が入っていたら reply とし、)
+  sender 名 を abbrev する。
+- received -> name -> send の name を太字に。
 
-(defn nav-link [uri title page]
-  [:a.navbar-item
-   {:href   uri
-    :class (when (= page (:page @session)) "is-active")}
-   title])
+## 0.9.1 - 2022-06-02
+- mikan's advice
+  goods received 表示だけ abbrev
 
-(defn navbar []
-  (r/with-let [expanded? (r/atom false)]
-    [:nav.navbar.is-info>div.container
-     [:div.navbar-brand
-      [:a.navbar-item {:href "#/" :style {:font-weight :bold}} "Reports"]
-      [:span.navbar-burger.burger
-       {:data-target :nav-menu
-        :on-click #(swap! expanded? not)
-        :class (when @expanded? :is-active)}
-       [:span] [:span] [:span]]]
-     [:div#nav-menu.navbar-menu
-      {:class (when @expanded? :is-active)}
-      [:div.navbar-start
-       [nav-link "#/" "Home" :home]
-       [nav-link "/login" "Login"]
-       [nav-link "/logout" "Logout"]
-       [nav-link "#/about" "About" :about]]]]))
+## 0.9.0 - 2022-06-02
+- l.melt にデプロイ
+- タイトルを login のリンクの横に表示する
+  -> title 書いてる人少ない。やめるか。
 
-;; -------------------------
-;; About
+## 0.9.0-SNAPSHOT
+- dswcj 通りの (migrate) は期待通りに行かず、
+  lein run migrate 20220602044123 を
+  実行した。
+- core.clj/upsert
+- /api/titles
+- display titles
 
-(defn about-page []
-  [:section.section>div.container>div.content
-   [:img {:src "/img/warning_clojure.png"}]
-   [:p "program: hkimura" [:br]
-    "version: " version [:br]
-    "update: " now]])
+## 0.8.12 - 2022-05-31
+### Added
+- about 見ないでも login したらバージョンわかるように。
+- コミットしたら core.clj は上書きされてしまうか(vscode)
+  -> しない。やっぱ、何かのショートカットキーをミスって打ってるんじゃないかなあ。
+- REPLY に元メッセージを引用する。
+- 自分のリンクは赤表示。
 
-;; -------------------------
-;; Home
+## 0.8.11 - 2022-05-31
+### Added
+- reply メッセージにオリジナルメッセージを (Re: ) で囲んでアペンド。
 
-(defn home-page []
-  (let [name js/login
-        url (str js/hp_url name)]
-    [:section.section>div.container>div.content
-     [:p "〆切間際のやっつけレポートは点数低い。"
-      "課題の意味わかってない証拠。"]
-     [:p "check your report => "
-      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
-     [:ul
-      [:li [:a {:href "#/upload"} "Upload"]]
-      [:li [:a {:href "#/browse"} "Browse & Comments"]]
-      [:li [:a {:href "#/goods"}  "Goods"]
-      ;;  " | "
-      ;;  [:a {:href "#/sent"} "histogram"]
-       " | "
-       [:a {:href "#/recv-sent"} "Received & Sent"]]]
-      ;;  " | "
-      ;;  [:a {:href "#/messages"} "all messages"]]]
-     [:hr]
-     "hkimura, " version]))
+## 0.8.10 - 2022-05-31
+### Changed
+- 0.8.9 を変更。hkimura のみ赤色で。
 
-(defn- hidden-field [name value]
-  [:input {:type "hidden"
-           :name name
-           :value value}])
+## 0.8.9 - 2022-05-30
+### Changed
+- Browse & Comments 自分のリンクを赤で、ホバリングしたら larger
 
-;; -------------------------
-;; Uploads
+## 0.8.8 - 2022-05-29
+- users-all を l22.melt/api/logins から読む。
+  l22 もこの対応で 0.4.5.
+### Removed
+- 古い histogram 関連、users-all をハードコーディングしていた過去のコードを削除。
+### Fixme
+- CORS に抵触するのだが、
+  #"https://rp.melt.kyutech.ac.jp" だと許可されるのに、
+  #"https://rp.melt.kyutech.ac.jp.*" がダメっつう理由がわからない。
 
-;; not ajax. form.
-(defn- upload-column [s1 s2 type]
-  [:form {:method "post"
-          :action "/api/upload"
-          :enc-type "multipart/form-data"}
-   [hidden-field "__anti-forgery-token" js/csrfToken]
-   [hidden-field "type" type]
-   [hidden-field "login" js/login]
-   [:div.columns
-    [:div.column.is-one-fifth s1]
-    [:div.column s2 [:input {:type "file" :name "upload"}]]
-    [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
-(defn- show-records [records]
- [:div
-  (doall
-   (for [r records]
-     [:p (str (.-rep (:date r)) "," (:count r))]))])
+## 0.8.7 - 2022-05-29
+### Fixed
+- Not Yet Send To バグ
+  -> core/disj じゃなく set/difference でした。
+### Changed
+- deply.sh は `lein uberjar` を含む。
 
-(defn record-columns []
-  [:div
-   [:h3 "uploaded (日付、回数)"]
-   [:div.columns {:style {:margin-left "2rem"}}
-    ;;[:div.column]
-    [:div.column
-     [:h4 "全体"]
-     (show-records @records-all)]
-    [:div.column
-     [:h4 js/login]
-     (show-records @record-login)]
-    [:div.column
-     [:h4 "hkimura"]
-     (show-records @record-hkimura)]]])
+## 0.8.6 - 2022-05-29
+### Added
+- 緑のリプライするとオリジナルメッセージの送信者がわかってしまう。
+  返事しない限り、わからないんで、OK にしとこ。anonymous などにするのは可能。
+  先にユーザアカウント作っておくか。
+  -> 送信者 REPLY にする。
+- REPLY メッセージへの reply はできないこととする。
 
-(defn upload-page []
-  (let [url (str js/hp_url js/login)]
-    ;;(.log js/console "url:" url)
-    [:section.section>div.container>div.content
-     [:h2 "Upload"]
-     [:div
-      [upload-column (str js/login) "/ " "html"]
-      [upload-column "" "/css/ " "css"]
-      [upload-column "" "/images/ " "images"]
-      [upload-column "" "/js/ " "js"]]
-     [:div "check your uploads => "
-      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
-     [:ul
-      [:li "アップロードはファイルひとつずつ。"]
-      [:li "フォルダはアップロードできない。"]
-      [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
-      [:li "同じファイル名でアップロードすると上書きする。"]
-      [:li "/js/ はやれる人用。授業では扱っていない。"]
-      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]
-     [:br]
-     [record-columns]]))
+## 0.8.5 - 2022-05-28
+- goods received に返事書きたい。誰が送信したかを分からないままで返信
+  -> CLJS の js/propt で実装。
 
-;; -------------------------
-;; Browse
+## 0.8.4 - 2022-05-28
+- browse-page は hot をデフォルトにする。
+- Goods | graph, sent/received 別ページよりも both がいい。
+  内容に対してコードが複雑すぎる。再帰が敗北感を感じる。
 
-;; browse ページローカル。random と shuffle のどちらを表示するか。
-;; 関数にローカルにできないか？
-(defonce random? (r/atom false))
-(def ^:private filters {true shuffle false identity})
+## 0.8.3 - 2022-05-28
+### Fixed
+- goods が送れなかった理由はなんだ？ hkimura だけ？
+  -> ブラウザのキャッシュか？
+- Browse の random で上から何番目につけた goods が hot のその番目で出てしまう。
+  -> max-index の仕方を変更して対応した。
 
-;; send-message! と browse-page で参照する。
-(def ^:private min-mesg 10)
+## 0.8.2 - 2022-05-27
+- いいねとユーザの順番を sent/receive で変える。
+- both が良くないか？
+- refactor: ルーティング整理
+### Removed
+- 使わなくなった関数、アップデート前にコメントアウトした関数を削除した。
 
-(defn- post-message [sender receiver message]
-  (POST "/api/save-message"
-    {:headers {"x-csrf-field" js/csrfToken}
-     :params {:snd sender
-              :rcv receiver
-              :message message}
-     :handler #(js/alert (str "メッセージ「" message "」を送りました。"))
-     :error-handler #(.log js/console (str %))}))
+## 0.8.1 - 2022-05-27
+- goods sent/received を別ページに。
+- admin でログイン時、sent/received をログイン名で表示、
+  一般アカウントでログイン時は abbrev.
 
-(defn send-message! [recv mesg]
-  (cond (< (count mesg) min-mesg)
-        (js/alert (str "メッセージは " min-mesg "文字以上です。"))
-        (= recv js/login)
-        (js/alert "自分自身へのメッセージは送れません。")
-        :else
-        (post-message js/login recv mesg)))
+## 0.8.0 - 2022-05-27
+- define `core.cljs` private functions using `defn-`
+- histogram(?)
+- cljs repl
+  今は reports プロジェクト内で clj/cljs を切り替えて作業できている。
+  手順次第でできるようだ。タブを選択するだけで repl が切り替わっている(m2)
+- Warning: validateDOMNesting(...): <div> cannot appear as a descendant of <p>.
 
-(defn- report-url [user]
-  (str js/hp_url user))
+## 0.7.4 - 2022-05-26
+### Changed
+- /api/goods/:me -> /api/goods-to/:user
+- /api/sends/:me -> /api/goods-from/:user
+- /api/goods-to, goods-from -> まとめて /api/goods
+- reverse order good reveived/sent
+- windows の絵文字は美しくない。favicon.ico 代えよう。
+- renamed r/atom goods -> r/atom recvs
+- To [:b user],
+- goods をダウンロードしておき、使い回す。
+### Added
+- /api/goods
 
-(defn browse-page []
-  [:section.section>div.container>div.content
-   [:h2 "Browse & Comments"]
-   [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
-    (str (count @users))
-    " 人。残りはいったい？"
-    "やっつけでいけると思っていたらそれは誤解です。"
-    "ページが出ません、イメージ出ません、リンクできませんって必ずなるだろう。"
-    "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
-    "大好きな「平常点」も毎日失ってることにも気づこうな。"
-    "平常点は平常につくんだ。"]
-   [:ul
-    [:li "good を押したあと「送信しました」が表示されない時、
-        ページを再読み込みして good し直してください🙏
-        再読み込みの前にメッセージはコピーしとくと吉。"]
-    [:li "タイトルは人目を引くようなものがいいやろな。自己紹介は印象に残るか？"]]
-   [:div
-    [:input {:type "radio"
-             :checked @random?
-             :on-change #(swap! random? not)}]
-    " random "
-    [:input {:type "radio"
-             :checked (not @random?)
-             :on-change #(swap! random? not)}]
-    " hot "]
-   [:br]
-   (for [[i u] ((filters @random?) (map-indexed vector @users))]
-     [:div.columns {:key i}
-      [:div.column.is-one-quarter
-       [:a {:href (report-url u)
-            :class (if (= u "hkimura") "hkimura" "other")}
-        u]
-       " "
-       (get @titles u)]
-      [:div.column
-       " "
-       [:input {:id i
-                :placeholder (str min-mesg " 文字以上のメッセージ")
-                :size 80}]
-       [:button
-        {:on-click
-         #(let [obj (.getElementById js/document i)]
-            (send-message! u (.-value obj))
-             ;; クリアしない方が誰にコメントしたかわかる。
-            #_(set! (.-innerHTML obj) ""))} "good!"]]])])
+## 0.7.3 - 2022-05-26
+- not yet sent to をシャッフル
+- forget access restriction remove comment
 
-;; -------------------------
-;; Goods
+## 0.7.2 - 2022-05-26
+- 0.7.1 は機能していない。
+- get や contains ではなく、.indexOf
+- calva-cljs node repl
 
-(defn- time-format [time]
-  (let [s (str time)
-        date (subs s 28 39)
-        time (subs s 40 48)]
-    (str date " " time)))
+## 0.7.1 - 2022-05-26
+- Goods: 未提出はリンクにしない。
 
-(defn- filter-goods-by [f]
-  (reverse (filter #(= js/login (f %)) @goods)))
+## 0.7.0 - 2022-05-26
+- one-fifth より幅が狭いクラスは定義されてない。
+- logout! assoc が良くて disj がダメな理由
+  -> disj の引数は set
 
-(defn- reply? [{:keys [snd message]}]
-  (when-let [msg (js/prompt "reply?")]
-    (if (empty? msg)
-      (js/alert "メッセージが空です。")
-      (post-message js/login
-                    snd
-                    (str msg "(Re: " message ")")))))
+## 0.6.4 - 2022-05-26
+- Goods(sent)
+- Goods を三分割
+- 自分から自分へのメッセージを弾く
+- Goods(not yet) 提出がないときどうする？
+  -> エラーでいいか。
 
-(defn- abbrev-if-contains-re [s]
-  (let [receiver (:rcv s)]
-    (if (re-find #"\(Re:" (:message s))
-      (abbrev receiver)
-      receiver)))
+## 0.6.3 - 2022-05-25
+### Fixed
+- Goods ページ: react.development.js:221 Warning: Each child in a list should have a unique "key" prop.
+  (for [[id g] (map-indexed vector @goods)]
+     [:p {:key id}
+      (.toLocaleString (:timestamp g))
+      [:br]
+      (:message g)])
+- timestamp の表示
+  [TaggedValue: LocalDateTime, 2022-05-24T23:30:40.697]
+  (defn time-format [time]
+    (let [s (str time)]
+       date (subs s 28 39)
+       time (subs s 40 48))
+   (str date " " time))
 
-(defn goods-page []
-  (let [received (filter-goods-by :rcv)
-        sent     (filter-goods-by :snd)]
-    [:section.section>div.container>div.content
-     [:ul
-      [:li "Goods Received に表示される good! には reply で返信できます。"]
-      ;; [:li "返信のメッセージは Goods Sent に記録されない。"]
-      ;; [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
-      ;;       reply ボタンないはず。"]
-      [:li "Not Yet は自分が一度も good! を出してない人のリスト。
-            青色のリンクで表示されるのは一度以上アップロードした人（見えるとは限らない）。
-            黒はまだ何もアップロードしない人。"]]
-     [:div.columns
-      [:div.column
-       [:h2 "Goods Received (" (count received) ")"]
-       (for [[id g] (map-indexed vector received)]
-         [:p {:key (str "r" id)}
-          "from " [:b (abbrev (:snd g))] ", " (time-format (:timestamp g)) ","
-          [:br]
-          (:message g)
-          [:br]
-          [:button.button.is-success.is-small
-           {:on-click #(reply? g)}
-           "reply"]])]
-      [:div.column
-       [:h2 "Goods Sent (" (count sent) ")"]
-       (for [[id s] (map-indexed vector sent)]
-         [:p {:key (str "g" id)}
-          "to " [:b (abbrev-if-contains-re s)] ", " (time-format (:timestamp s)) ","
-          [:br]
-          (:message s)])]
-      [:div.column
-       [:h2 "Not Yet"]
-       (doall
-        (for [[id u] (map-indexed
-                      vector
-                      (difference @users-all
-                                  (set (map #(:rcv %) sent))))]
-          [:p {:key (str "n" id)}
-           (if (neg? (.indexOf @users u))
-             u
-             [:a {:href (report-url u)} u])]))]]]))
+## 0.6.2 - 2022-05-25
+- db-dump/{db-dump,db-restore}.sh
+- チラッと見える土台　html
+  -> clean up home.html
+- title "Report"
+- bump-version.sh, 日付を date '+%F %T' で得る
+- Upload に説明文
 
-;; -------------------------
-;; Histgram
+## 0.6.1 - 2022-05-24
+- 送信メッセージ長さのチェック
+- 受け取ったメッセージの表示
 
-(defn good-marks [n]
-  (repeat n "👍"))
+## 0.6.0 - 2022-05-24
+- js/alert recv, mesg
+- can send messages
+- (for [u @users]) のループを　map-indexed で回した。
 
-(defn- goods-f [f]
-  (->> (group-by f @goods)
-       (map (fn [x] {:id (first x) f (count (second x))}))))
+  Warning: Every element in a seq should have a unique :key: ([:div.columns [:div.column [:a {:href "http://localhost:8080/hkimura"} "hkimura"]] [:div.column " " [:input {:placeholder "message"}] [:button "send"]]] [:div.columns [:div.column [:a {:href "http://localhost:8080/user2"} "user2"]] [:div.column " " [:input {:placeholder "message"}] [:button "send"]]] [:div.columns [:div.column [:a {:href "http://localhost:8080/user1"} "user1"]] [:div.column " " [:input {:placeholder "message"}] [:button "send"]]])
+ (in browse-page)
+- can send messages
 
-(defn- get-count [v key]
-  (cond
-    (empty? v) 0
-    (get (first v) key) (get (first v) key)
-    :else (get-count (rest v) key)))
 
-;; FIXME: too complex. make this simpler.
-(defn histogram-both []
-  [:section.section>div.container>div.content
-   [:h2 "Goods (Reveived → Who → Sent)"]
-   #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
-        人気のページがどんなページか見たくない？
-        たくさん good! をつけてくれる優しいお兄さんお姉さんのページ、見たくない？
-        そういうの、刺激になると思うんだけどなあ。"]
-   [:p "全 " (count @goods) " goods"]
-   (let [snd (goods-f :snd)
-         rcv (goods-f :rcv)
-         goods (group-by :id (concat snd rcv))]
-     (for [[i g] (map-indexed vector goods)]
-       (let [name (abbrev (key g))
-             r (-> g val (get-count :rcv) good-marks)
-             s (-> g val (get-count :snd) good-marks)]
-         (when-not (= "REPLY" name)
-           [:p {:key i} r " → " [:b name] " → " s]))))])
+## 0.5.1 - 2022-05-24
+- Browse random/hot の並び替えができる。
+  ラジオボタンが選びにくく、選べないのではとずーっと思ってた。
 
-(defn messages []
-  [:section.section>div.container>div.content
-   [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
-   [:p "作成中。"]
-   [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
-       その影響をしばらく確認する。"]
-   [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
+## 0.5.0 - 2022-05-24
+can browse locally
+- Invalid anti-forgery token
+  -> 「再読み込み後にログイン」のメッセージ
+- alter table uploads add column filename varchar(64) not null
+- db/create-upload!
+- db/get-uploads
 
-;; -------------------------
-;; Pages
+## 0.4.0 - 2022-05-24
+- :page-url "http://localhost:3001/" の導入。
+  デベロップでは http-server を動かしとけ。
+  プロダクションでは "https://hp.melt.kyutech.ac.jp/" になる。
+- upload 後の戻り先 -> /r/#/upload とした。
+- (js/Date.) or (js/Date)
+  (js/Date) == (str (js/Date.))
+- `check your report` in upload-page
+- `check your report` in home-page
+- check your report URL を csrf と同様の手段で cljs に渡す。
+- time format
+  (.toLocaleString (js/Date.))
 
-(def pages
-  {:home   #'home-page
-   :about  #'about-page
-   :upload #'upload-page
-   :browse #'browse-page
-   :goods  #'goods-page
-   :histogram-both #'histogram-both
-   :messages #'messages})
+## 0.3.3 - 2022-05-23
+- /api/upload production では PUBLIC_DIR 環境変数を定義すること。
+    export PUBLIC_DIR=/home/ubuntu/reports/public
+- api/copy! でエラー。
+  No method in multimethod 'do-copy' for dispatch value: [java.io.File java.lang.String]
+  ->  (io/copy tempfile (io/file (str dir "/" filename)))
+- About にバージョンと更新日時を表示。
+- Uploads が動き出した。
 
-(defn page []
-  [(pages (:page @session))])
+## 0.3.1 - 2022-05-23
+- (layout/render [req] "template.html" {:key value}) で渡し、
+  template.html 中に、
 
-;; -------------------------
-;; Routes
+```
+  <script type="text/javascript">
+        var key = "{{value}}";
+  </script>
+```
+  cljs 側ではその値を js/key で参照できる。
+- test deploy to l.melt. OK.
+- fix typo. parInfer 使ってると時々、括弧の対応を外してしまって気がつかない。
 
-(def router
-  (reitit/router
-   [["/" :home]
-    ["/about"  :about]
-    ["/upload" :upload]
-    ["/browse" :browse]
-    ["/goods"  :goods]
-    ["/recv-sent" :histogram-both]
-    ["/messages"  :messages]]))
+## 0.3.0 - 2022-05-23
+- (assoc :session {}) は良くて、(dissoc :session) はダメな理由はなんだ？
+  :session キーがないのがダメってこと？
+- /r/ping が反応しない -> /api/ping の間違い。
+- /api/ping not allowed -> プログラムミス。シンタックスエラーが実行時までエラーにならない。
+- login/logout を nav-bar に表示。
+- nav-bar の Report はリンクじゃなくていいけど　-> メニューが不細工に見えるので止める。
+  代わりに #/ をリンク。
+- カラの Upload, Browse, Goods ページ。
+- github 取り下げて上げ直し。
 
-(defn match-route [uri]
-  (->> (or (not-empty (replace uri #"^.*#" "")) "/")
-       (reitit/match-by-path router)
-       :data
-       :name))
+# RESTART
+深夜のプログラミングは思ったほど捗らない。
+最初からやり直し。+auth 忘れないよう。
 
-;; -------------------------
-;; History
-;; must be called after routes have been defined
+## 0.2.1 - 2022-05-22
+- early deploy
+- (hato.client/get url {:as :json})
+- I don't believe CORS.
+  リバースプロキシ配下の web app のアクセスを許すのに次はまずいんじゃないの？
+  せめて表向きのグローバルアドレスでフィルタすべき。誤解しているか？
 
-(defn hook-browser-navigation! []
-  (doto (History.)
-    (events/listen
-     HistoryEventType/NAVIGATE
-     (fn [^js/Event.token event]
-       (swap! session assoc :page (match-route (.-token event)))))
-    (.setEnabled true)))
+  :access-control-allow-origin  [#"http://localhost.*"]
 
-;; -------------------------
-;; Initialize app
+## 0.2.0 - 2022-05-22
+- forgot buddy. copied from other project created by
+  `lein new luminus app +budy`
+- login/logout. when login error, flash message
 
-(defn ^:dev/after-load mount-components []
-  (rdom/render [#'navbar] (.getElementById js/document "navbar"))
-  (rdom/render [#'page]   (.getElementById js/document "app")))
-
-(defn- reset-users! []
-  (GET "/api/users"
-    {:handler #(reset! users %)}
-    {:error-handler #(.log js/console "error:" %)}))
-
-(defn- reset-goods! []
-  (GET (str "/api/goods")
-    {:handler #(reset! goods %)
-     :error-handler #(.log js/console "reset-goods! error:" %)}))
-
-(defn- setup-titles! [m]
-  ;;(.log js/console (str m))
-  (doseq [{:keys [login title]} m]
-    (swap! titles merge {login title})))
-
-(defn- reset-titles! []
-  (GET (str "/api/titles")
-    {:handler #(setup-titles! %)
-     :error-handler #(.log js/console "reset-titles! error:" %)}))
-
-(defn- reset-users-all! []
-  (GET "https://l22.melt.kyutech.ac.jp/api/logins"
-    {:headers {"Accept" "application/json"}
-     :handler #(reset! users-all (set %))
-     :error-handler #(println (str "error:" %))}))
-
-(defn reset-records-all! []
- (GET "/api/records"
-   {:handler #(reset! records-all %)
-    :error-handler #(.log js/console "reset-records-all! error:" %)}))
-
-(defn reset-record-login! []
-  (GET (str "/api/record/" js/login)
-    {:handler #(reset! record-login %)
-     :error-handler #(.log js/console "reset-records-login! error:" %)}))
-
-(defn reset-record-hkimura! []
-  (GET "/api/record/hkimura"
-    {:handler #(reset! record-hkimura %)
-     :error-handler #(.log js/console "reset-records-hkimura! error:" %)}))
-
-(defn init! []
-  (ajax/load-interceptors!)
-  (hook-browser-navigation!)
-  (reset-users!)
-  (reset-goods!)
-  (reset-titles!)
-  (reset-users-all!)
-
-  (reset-records-all!)
-  (reset-record-login!)
-  (reset-record-hkimura!)
- 
-  (mount-components))
+## 0.1.0  - 2022-05-22
+prep for development.
+- lein new luminus reports +reagent +postgres
+- antq --upgrade
+- npm install
+- npm install xmlhttprequest
+- code REPL report Server+Client
+- create database reports owner='postgres';
+- (create-migration "uploads")
+- (create-migration "goods")
+- (migrate)
+- gh repo create hkim0331/reports.git --public
+- git remote add origin git@github.com:hkim0331/reports.git

@@ -27,7 +27,11 @@
 - db/functions の引数
 - reagent, マップの場所はそこか？
 - キャッシュのクリアをしないでも、0.11.2 の内容が見えるように。
-
+- warning
+  127 |      [:p (str (.-rep (:date r)) "," (:count r))]))])
+  ---------------------^-----------------------------------------------
+  Cannot infer target type in expression (. (:date r) -rep)
+- markdown table
 
 ## 0.11.2 - 2022-06-06
 - <meta http-equiv="Pragma" content="no-cache"> は効果あるか？
