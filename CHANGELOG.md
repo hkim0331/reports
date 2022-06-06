@@ -31,6 +31,11 @@
 - uploaded は色付きで、
 - uploaded は Upload とは別ページに。
 
+## 0.12.2 - 2022-06-06
+- color div
+- check js ?version effect
+- bump-version.sh
+
 ## 0.12.1 - 2022-06-06
 app.js?ver=0.12.1 でキャッシュが外れるか？
 - 0.11.2 では効果なし、home.html に app.js?version=0.12.1

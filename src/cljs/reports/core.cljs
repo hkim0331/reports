@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.12.1")
-(def ^:private now "2022-06-06 18:09:01")
+(def ^:private version "0.12.2")
+(def ^:private now "2022-06-06 22:39:00")
 
 (defonce session (r/atom {:page :home}))
 
@@ -132,14 +132,13 @@
    [:h3#records "uploaded (日付, 回数)"]
    [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"]
    [:div.columns {:style {:margin-left "0rem"}}
-    ;;[:div.column]
-    [:div.column
+    [:div#all.column
      [:h4 "全体"]
      (make-table @records-all)]
-    [:div.column
+    [:div#you.column
      [:h4 js/login]
      (make-table @record-login)]
-    [:div.column
+    [:div#hkim.column
      [:h4 "hkimura"]
      (make-table @record-hkimura)]
     [:div.column]]])
