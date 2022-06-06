@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.11.2")
-(def ^:private now "2022-06-06 12:13:09")
+(def ^:private version "0.12.1")
+(def ^:private now "2022-06-06 18:09:01")
 
 (defonce session (r/atom {:page :home}))
 
@@ -87,7 +87,7 @@
      [:p "check your report => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
-      [:li [:a {:href "#/upload"} "Upload"]]
+      [:li [:a {:href "#/upload"} "Upload, uploaded"]]
       [:li [:a {:href "#/browse"} "Browse & Comments"]]
       [:li [:a {:href "#/goods"}  "Goods"]
       ;;  " | "
@@ -120,26 +120,29 @@
     [:div.column s2 [:input {:type "file" :name "upload"}]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
-(defn- show-records [records]
- [:div
-  (doall
-   (for [r records]
-     [:p (str (.-rep (:date r)) "," (:count r))]))])
+(defn make-table [records]
+  (let [s (atom "| 日付 | 回数 |\n| :---: | ---: |\n")]
+    (doseq [r records]
+      (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
+    [:div {:dangerouslySetInnerHTML
+           {:__html (md->html (apply str @s))}}]))
 
 (defn record-columns []
   [:div
-   [:h3 "uploaded (日付、回数)"]
-   [:div.columns {:style {:margin-left "2rem"}}
+   [:h3#records "uploaded (日付, 回数)"]
+   [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"]
+   [:div.columns {:style {:margin-left "0rem"}}
     ;;[:div.column]
     [:div.column
      [:h4 "全体"]
-     (show-records @records-all)]
+     (make-table @records-all)]
     [:div.column
      [:h4 js/login]
-     (show-records @record-login)]
+     (make-table @record-login)]
     [:div.column
      [:h4 "hkimura"]
-     (show-records @record-hkimura)]]])
+     (make-table @record-hkimura)]
+    [:div.column]]])
 
 (defn upload-page []
   (let [url (str js/hp_url js/login)]
@@ -272,11 +275,8 @@
     [:section.section>div.container>div.content
      [:ul
       [:li "Goods Received に表示される good! には reply で返信できます。"]
-      ;; [:li "返信のメッセージは Goods Sent に記録されない。"]
-      ;; [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
-      ;;       reply ボタンないはず。"]
       [:li "Not Yet は自分が一度も good! を出してない人のリスト。
-            青色のリンクで表示されるのは一度以上アップロードした人（見えるとは限らない）。
+            青色のリンクで表示されるのは一度以上アップロードした人（ページが見えるとは限らない）。
             黒はまだ何もアップロードしない人。"]]
      [:div.columns
       [:div.column
@@ -341,7 +341,7 @@
        (let [name (abbrev (key g))
              r (-> g val (get-count :rcv) good-marks)
              s (-> g val (get-count :snd) good-marks)]
-         (when-not (= "REPLY" name)
+         (when-not (= "REPLY" (key g))
            [:p {:key i} r " → " [:b name] " → " s]))))])
 
 (defn messages []
@@ -432,9 +432,9 @@
      :error-handler #(println (str "error:" %))}))
 
 (defn reset-records-all! []
- (GET "/api/records"
-   {:handler #(reset! records-all %)
-    :error-handler #(.log js/console "reset-records-all! error:" %)}))
+  (GET "/api/records"
+    {:handler #(reset! records-all %)
+     :error-handler #(.log js/console "reset-records-all! error:" %)}))
 
 (defn reset-record-login! []
   (GET (str "/api/record/" js/login)
@@ -457,5 +457,5 @@
   (reset-records-all!)
   (reset-record-login!)
   (reset-record-hkimura!)
- 
+
   (mount-components))
