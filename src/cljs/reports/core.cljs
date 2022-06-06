@@ -3,7 +3,7 @@
    [ajax.core :refer [GET POST]]
    [clojure.string :refer [replace starts-with?]]
    [clojure.set :refer [difference]]
-   ;;[markdown.core :refer [md->html]]
+   [markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
    [reitit.core :as reitit]
@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.10.0")
-(def ^:private now "2022-06-05 08:06:30")
+(def ^:private version "0.12.2")
+(def ^:private now "2022-06-06 22:40:48")
 
 (defonce session (r/atom {:page :home}))
 
@@ -25,6 +25,10 @@
 (defonce goods     (r/atom []))
 (defonce users-all (r/atom []))
 (defonce titles    (r/atom {}))
+
+(defonce records-all    (r/atom []))
+(defonce record-hkimura (r/atom []))
+(defonce record-login   (r/atom []))
 
 (defn- admin?
   "cljs のため。
@@ -83,7 +87,7 @@
      [:p "check your report => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
-      [:li [:a {:href "#/upload"} "Upload"]]
+      [:li [:a {:href "#/upload"} "Upload, uploaded"]]
       [:li [:a {:href "#/browse"} "Browse & Comments"]]
       [:li [:a {:href "#/goods"}  "Goods"]
       ;;  " | "
@@ -116,6 +120,29 @@
     [:div.column s2 [:input {:type "file" :name "upload"}]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
+(defn make-table [records]
+  (let [s (atom "| 日付 | 回数 |\n| :---: | ---: |\n")]
+    (doseq [r records]
+      (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
+    [:div {:dangerouslySetInnerHTML
+           {:__html (md->html (apply str @s))}}]))
+
+(defn record-columns []
+  [:div
+   [:h3#records "uploaded (日付, 回数)"]
+   [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"]
+   [:div.columns {:style {:margin-left "0rem"}}
+    [:div#all.column
+     [:h4 "全体"]
+     (make-table @records-all)]
+    [:div#you.column
+     [:h4 js/login]
+     (make-table @record-login)]
+    [:div#hkim.column
+     [:h4 "hkimura"]
+     (make-table @record-hkimura)]
+    [:div.column]]])
+
 (defn upload-page []
   (let [url (str js/hp_url js/login)]
     ;;(.log js/console "url:" url)
@@ -134,7 +161,9 @@
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書きする。"]
       [:li "/js/ はやれる人用。授業では扱っていない。"]
-      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
+      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]
+     [:br]
+     [record-columns]]))
 
 ;; -------------------------
 ;; Browse
@@ -245,11 +274,8 @@
     [:section.section>div.container>div.content
      [:ul
       [:li "Goods Received に表示される good! には reply で返信できます。"]
-      ;; [:li "返信のメッセージは Goods Sent に記録されない。"]
-      ;; [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
-      ;;       reply ボタンないはず。"]
       [:li "Not Yet は自分が一度も good! を出してない人のリスト。
-            青色のリンクで表示されるのは一度以上アップロードした人（見えるとは限らない）。
+            青色のリンクで表示されるのは一度以上アップロードした人（ページが見えるとは限らない）。
             黒はまだ何もアップロードしない人。"]]
      [:div.columns
       [:div.column
@@ -261,8 +287,8 @@
           (:message g)
           [:br]
           [:button.button.is-success.is-small
-            {:on-click #(reply? g)}
-            "reply"]])]
+           {:on-click #(reply? g)}
+           "reply"]])]
       [:div.column
        [:h2 "Goods Sent (" (count sent) ")"]
        (for [[id s] (map-indexed vector sent)]
@@ -314,16 +340,16 @@
        (let [name (abbrev (key g))
              r (-> g val (get-count :rcv) good-marks)
              s (-> g val (get-count :snd) good-marks)]
-         (when-not (= "REPLY" name)
+         (when-not (= "REPLY" (key g))
            [:p {:key i} r " → " [:b name] " → " s]))))])
 
 (defn messages []
- [:section.section>div.container>div.content
-  [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
-  [:p "作成中。"]
-  [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
+  [:section.section>div.container>div.content
+   [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
+   [:p "作成中。"]
+   [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
        その影響をしばらく確認する。"]
-  [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
+   [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
 
 ;; -------------------------
 ;; Pages
@@ -394,7 +420,7 @@
     (swap! titles merge {login title})))
 
 (defn- reset-titles! []
- (GET (str "/api/titles")
+  (GET (str "/api/titles")
     {:handler #(setup-titles! %)
      :error-handler #(.log js/console "reset-titles! error:" %)}))
 
@@ -404,6 +430,21 @@
      :handler #(reset! users-all (set %))
      :error-handler #(println (str "error:" %))}))
 
+(defn reset-records-all! []
+  (GET "/api/records"
+    {:handler #(reset! records-all %)
+     :error-handler #(.log js/console "reset-records-all! error:" %)}))
+
+(defn reset-record-login! []
+  (GET (str "/api/record/" js/login)
+    {:handler #(reset! record-login %)
+     :error-handler #(.log js/console "reset-records-login! error:" %)}))
+
+(defn reset-record-hkimura! []
+  (GET "/api/record/hkimura"
+    {:handler #(reset! record-hkimura %)
+     :error-handler #(.log js/console "reset-records-hkimura! error:" %)}))
+
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
@@ -411,4 +452,9 @@
   (reset-goods!)
   (reset-titles!)
   (reset-users-all!)
+
+  (reset-records-all!)
+  (reset-record-login!)
+  (reset-record-hkimura!)
+
   (mount-components))

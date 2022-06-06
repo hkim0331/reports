@@ -18,15 +18,45 @@
   hkimura より上にある人が前回のチェックの後に更新あった人ってわかる。
 - Goods/graph から各レポートをリンク（リンク先がバレる。嫌がるか？）
 - 再読み込みの後じゃないと good! が出ていかないことがある。
-- graph に表示される REPLY を除く。
-  -> 簡単にやるにはループの内側で。
-  -> 効率を考えるにはループの前にフィルタする。
 - reports ページが下に長すぎ。head で切って、more? とかやるか？
 - 誰から誰にをすべて隠して、メッセージ本文だけ時系列で表示する。
 - TDD
 - db/functions の引数
 - reagent, マップの場所はそこか？
+- warning
+  127 |      [:p (str (.-rep (:date r)) "," (:count r))]))])
+  ---------------------^-----------------------------------------------
+  Cannot infer target type in expression (. (:date r) -rep)
+  型情報を与えてやるのかな？
+- uploaded は色付きで、
+- uploaded は Upload とは別ページに。
 
+## 0.12.2 - 2022-06-06
+- color div
+- check js ?version effect
+- bump-version.sh
+
+## 0.12.1 - 2022-06-06
+app.js?ver=0.12.1 でキャッシュが外れるか？
+- 0.11.2 では効果なし、home.html に app.js?version=0.12.1
+
+## 0.12.0 - 2022-06-06
+### Added
+- markdown table
+
+## 0.11.2 - 2022-06-06
+- キャッシュのクリアをしないでも、0.11.2 の内容が見えるように。
+  <meta http-equiv="Pragma" content="no-cache"> は効果あるか？
+
+## 0.11.0 - 2022-06-06
+### Added
+- Upload のページに uploaded のセクション追加。
+  * 全体
+  * 自分
+  * hkimura
+- graph に表示される REPLY を除く。
+  -> 簡単にやるにはループの内側で。
+  -> 効率を考えるにはループの前にフィルタする。
 
 ## 0.10.0 - 2022-06-05
 ### Added
