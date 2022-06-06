@@ -27,6 +27,9 @@
 - db/functions の引数
 - reagent, マップの場所はそこか？
 
+## 0.11.1-SNAPSHOT
+- <meta http-equiv="Pragma" content="no-cache"> は効果あるか？
+
 ## 0.11.0 - 2022-06-06
 ### Added
 - Upload のページに uploaded のセクション追加。
