@@ -120,17 +120,9 @@
     [:div.column s2 [:input {:type "file" :name "upload"}]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
-;; (defn- show-records [records]
-;;  [:div
-;;   (doall
-;;    (for [r records]
-;;      [:p (str (.-rep (:date r)) "," (:count r))]))])
-
-
 (defn make-table [records]
   (let [s (atom "| 日付 | 回数 |\n| :---: | ---: |\n")]
     (doseq [r records]
-      ;;
       (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
     [:div {:dangerouslySetInnerHTML
            {:__html (md->html (apply str @s))}}]))
@@ -440,9 +432,9 @@
      :error-handler #(println (str "error:" %))}))
 
 (defn reset-records-all! []
- (GET "/api/records"
-   {:handler #(reset! records-all %)
-    :error-handler #(.log js/console "reset-records-all! error:" %)}))
+  (GET "/api/records"
+    {:handler #(reset! records-all %)
+     :error-handler #(.log js/console "reset-records-all! error:" %)}))
 
 (defn reset-record-login! []
   (GET (str "/api/record/" js/login)
@@ -465,5 +457,5 @@
   (reset-records-all!)
   (reset-record-login!)
   (reset-record-hkimura!)
- 
+
   (mount-components))

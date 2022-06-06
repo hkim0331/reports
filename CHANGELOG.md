@@ -29,7 +29,11 @@
   Cannot infer target type in expression (. (:date r) -rep)
   型情報を与えてやるのかな？
 
-## 0.12.0
+## 0.12.1 - 2022-06-06
+- 0.11.2 では効果なし、home.html に app.js?version=0.12.1
+
+
+## 0.12.0 - 2022-06-06
 ### Added
 - markdown table
 
