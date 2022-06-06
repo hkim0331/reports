@@ -1,4 +1,4 @@
-(defproject reports "0.11.0"
+(defproject reports "0.11.2"
 
   :description "reports for literacy 2022"
   :url "https://rp.melt.kyutech.ac.jp"
@@ -22,7 +22,7 @@
                  [luminus-transit "0.1.5"]
                  [luminus-undertow "0.1.14"]
                  [luminus/ring-ttl-session "0.3.3"]
-                 [markdown-clj "1.10.8"]
+                 [markdown-clj "1.11.1"] ;; updated
                  [metosin/muuntaja "0.6.8"]
                  [metosin/reitit "0.5.15"]
                  [metosin/ring-http-response "0.9.3"]

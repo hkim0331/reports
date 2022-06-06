@@ -37,7 +37,7 @@ WHERE snd = :snd order by id desc
 SELECT * FROM goods
 
 -----------------------------------
-  titles
+-- titles
 -----------------------------------
 -- :name titles
 -- :doc fetch all titles
@@ -58,3 +58,20 @@ WHERE login = :login
 -- :doc find login's report title
 SELECT * FROM titles
 WHERE login = :login
+
+---------------------
+-- upload records
+---------------------
+
+-- :name records :? :*
+-- :doc fetch upload count by date
+SELECT DATE(uploaded_at), COUNT(*)
+FROM uploads
+GROUP BY DATE(uploaded_at) ORDER BY DATE(uploaded_at)
+
+-- :name record :? :*
+-- :doc fetch `login`s upload count by date
+SELECT DATE(uploaded_at), COUNT(*)
+FROM uploads
+WHERE login = :login
+GROUP BY DATE(uploaded_at) ORDER BY DATE(uploaded_at)
