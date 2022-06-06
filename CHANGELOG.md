@@ -23,9 +23,38 @@
   -> 効率を考えるにはループの前にフィルタする。
 - reports ページが下に長すぎ。head で切って、more? とかやるか？
 - 誰から誰にをすべて隠して、メッセージ本文だけ時系列で表示する。
-
 - TDD
 - db/functions の引数
+- reagent, マップの場所はそこか？
+
+## 0.11.0 - 2022-06-06
+### Added
+- Upload のページに uploaded のセクション追加。
+  * 全体
+  * 自分
+  * hkimura
+
+## 0.10.0 - 2022-06-05
+### Added
+- goods 総数を表示する。
+### Changed
+- REPLY をグラフから外す
+
+## 0.9.4 - 2022-06-04
+- chaged home menu
+
+## 0.9.3-mikan - 2022-06-22
+### Fixed
+- sender/receiver を間違えた。
+
+## 0.9.2-mikan - 2022-06-02
+- goods sent を message に '(Re:' が入っていたら reply とし、
+  sender 名 を abbrev する。
+- received -> name -> send の name を太字に。
+
+## 0.9.1 - 2022-06-02
+- mikan's advice
+  goods received 表示だけ abbrev
 
 ## 0.9.0 - 2022-06-02
 - l.melt にデプロイ

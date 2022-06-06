@@ -12,12 +12,10 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-
-
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.9.0")
-(def ^:private now "2022-06-02 15:29:23")
+(def ^:private version "0.11.0")
+(def ^:private now "2022-06-06 11:38:34")
 
 (defonce session (r/atom {:page :home}))
 
@@ -33,6 +31,11 @@
    本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
   [user]
   (= "hkimura" user))
+
+(defn- abbrev [s]
+  (if (admin? js/login)
+    s
+    (concat (first s) (map (fn [_] "?") (rest s)))))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -86,9 +89,9 @@
       ;;  " | "
       ;;  [:a {:href "#/sent"} "histogram"]
        " | "
-       [:a {:href "#/recv-sent"} "graph"]
-       " | "
-       [:a {:href "#/messages"} "all messages"]]]
+       [:a {:href "#/recv-sent"} "Received & Sent"]]]
+      ;;  " | "
+      ;;  [:a {:href "#/messages"} "all messages"]]]
      [:hr]
      "hkimura, " version]))
 
@@ -115,7 +118,7 @@
 
 (defn upload-page []
   (let [url (str js/hp_url js/login)]
-    (.log js/console "url:" url)
+    ;;(.log js/console "url:" url)
     [:section.section>div.container>div.content
      [:h2 "Upload"]
      [:div
@@ -130,9 +133,6 @@
       [:li "フォルダはアップロードできない。"]
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書きする。"]
-      #_[:li "up ボタン押した後、
-            Choose.. で選んだファイル名が No file.. に戻ったらアップロード完了。
-            ただし、正しい場所にアップロードするのはユーザの責任。"]
       [:li "/js/ はやれる人用。授業では扱っていない。"]
       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
 
@@ -147,10 +147,10 @@
 ;; send-message! と browse-page で参照する。
 (def ^:private min-mesg 10)
 
-(defn- post-message [sender receiver message & reply?]
+(defn- post-message [sender receiver message]
   (POST "/api/save-message"
     {:headers {"x-csrf-field" js/csrfToken}
-     :params {:snd (if reply? "REPLY" js/login)
+     :params {:snd sender
               :rcv receiver
               :message message}
      :handler #(js/alert (str "メッセージ「" message "」を送りました。"))
@@ -181,7 +181,8 @@
    [:ul
     [:li "good を押したあと「送信しました」が表示されない時、
         ページを再読み込みして good し直してください🙏
-        再読み込みの前にメッセージはコピーしとくといいぞ。"]]
+        再読み込みの前にメッセージはコピーしとくと吉。"]
+    [:li "タイトルは人目を引くようなものがいいやろな。自己紹介は印象に残るか？"]]
    [:div
     [:input {:type "radio"
              :checked @random?
@@ -197,7 +198,7 @@
       [:div.column.is-one-quarter
        [:a {:href (report-url u)
             :class (if (= u "hkimura") "hkimura" "other")}
-           u]
+        u]
        " "
        (get @titles u)]
       [:div.column
@@ -230,7 +231,13 @@
       (js/alert "メッセージが空です。")
       (post-message js/login
                     snd
-                    (str "(REPLY) " msg "(Re: " message ")") true))))
+                    (str msg "(Re: " message ")")))))
+
+(defn- abbrev-if-contains-re [s]
+  (let [receiver (:rcv s)]
+    (if (re-find #"\(Re:" (:message s))
+      (abbrev receiver)
+      receiver)))
 
 (defn goods-page []
   (let [received (filter-goods-by :rcv)
@@ -238,34 +245,33 @@
     [:section.section>div.container>div.content
      [:ul
       [:li "Goods Received に表示される good! には reply で返信できます。"]
-      [:li "返信のメッセージは Goods Sent に記録されない。"]
-      [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
-            reply ボタンないはず。"]
-      [:li "Not Yet Send To は自分が一度も good! を出してない人のリスト。"]
-      [:li "青色のリンクで表示されるのは一度以上アップロードした人。
+      ;; [:li "返信のメッセージは Goods Sent に記録されない。"]
+      ;; [:li "goods! から届いたメッセージと違って、返信メッセージには再返信できない。
+      ;;       reply ボタンないはず。"]
+      [:li "Not Yet は自分が一度も good! を出してない人のリスト。
+            青色のリンクで表示されるのは一度以上アップロードした人（見えるとは限らない）。
             黒はまだ何もアップロードしない人。"]]
      [:div.columns
       [:div.column
-       [:h2 "Goods Received"]
+       [:h2 "Goods Received (" (count received) ")"]
        (for [[id g] (map-indexed vector received)]
          [:p {:key (str "r" id)}
-          (time-format (:timestamp g))
+          "from " [:b (abbrev (:snd g))] ", " (time-format (:timestamp g)) ","
           [:br]
           (:message g)
           [:br]
-          (when-not (starts-with? (:message g) "(REPLY)")
-            [:button.button.is-success.is-small
-             {:on-click #(reply? g)}
-             "reply"])])]
+          [:button.button.is-success.is-small
+            {:on-click #(reply? g)}
+            "reply"]])]
       [:div.column
-       [:h2 "Goods Sent"]
+       [:h2 "Goods Sent (" (count sent) ")"]
        (for [[id s] (map-indexed vector sent)]
          [:p {:key (str "g" id)}
-          "to " [:b (:rcv s)] ", " (time-format (:timestamp s))
+          "to " [:b (abbrev-if-contains-re s)] ", " (time-format (:timestamp s)) ","
           [:br]
           (:message s)])]
       [:div.column
-       [:h2 "Not Yet Send To"]
+       [:h2 "Not Yet"]
        (doall
         (for [[id u] (map-indexed
                       vector
@@ -282,11 +288,6 @@
 (defn good-marks [n]
   (repeat n "👍"))
 
-(defn abbrev [s]
-  (if (admin? js/login)
-    s
-    (concat (first s) (map (fn [_] "?") (rest s)))))
-
 (defn- goods-f [f]
   (->> (group-by f @goods)
        (map (fn [x] {:id (first x) f (count (second x))}))))
@@ -301,10 +302,11 @@
 (defn histogram-both []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
-   [:p "ログイン名、希望により伏せ字なんだが、どうですか？
+   #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
         人気のページがどんなページか見たくない？
         たくさん good! をつけてくれる優しいお兄さんお姉さんのページ、見たくない？
         そういうの、刺激になると思うんだけどなあ。"]
+   [:p "全 " (count @goods) " goods"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
@@ -312,7 +314,8 @@
        (let [name (abbrev (key g))
              r (-> g val (get-count :rcv) good-marks)
              s (-> g val (get-count :snd) good-marks)]
-         [:p {:key i} r " → " name " → " s])))])
+         (when-not (= "REPLY" name)
+           [:p {:key i} r " → " [:b name] " → " s]))))])
 
 (defn messages []
  [:section.section>div.container>div.content
@@ -321,6 +324,7 @@
   [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
        その影響をしばらく確認する。"]
   [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
+
 ;; -------------------------
 ;; Pages
 
@@ -385,7 +389,7 @@
      :error-handler #(.log js/console "reset-goods! error:" %)}))
 
 (defn- setup-titles! [m]
-  (.log js/console (str m))
+  ;;(.log js/console (str m))
   (doseq [{:keys [login title]} m]
     (swap! titles merge {login title})))
 
