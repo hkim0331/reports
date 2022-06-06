@@ -26,8 +26,10 @@
 - TDD
 - db/functions の引数
 - reagent, マップの場所はそこか？
+- キャッシュのクリアをしないでも、0.11.2 の内容が見えるように。
 
-## 0.11.1-SNAPSHOT
+
+## 0.11.2 - 2022-06-06
 - <meta http-equiv="Pragma" content="no-cache"> は効果あるか？
 
 ## 0.11.0 - 2022-06-06

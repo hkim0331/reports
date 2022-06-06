@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-(defproject reports "0.11.1-SNAPSHOT"
-=======
-(defproject reports "upload-records"
->>>>>>> feature/upload-records
+(defproject reports "0.11.2"
 
   :description "reports for literacy 2022"
   :url "https://rp.melt.kyutech.ac.jp"
