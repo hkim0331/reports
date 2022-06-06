@@ -82,6 +82,13 @@
 (defn titles [_]
   (response/ok (db/titles)))
 
+(defn records-all [request]
+  (response/ok (db/records)))
+
+(defn record-login [{{:keys [login]} :path-params}]
+  (log/debug "record-login logn=" login)
+  (response/ok (db/record {:login login})))
+
 (defn services-routes []
   ["/api" {:middleware [middleware/wrap-restricted
                         middleware/wrap-csrf
@@ -90,4 +97,6 @@
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
    ["/goods"  {:get goods}]
-   ["/titles" {:get titles}]])
+   ["/titles" {:get titles}]
+   ["/records" {:get records-all}]
+   ["/record/:login" {:get record-login}]])
