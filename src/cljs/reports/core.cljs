@@ -90,12 +90,10 @@
       [:li [:a {:href "#/upload"} "Upload, uploaded"]]
       [:li [:a {:href "#/browse"} "Browse & Comments"]]
       [:li [:a {:href "#/goods"}  "Goods"]
-      ;;  " | "
-      ;;  [:a {:href "#/sent"} "histogram"]
        " | "
-       [:a {:href "#/recv-sent"} "Received & Sent"]]]
-      ;;  " | "
-      ;;  [:a {:href "#/messages"} "all messages"]]]
+       [:a {:href "#/recv-sent"} "Received & Sent"]
+       " | "
+       [:a {:href "#/messages"} "messages"]]]
      [:hr]
      "hkimura, " version]))
 
@@ -345,11 +343,16 @@
 
 (defn messages []
   [:section.section>div.container>div.content
-   [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
-   [:p "作成中。"]
-   [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
-       その影響をしばらく確認する。"]
-   [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
+   [:h2 "Goods (Messages)"]
+   (for [g (-> @goods reverse)]
+     [:p {:key (:id g)} (time-format (:timestamp g))
+       [:br] (:message g)])])
+
+  ;;  [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
+  ;;  [:p "作成中。"]
+  ;;  [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
+  ;;      その影響をしばらく確認する。"]
+  ;;  [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
 
 ;; -------------------------
 ;; Pages

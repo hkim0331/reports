@@ -31,6 +31,10 @@
 - uploaded は色付きで、
 - uploaded は Upload とは別ページに。
 
+## 0.12.3 - 2022-06-06
+- messages
+  from/send を省いて、日付とメッセージ本文を。
+
 ## 0.12.2 - 2022-06-06
 - color div
 - check js ?version effect
