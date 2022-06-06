@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.12.2")
-(def ^:private now "2022-06-06 22:40:48")
+(def ^:private version "0.12.3")
+(def ^:private now "2022-06-06 23:21:44")
 
 (defonce session (r/atom {:page :home}))
 
@@ -346,6 +346,7 @@
    [:h2 "Goods (Messages)"]
    (for [g (-> @goods reverse)]
      [:p {:key (:id g)} (time-format (:timestamp g))
+       ", from xxx to yyy, "
        [:br] (:message g)])])
 
   ;;  [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
