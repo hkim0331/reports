@@ -344,21 +344,18 @@
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → " [:b name] " → " s]))))])
 
+;; 幼児化が進んでいる。
+;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
+;; のレベルではない。好き、嫌いの第一次欲求、漫画好き好きばっかだ。
 (defn messages []
   [:section.section>div.container>div.content
    [:h2 "Goods (Messages)"]
    (for [g (-> @goods reverse)]
      [:p {:key (:id g)} (time-format (:timestamp g))
-       ", from " [:b (abbrev (:snd g))]
-       " to " [:b (abbrev (:rcv g))] ","
-       [:br]
-       (:message g)])])
-
-  ;;  [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
-  ;;  [:p "作成中。"]
-  ;;  [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
-  ;;      その影響をしばらく確認する。"]
-  ;;  [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
+      ", from " [:b (abbrev (:snd g))]
+      " to " [:b (abbrev (:rcv g))] ","
+      [:br]
+      (:message g)])])
 
 ;; -------------------------
 ;; Pages
