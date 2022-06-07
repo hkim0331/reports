@@ -31,6 +31,9 @@
 - uploaded は色付きで、
 - uploaded は Upload とは別ページに。
 
+## 0.12.6 - 2022-06-07
+- messages, abbrev sender/receiver
+
 ## 0.12.4, 0.12.5 - 2022-06-07
 - update message to students
 

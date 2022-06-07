@@ -41,6 +41,7 @@
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
 
+
 (defn nav-link [uri title page]
   [:a.navbar-item
    {:href   uri
@@ -244,6 +245,7 @@
 ;; -------------------------
 ;; Goods
 
+;; FIXME
 (defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
@@ -347,8 +349,10 @@
    [:h2 "Goods (Messages)"]
    (for [g (-> @goods reverse)]
      [:p {:key (:id g)} (time-format (:timestamp g))
-       ", from xxx to yyy, "
-       [:br] (:message g)])])
+       ", from " [:b (abbrev (:snd g))]
+       " to " [:b (abbrev (:rcv g))] ","
+       [:br]
+       (:message g)])])
 
   ;;  [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
   ;;  [:p "作成中。"]
