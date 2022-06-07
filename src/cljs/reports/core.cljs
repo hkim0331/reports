@@ -119,7 +119,7 @@
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
 (defn make-table [records]
-  (let [s (atom "| 日付 | 回数 |\n| :---: | ---: |\n")]
+  (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
     (doseq [r records]
       (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
     [:div {:dangerouslySetInnerHTML
@@ -127,7 +127,7 @@
 
 (defn record-columns []
   [:div
-   [:h3#records "uploaded (日付, 回数)"]
+   [:h3#records "Uploaded"]
    [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"]
    [:div.columns {:style {:margin-left "0rem"}}
     [:div#all.column
