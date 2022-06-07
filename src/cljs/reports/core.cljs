@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.12.5")
-(def ^:private now "2022-06-07 10:13:23")
+(def ^:private version "0.12.6")
+(def ^:private now "2022-06-07 11:26:07")
 
 (defonce session (r/atom {:page :home}))
 
@@ -40,6 +40,7 @@
   (if (admin? js/login)
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
+
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -119,7 +120,7 @@
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
 (defn make-table [records]
-  (let [s (atom "| 日付 | 回数 |\n| :---: | ---: |\n")]
+  (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
     (doseq [r records]
       (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
     [:div {:dangerouslySetInnerHTML
@@ -127,7 +128,7 @@
 
 (defn record-columns []
   [:div
-   [:h3#records "uploaded (日付, 回数)"]
+   [:h3#records "Uploaded"]
    [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"]
    [:div.columns {:style {:margin-left "0rem"}}
     [:div#all.column
@@ -244,6 +245,7 @@
 ;; -------------------------
 ;; Goods
 
+;; FIXME
 (defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
@@ -347,8 +349,10 @@
    [:h2 "Goods (Messages)"]
    (for [g (-> @goods reverse)]
      [:p {:key (:id g)} (time-format (:timestamp g))
-       ", from xxx to yyy, "
-       [:br] (:message g)])])
+       ", from " [:b (abbrev (:snd g))]
+       " to " [:b (abbrev (:rcv g))] ","
+       [:br]
+       (:message g)])])
 
   ;;  [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
   ;;  [:p "作成中。"]
