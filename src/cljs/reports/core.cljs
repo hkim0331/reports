@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.12.6")
-(def ^:private now "2022-06-07 11:26:07")
+(def ^:private version "0.13.0-SNAPSHOT")
+(def ^:private now "2022-06-09 08:28:41")
 
 (defonce session (r/atom {:page :home}))
 
@@ -119,12 +119,35 @@
     [:div.column s2 [:input {:type "file" :name "upload"}]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
-(defn make-table [records]
+(defn- make-table [records]
   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
     (doseq [r records]
       (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
     [:div {:dangerouslySetInnerHTML
            {:__html (md->html (apply str @s))}}]))
+
+(defn- upload-columns []
+  (let [url (str js/hp_url js/login)]
+    [:div
+      [:h2 "Upload"]
+      [:div
+        [upload-column (str js/login) "/ " "html"]
+        [upload-column "" "/css/ " "css"]
+        [upload-column "" "/images/ " "images"]
+        [upload-column "" "/js/ " "js"]]
+      [:div "check your uploads => "
+       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+      [:ul
+       [:li "アップロードはファイルひとつずつ。"]
+       [:li "フォルダはアップロードできない。"]
+       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
+       [:li "同じファイル名でアップロードすると上書きする。"]
+       [:li "/js/ はやれる人用。授業では扱っていない。"]
+       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
+
+(defn- upload-ends []
+ [:div
+  [:h2 "Upload は終了です"]])
 
 (defn record-columns []
   [:div
@@ -143,26 +166,11 @@
     [:div.column]]])
 
 (defn upload-page []
-  (let [url (str js/hp_url js/login)]
-    ;;(.log js/console "url:" url)
-    [:section.section>div.container>div.content
-     [:h2 "Upload"]
-     [:div
-      [upload-column (str js/login) "/ " "html"]
-      [upload-column "" "/css/ " "css"]
-      [upload-column "" "/images/ " "images"]
-      [upload-column "" "/js/ " "js"]]
-     [:div "check your uploads => "
-      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
-     [:ul
-      [:li "アップロードはファイルひとつずつ。"]
-      [:li "フォルダはアップロードできない。"]
-      [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
-      [:li "同じファイル名でアップロードすると上書きする。"]
-      [:li "/js/ はやれる人用。授業では扱っていない。"]
-      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]
-     [:br]
-     [record-columns]]))
+  [:section.section>div.container>div.content
+    #_[upload-columns]
+    [upload-ends]
+    [:br]
+    [record-columns]])
 
 ;; -------------------------
 ;; Browse
