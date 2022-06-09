@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.13.0-SNAPSHOT")
-(def ^:private now "2022-06-09 08:28:41")
+(def ^:private version "0.13.0")
+(def ^:private now "2022-06-09 08:34:28")
 
 (defonce session (r/atom {:page :home}))
 
@@ -152,7 +152,8 @@
 (defn record-columns []
   [:div
    [:h3#records "Uploaded"]
-   [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"]
+   [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。
+        〆切間際の駆け込みアップロードの評価は高くない。友人の作品、じっくり見れたか？"]
    [:div.columns {:style {:margin-left "0rem"}}
     [:div#all.column
      [:h4 "全体"]

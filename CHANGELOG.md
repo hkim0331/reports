@@ -8,9 +8,6 @@
 - button.is-primary.is-small でも大きすぎる
 - is-fifth でも大きすぎる。
 - good 送信後の input フィールドのクリア(クリアしない方がいい)
-- login 名の最大幅で div
-- feedback upload
-- return key でメッセージ送信
 - hot に時刻表示
   -> get /users で最近アップデートの時刻をくっつけて持って来れれば可能だが、
   0.8.3 のソリューションが影響を受ける。やめとこ。
@@ -22,17 +19,20 @@
 - 誰から誰にをすべて隠して、メッセージ本文だけ時系列で表示する。
 - TDD
 - db/functions の引数
-- reagent, マップの場所はそこか？
 - warning
   127 |      [:p (str (.-rep (:date r)) "," (:count r))]))])
   ---------------------^-----------------------------------------------
   Cannot infer target type in expression (. (:date r) -rep)
   型情報を与えてやるのかな？
-- uploaded は色付きで、
-- uploaded は Upload とは別ページに。
+
+
+## 0.13.0 - 2022-06-09
+- stop uploading
 
 ## 0.12.6 - 2022-06-07
 - messages, abbrev sender/receiver
+- uploaded は色付きで、
+- uploaded は Upload とは別ページに。
 
 ## 0.12.4, 0.12.5 - 2022-06-07
 - update message to students
