@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.12.6")
-(def ^:private now "2022-06-07 11:26:07")
+(def ^:private version "0.13.0")
+(def ^:private now "2022-06-09 08:34:28")
 
 (defonce session (r/atom {:page :home}))
 
@@ -119,17 +119,42 @@
     [:div.column s2 [:input {:type "file" :name "upload"}]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
-(defn make-table [records]
+(defn- make-table [records]
   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
     (doseq [r records]
       (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
     [:div {:dangerouslySetInnerHTML
            {:__html (md->html (apply str @s))}}]))
 
+(defn- upload-columns []
+  (let [url (str js/hp_url js/login)]
+    [:div
+      [:h2 "Upload"]
+      [:div
+        [upload-column (str js/login) "/ " "html"]
+        [upload-column "" "/css/ " "css"]
+        [upload-column "" "/images/ " "images"]
+        [upload-column "" "/js/ " "js"]]
+      [:div "check your uploads => "
+       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+      [:ul
+       [:li "アップロードはファイルひとつずつ。"]
+       [:li "フォルダはアップロードできない。"]
+       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
+       [:li "同じファイル名でアップロードすると上書きする。"]
+       [:li "/js/ はやれる人用。授業では扱っていない。"]
+       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
+
+(defn- upload-ends []
+ [:div
+  [:h2 "Upload は終了です"]])
+
 (defn record-columns []
   [:div
    [:h3#records "Uploaded"]
-   [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"]
+   [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"
+       [:br]
+       "〆切間際の駆け込みアップロードの評価は高くない。友人の作品、じっくり見れたか？"]
    [:div.columns {:style {:margin-left "0rem"}}
     [:div#all.column
      [:h4 "全体"]
@@ -143,26 +168,11 @@
     [:div.column]]])
 
 (defn upload-page []
-  (let [url (str js/hp_url js/login)]
-    ;;(.log js/console "url:" url)
-    [:section.section>div.container>div.content
-     [:h2 "Upload"]
-     [:div
-      [upload-column (str js/login) "/ " "html"]
-      [upload-column "" "/css/ " "css"]
-      [upload-column "" "/images/ " "images"]
-      [upload-column "" "/js/ " "js"]]
-     [:div "check your uploads => "
-      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
-     [:ul
-      [:li "アップロードはファイルひとつずつ。"]
-      [:li "フォルダはアップロードできない。"]
-      [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
-      [:li "同じファイル名でアップロードすると上書きする。"]
-      [:li "/js/ はやれる人用。授業では扱っていない。"]
-      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]
-     [:br]
-     [record-columns]]))
+  [:section.section>div.container>div.content
+    #_[upload-columns]
+    [upload-ends]
+    [:br]
+    [record-columns]])
 
 ;; -------------------------
 ;; Browse
@@ -344,21 +354,18 @@
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → " [:b name] " → " s]))))])
 
+;; 幼児化が進んでいる。
+;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
+;; のレベルではない。好き、嫌いの第一次欲求、漫画好き好きばっかだ。
 (defn messages []
   [:section.section>div.container>div.content
    [:h2 "Goods (Messages)"]
    (for [g (-> @goods reverse)]
      [:p {:key (:id g)} (time-format (:timestamp g))
-       ", from " [:b (abbrev (:snd g))]
-       " to " [:b (abbrev (:rcv g))] ","
-       [:br]
-       (:message g)])])
-
-  ;;  [:p "飛び交った goods を送信者、受信者を外して時系列の逆順で表示する。"]
-  ;;  [:p "作成中。"]
-  ;;  [:p "この前の users-all の変更 (0.8.8) がシステム上、大きかったので、
-  ;;      その影響をしばらく確認する。"]
-  ;;  [:p "しかし、他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。"]])
+      ", from " [:b (abbrev (:snd g))]
+      " to " [:b (abbrev (:rcv g))] ","
+      [:br]
+      (:message g)])])
 
 ;; -------------------------
 ;; Pages
