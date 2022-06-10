@@ -25,6 +25,8 @@
   Cannot infer target type in expression (. (:date r) -rep)
   型情報を与えてやるのかな？
 
+## 0.13.1 - 2022-06-10
+- 動かしますか？のメッセージ。
 
 ## 0.13.0 - 2022-06-09
 - stop uploading
