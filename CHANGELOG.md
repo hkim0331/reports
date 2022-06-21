@@ -25,6 +25,9 @@
   Cannot infer target type in expression (. (:date r) -rep)
   型情報を与えてやるのかな？
 
+## 0.14.0 - 2022-06-22
+- answers.md をアップロードさせ、プレビューする。
+
 ## 0.13.1 - 2022-06-10
 - 動かしますか？のメッセージ。
 
