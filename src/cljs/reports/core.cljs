@@ -143,7 +143,8 @@
        [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
        [:li "同じファイル名でアップロードすると上書きする。"]
        [:li "/js/ はやれる人用。授業では扱っていない。"]
-       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
+       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
+       [:li "*.md ファイルは一番上、'/' からアップロードしてください。"]]]))
 
 (defn- upload-ends []
  [:div
@@ -175,8 +176,8 @@
 
 (defn upload-page []
   [:section.section>div.container>div.content
-    #_[upload-columns]
-    [upload-ends]
+    [upload-columns]
+    #_[upload-ends]
     [:br]
     [record-columns]])
 
