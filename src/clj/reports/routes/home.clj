@@ -5,8 +5,8 @@
    ;;[reports.db.core :as db]
    [reports.layout :as layout]
    [reports.middleware :as middleware]
-   [ring.util.response]))
-   ;;[ring.util.http-response :as response]))
+   [ring.util.response]
+   [ring.util.http-response :as response]))
 
 (defn home-page [request]
   (if-let [login (get-in request [:session :identity])]
@@ -14,8 +14,12 @@
                                           :hp-url (:hp-url env)})
     (layout/render [request] "error.html")))
 
+(defn preview [{{:keys [login]} :path-params}]
+    (response/ok login))
+
 (defn home-routes []
   ["/r" {:middleware [middleware/wrap-restricted
                       middleware/wrap-csrf
                       middleware/wrap-formats]}
-   ["/" {:get home-page}]])
+   ["/" {:get home-page}]
+   ["/preview/:login" {:get preview}]])
