@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.13.1")
-(def ^:private now "2022-06-10 17:11:15")
+(def ^:private version "0.14.0")
+(def ^:private now "2022-06-22 01:45:35")
 
 (defonce session (r/atom {:page :home}))
 
@@ -138,13 +138,16 @@
       [:div "check your uploads => "
        [:a.button.buttun.is-warning.is-small {:href url} "check"]]
       [:ul
+       [:li "*.md ファイルは一番上、'/' からアップロードしてください。
+             プレビューは "
+            [:a {:href (str "/r/preview/" js/login)} "preview"]
+            " から。"]
        [:li "アップロードはファイルひとつずつ。"]
        [:li "フォルダはアップロードできない。"]
        [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
        [:li "同じファイル名でアップロードすると上書きする。"]
        [:li "/js/ はやれる人用。授業では扱っていない。"]
-       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
-       [:li "*.md ファイルは一番上、'/' からアップロードしてください。"]]]))
+       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
 
 (defn- upload-ends []
  [:div
