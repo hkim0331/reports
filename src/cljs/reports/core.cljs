@@ -139,9 +139,9 @@
        [:a.button.buttun.is-warning.is-small {:href url} "check"]]
       [:ul
        [:li "*.md ファイルは一番上、'/' からアップロードしてください。
-             プレビューは"
-            [:a {:href (str "/preview/" js/login)} "preview"]
-            "から。"]
+             プレビューは "
+            [:a {:href (str "/r/preview/" js/login)} "preview"]
+            " から。"]
        [:li "アップロードはファイルひとつずつ。"]
        [:li "フォルダはアップロードできない。"]
        [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
