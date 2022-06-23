@@ -174,7 +174,7 @@
 
 (defn upload-page []
   [:section.section>div.container>div.content
-    #[upload-columns]
+    ;;[upload-columns]
     [upload-ends]
     [:br]
     [record-columns]])
