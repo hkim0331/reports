@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.13.0")
-(def ^:private now "2022-06-09 08:34:28")
+(def ^:private version "0.14.0")
+(def ^:private now "2022-06-22 01:45:35")
 
 (defonce session (r/atom {:page :home}))
 
@@ -138,6 +138,10 @@
       [:div "check your uploads => "
        [:a.button.buttun.is-warning.is-small {:href url} "check"]]
       [:ul
+       [:li "*.md ファイルは一番上、'/' からアップロードしてください。
+             プレビューは "
+            [:a {:href (str "/r/preview/" js/login)} "preview"]
+            " から。"]
        [:li "アップロードはファイルひとつずつ。"]
        [:li "フォルダはアップロードできない。"]
        [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
@@ -147,7 +151,13 @@
 
 (defn- upload-ends []
  [:div
-  [:h2 "Upload は終了です"]])
+  [:h2 "Upload は終了です"]
+  [:p "Upload 動いてなくてページのアップデートはできないが、
+       それ以外、メッセージ交換はできるよ。
+       採点は別に作成したコピーでオフラインで進行中です。
+       upload 動かしておいた方が楽しいか？少なくとも前期の間は。
+       希望があれば 214 か mt.melt へ。
+       ホームページ見て、友達出たりすると授業の目的とは別に嬉しいかな。"]])
 
 (defn record-columns []
   [:div
@@ -169,8 +179,8 @@
 
 (defn upload-page []
   [:section.section>div.container>div.content
-    #_[upload-columns]
-    [upload-ends]
+    [upload-columns]
+    #_[upload-ends]
     [:br]
     [record-columns]])
 
