@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.14.0")
-(def ^:private now "2022-06-22 01:45:35")
+(def ^:private version "0.14.1")
+(def ^:private now "2022-06-23 11:03:10")
 
 (defonce session (r/atom {:page :home}))
 
@@ -151,13 +151,8 @@
 
 (defn- upload-ends []
  [:div
-  [:h2 "Upload は終了です"]
-  [:p "Upload 動いてなくてページのアップデートはできないが、
-       それ以外、メッセージ交換はできるよ。
-       採点は別に作成したコピーでオフラインで進行中です。
-       upload 動かしておいた方が楽しいか？少なくとも前期の間は。
-       希望があれば 214 か mt.melt へ。
-       ホームページ見て、友達出たりすると授業の目的とは別に嬉しいかな。"]])
+  [:h2 "Upload 停止"]
+  [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
 
 (defn record-columns []
   [:div
@@ -179,8 +174,8 @@
 
 (defn upload-page []
   [:section.section>div.container>div.content
-    [upload-columns]
-    #_[upload-ends]
+    #[upload-columns]
+    [upload-ends]
     [:br]
     [record-columns]])
 
