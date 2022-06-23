@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.13.0")
-(def ^:private now "2022-06-09 08:34:28")
+(def ^:private version "0.14.1")
+(def ^:private now "2022-06-23 11:03:10")
 
 (defonce session (r/atom {:page :home}))
 
@@ -138,6 +138,10 @@
       [:div "check your uploads => "
        [:a.button.buttun.is-warning.is-small {:href url} "check"]]
       [:ul
+       [:li "*.md ファイルは一番上、'/' からアップロードしてください。
+             プレビューは "
+            [:a {:href (str "/r/preview/" js/login)} "preview"]
+            " から。"]
        [:li "アップロードはファイルひとつずつ。"]
        [:li "フォルダはアップロードできない。"]
        [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
@@ -147,7 +151,8 @@
 
 (defn- upload-ends []
  [:div
-  [:h2 "Upload は終了です"]])
+  [:h2 "Upload 停止"]
+  [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
 
 (defn record-columns []
   [:div
@@ -169,7 +174,7 @@
 
 (defn upload-page []
   [:section.section>div.container>div.content
-    #_[upload-columns]
+    #[upload-columns]
     [upload-ends]
     [:br]
     [record-columns]])
