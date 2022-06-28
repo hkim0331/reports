@@ -15,8 +15,10 @@
                                           :hp-url (:hp-url env)})
     (layout/render [request] "error.html")))
 
+;; ex1 answers.md
+;; ex2 md2-python.md
 (defn preview [{{:keys [login]} :path-params}]
-  (let [path (str (:upload-to env) "/" login "/answers.md")]
+  (let [path (str (:upload-to env) "/" login "/ex2-markdown.md")]
     (content-type
      (ok (md-to-html-string (slurp path)))
      "text/html")))
