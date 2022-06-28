@@ -18,7 +18,7 @@
 ;; ex1 answers.md
 ;; ex2 md2-python.md
 (defn preview [{{:keys [login]} :path-params}]
-  (let [path (str (:upload-to env) "/" login "/ex2-markdown.md")]
+  (let [path (str (:upload-to env) "/" login "/ex2-python.md")]
     (content-type
      (ok (md-to-html-string (slurp path)))
      "text/html")))
