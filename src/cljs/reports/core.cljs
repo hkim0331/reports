@@ -140,8 +140,13 @@
       [:ul
        [:li "*.md ファイルは一番上、'/' からアップロードしてください。
              プレビューは "
-            [:a {:href (str "/r/preview/" js/login)} "preview"]
-            " から。"]
+        [:a {:href (str "/r/preview/" js/login)} "preview"]
+        " から。"]
+       [:li "Q10 でアップロードしたイメージは "
+             [:a {:href (str "https://hp.melt.kyutech.ac.jp/"
+                             js/login
+                             "/images/endterm-plot.png")} "preview-plot"]
+             "で。"]
        [:li "アップロードはファイルひとつずつ。"]
        [:li "フォルダはアップロードできない。"]
        [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
