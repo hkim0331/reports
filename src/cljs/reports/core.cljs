@@ -132,11 +132,11 @@
       [:h2 "Upload"]
       [:div
         [upload-column (str js/login) "/ " "html"]
-        [upload-column "" "/css/ " "css"]
-        [upload-column "" "/images/ " "images"]
-        [upload-column "" "/js/ " "js"]]
-      [:div "check your uploads => "
-       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+        ;;[upload-column "" "/css/ " "css"]
+        [upload-column "" "/images/ " "images"]]
+        ;;[upload-column "" "/js/ " "js"]]
+      #_[:div "check your uploads => "
+         [:a.button.buttun.is-warning.is-small {:href url} "check"]]
       [:ul
        [:li "*.md ファイルは一番上、'/' からアップロードしてください。
              プレビューは "
