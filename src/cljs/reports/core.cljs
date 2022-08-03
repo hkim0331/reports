@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.14.2")
-(def ^:private now "2022-06-29 07:55:51")
+(def ^:private version "0.16.1")
+(def ^:private now "2022-08-03 08:07:51")
 
 (defonce session (r/atom {:page :home}))
 
@@ -132,16 +132,21 @@
       [:h2 "Upload"]
       [:div
         [upload-column (str js/login) "/ " "html"]
-        [upload-column "" "/css/ " "css"]
-        [upload-column "" "/images/ " "images"]
-        [upload-column "" "/js/ " "js"]]
-      [:div "check your uploads => "
-       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+        ;;[upload-column "" "/css/ " "css"]
+        [upload-column "" "/images/ " "images"]]
+        ;;[upload-column "" "/js/ " "js"]]
+      #_[:div "check your uploads => "
+         [:a.button.buttun.is-warning.is-small {:href url} "check"]]
       [:ul
        [:li "*.md ファイルは一番上、'/' からアップロードしてください。
              プレビューは "
-            [:a {:href (str "/r/preview/" js/login)} "preview"]
-            " から。"]
+        [:a {:href (str "/r/preview/" js/login)} "preview"]
+        " から。"]
+       [:li "Q10 でアップロードしたイメージは "
+             [:a {:href (str "https://hp.melt.kyutech.ac.jp/"
+                             js/login
+                             "/images/endterm-plot.png")} "preview-plot"]
+             "で。"]
        [:li "アップロードはファイルひとつずつ。"]
        [:li "フォルダはアップロードできない。"]
        [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]

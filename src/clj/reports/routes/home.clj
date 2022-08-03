@@ -19,8 +19,9 @@
 ;; ex2 ex2-python.md
 ;; ex3 ex3-python.md
 ;; ex4 ex4-python.md
+;; endterm endterm.md
 (defn preview [{{:keys [login]} :path-params}]
-  (let [path (str (:upload-to env) "/" login "/ex4-python.md")]
+  (let [path (str (:upload-to env) "/" login "/endterm.md")]
     (content-type
      (ok (md-to-html-string (slurp path)))
      "text/html")))
