@@ -29,6 +29,10 @@
 
 ## 0.15.0 - 2023-05-30
 restart project
+## 0.16.0 - 2022-08-03
+### 期末試験
+
+## 0.14.0 - 2022-06-22
 - answers.md をアップロードさせ、プレビューする。
 - upload from https://rp.melt　lumius project
 - browse from http://hp.melt:8080/　python -m http.server 8080 で。
