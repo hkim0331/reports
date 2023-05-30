@@ -26,6 +26,29 @@
   型情報を与えてやるのかな？
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
 
+## 1.17.1 - 2023-05-31
+
+```
+reports=# \d
+               List of relations
+ Schema |      Name      |   Type   |  Owner
+--------+----------------+----------+----------
+ public | goods          | table    | postgres
+ public | goods_id_seq   | sequence | postgres
+ public | titles         | table    | postgres
+ public | titles_id_seq  | sequence | postgres
+ public | uploads        | table    | postgres
+ public | uploads_id_seq | sequence | postgres
+(6 rows)
+
+reports=# delete from goods;
+DELETE 1721
+reports=# delete from titles;
+DELETE 152
+reports=# delete from uploads;
+DELETE 12835
+reports=#
+```
 
 ## 1.17.0 - 2023-05-31
 - answers.md をアップロードさせ、プレビューする。
