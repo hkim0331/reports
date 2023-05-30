@@ -17,3 +17,6 @@ profiles.clj
 
 /db-dumps/*
 !/db-dumps/*.sh
+
+/.calva/output-window
+/.clj-kondo/cache
