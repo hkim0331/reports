@@ -14,8 +14,8 @@
 
 ;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.15.0")
-(def ^:private now "2023-05-30 23:28:37")
+(def ^:private version "1.17.0")
+(def ^:private now "2023-05-31 01:30:44")
 
 (defonce session (r/atom {:page :home}))
 
@@ -129,37 +129,37 @@
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
     [:div
-      [:h2 "Upload"]
-      [:div
-        [upload-column (str js/login) "/ " "html"]
-        [upload-column "" "/css/ " "css"]
-        [upload-column "" "/images/ " "images"]
-        [upload-column "" "/js/ " "js"]]
-      [:div "check your uploads => "
-       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
-      [:ul
-       [:li "*.md ファイルは一番上、'/' からアップロードしてください。
+     [:h2 "Upload"]
+     [:div
+      [upload-column (str js/login) "/ " "html"]
+      [upload-column "" "/css/ " "css"]
+      [upload-column "" "/images/ " "images"]
+      [upload-column "" "/js/ " "js"]]
+     [:div "check your uploads => "
+      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+     [:ul
+      [:li "*.md ファイルは一番上、'/' からアップロードしてください。
              プレビューは "
-            [:a {:href (str "/r/preview/" js/login)} "preview"]
-            " から。"]
-       [:li "アップロードはファイルひとつずつ。"]
-       [:li "フォルダはアップロードできない。"]
-       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
-       [:li "同じファイル名でアップロードすると上書きする。"]
-       [:li "/js/ はやれる人用。授業では扱っていない。"]
-       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
+       [:a {:href (str "/r/preview/" js/login)} "preview"]
+       " から。"]
+      [:li "アップロードはファイルひとつずつ。"]
+      [:li "フォルダはアップロードできない。"]
+      [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
+      [:li "同じファイル名でアップロードすると上書きする。"]
+      [:li "/js/ はやれる人用。授業では扱っていない。"]
+      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
 
 (defn- upload-ends []
- [:div
-  [:h2 "Upload 停止"]
-  [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
+  [:div
+   [:h2 "Upload 停止"]
+   [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
 
 (defn record-columns []
   [:div
    [:h3#records "Uploaded"]
    [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"
-       [:br]
-       "〆切間際の駆け込みアップロードの評価は高くない。友人の作品、じっくり見れたか？"]
+    [:br]
+    "〆切間際の駆け込みアップロードの評価は高くない。友人の作品、じっくり見れたか？"]
    [:div.columns {:style {:margin-left "0rem"}}
     [:div#all.column
      [:h4 "全体"]
@@ -174,10 +174,10 @@
 
 (defn upload-page []
   [:section.section>div.container>div.content
-    [upload-columns]
+   [upload-columns]
     ;;[upload-ends]
-    [:br]
-    [record-columns]])
+   [:br]
+   [record-columns]])
 
 ;; -------------------------
 ;; Browse

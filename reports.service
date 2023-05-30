@@ -1,0 +1,13 @@
+[Unit]
+Description=literacy reports for hkimura classes
+
+[Service]
+WorkingDirectory=/home/ubuntu/reports
+ExecStart=/bin/sh start.sh
+ExecStop=/bin/sh stop.sh
+TimeoutSec=300
+Type=simple
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target
