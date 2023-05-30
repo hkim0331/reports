@@ -1,5 +1,8 @@
 # reports
 
+This README.md is awfully insufficient.
+Need updates.
+
 情報リテラシー 2020 レポート回収サイト。
 
 generated using Luminus version "4.38"
@@ -20,4 +23,4 @@ To start a web server for the application, run:
 
 ## License
 
-Copyright © 2022 Hiroshi Kimura
+Copyright © 2022,2023 Hiroshi Kimura

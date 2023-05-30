@@ -29,9 +29,15 @@
 
 ## 0.15.0 - 2023-05-30
 restart project
-
-## 0.14.0 - 2022-06-22
 - answers.md をアップロードさせ、プレビューする。
+- upload from https://rp.melt　lumius project
+- browse from http://hp.melt:8080/　python -m http.server 8080 で。
+- reports.* テーブルを初期化して tiger.melt に渡す
+
+
+----
+# 2022
+## 0.14.0 - 2022-06-22
 
 ## 0.13.1 - 2022-06-10
 - 動かしますか？のメッセージ。
