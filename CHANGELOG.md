@@ -27,6 +27,9 @@
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
 
 
+## 1.17.3 - 2023-05-31
+- update favicon.ico
+
 ## 1.17.2 - 2023-05-31
 
 ## 1.17.1 - 2023-05-31
@@ -55,8 +58,8 @@ reports=#
 
 ## 1.17.0 - 2023-05-31
 - answers.md をアップロードさせ、プレビューする。
-- upload from https://rp.melt　lumius project
-- browse from http://hp.melt:8080/　python -m http.server 8080 で。
+- upload from https://rp.meltlumius project
+- browse from http://hp.melt:8080/ python -m http.server 8080 で。
 - reports.* テーブルを初期化して tiger.melt に渡す
 
 restart project
