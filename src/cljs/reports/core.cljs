@@ -147,10 +147,10 @@
       [:li "アップロードが反映されない時、エラーないとすると例のアレすると良い。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
 
-(defn- upload-ends []
-  [:div
-   [:h2 "Upload 停止"]
-   [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
+;; (defn- upload-ends []
+;;   [:div
+;;    [:h2 "Upload 停止"]
+;;    [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
 
 (defn record-columns []
   [:div
@@ -162,7 +162,8 @@
      (make-table @records-all)]
     [:div#you.column
      [:h4 js/login]
-     (make-table @record-login)]
+     (make-table @record-login)
+     #_(make-table js/login)]
     [:div#hkim.column
      [:h4 "hkimura"]
      (make-table @record-hkimura)]
@@ -348,9 +349,7 @@
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → " [:b name] " → " s]))))])
 
-;; 幼児化が進んでいる。
 ;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
-;; のレベルではない。好き、嫌いの第一次欲求、漫画好き好きばっかだ。
 (defn messages []
   [:section.section>div.container>div.content
    [:h2 "Goods (Messages)"]
@@ -458,6 +457,7 @@
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
+
   (reset-users!)
   (reset-goods!)
   (reset-titles!)
