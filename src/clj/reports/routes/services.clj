@@ -39,20 +39,20 @@
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)]
-    (log/debug login type filename tempfile size)
-    (log/debug dir)
+    ;; (log/info login type filename tempfile size)
+    (log/info "upload!" login type filename size dir)
     (try
       (when (empty? filename)
-        (throw (Exception. "did not select a file.")))
+        (throw (Exception. "could not select a file.")))
       (sh "mkdir" "-p" dir)
-      (io/copy tempfile (io/file (str dir "/" filename)))
+      (io/copy tempfile (io/file dir filename)) ; throws if error
       (db/create-upload! {:login login :filename filename})
 
       ;; 0.9.0, insert title into `titles` table
       (when (= "index.html" filename)
-        (log/debug "when")
+        (log/info "upload! found index.html")
         (when-let [title (find-title tempfile)]
-          (log/debug  "when-let")
+          (log/info  "upload! found title")
           (upsert! login title)))
 
       ;; is this flash displayed?
