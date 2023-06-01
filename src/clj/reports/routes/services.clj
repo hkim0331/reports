@@ -33,36 +33,44 @@
    (db/update-title! {:login login :title title})
    (db/insert-title! {:login login :title title})))
 
+(comment
+  (count (slurp "/tmp/hello.txt"))
+  :rcf)
+
 (defn upload!
   "受け取った multiplart-params を login/{type}/filename にセーブする。
    type = html の時は login 直下とする。"
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
-        dir (dest-dir login type)]
-    (log/info type login filename tempfile size dir)
+        dir (dest-dir login type)
+        dest (io/file dir filename)]
+    (log/info "dir:" dir "dest:" dest)
     (try
       (when (empty? filename)
-        (throw (Exception. "did not select a file.")))
+        (throw (Exception. "choose a file to upload.")))
       (sh "mkdir" "-p" dir)
-      ;;
-      (io/copy tempfile (io/file dir filename)) ; throws if error
-      ;;
+ ;;;;
+      (log/info type login filename size dir tempfile)
+      (when (zero? size)
+        (throw (Exception. "upload parameter size is 0")))
+      (when (zero? (count (slurp tempfile)))
+        (throw (Exception. "upload file length is 0")))
+      (io/copy tempfile dest)
+      (when (zero? (count (slurp dest)))
+        (throw (Exception. "saved file length is 0")))
+
       (db/create-upload! {:login login :filename filename})
-
-      ;; 0.9.0, insert title into `titles` table
       (when (= "index.html" filename)
-        (log/info "uploaded index.html:" (slurp tempfile))
+        ;; (log/info "uploaded index.html:" (slurp tempfile))
         (when-let [title (find-title tempfile)]
-          (log/info "upload! found title" title)
+          ;; (log/info "upload! found title" title)
           (upsert! login title)))
-
-      ;; is this flash displayed?
-      (-> (response/found "/r/#/upload")
-          (assoc :flash (str "uploaded " filename)))
-
+      (response/found (str "https://hp.melt.kyutech.ac.jp/" login))
 
       (catch Exception e
-        (layout/render [request] "error.html" {:message (.getMessage e)})))))
+        (let [message (.getMessage e)]
+          (log/error "upload! error:" message)
+          (layout/render [request] "error.html" {:message message}))))))
 
 (defn users
   "distinct users order by `uploaded_at`"
