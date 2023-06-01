@@ -21,12 +21,12 @@
 
 (defn find-title
   "テキストファイル f 中の <title> ~ </title> に挟まれる文字列を返す。
-   取れないときは戻りは空文字列。一般化する？"
+   取れないときは戻りは nil"
   [f]
   (try
     (-> (re-find #"<title>[^<]*" (slurp f))
         (subs (count "<title>")))
-    (catch Exception _ "")))
+    (catch Exception _ nil)))
 
 (defn upsert! [login title]
  (if-let [_ (db/find-title {:login login})]
@@ -39,25 +39,28 @@
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)]
-    (log/info "keys upload" (keys upload))
-    (log/info login type filename tempfile size)
+    (log/info type login filename tempfile size dir)
     (try
       (when (empty? filename)
-        (throw (Exception. "could not select a file.")))
+        (throw (Exception. "did not select a file.")))
       (sh "mkdir" "-p" dir)
+      ;;
       (io/copy tempfile (io/file dir filename)) ; throws if error
+      ;;
       (db/create-upload! {:login login :filename filename})
 
       ;; 0.9.0, insert title into `titles` table
       (when (= "index.html" filename)
-        (log/info "upload! found index.html")
+        (log/info "uploaded index.html:" (slurp tempfile))
         (when-let [title (find-title tempfile)]
-          (log/info  "upload! found title")
+          (log/info "upload! found title" title)
           (upsert! login title)))
 
       ;; is this flash displayed?
       (-> (response/found "/r/#/upload")
           (assoc :flash (str "uploaded " filename)))
+
+
       (catch Exception e
         (layout/render [request] "error.html" {:message (.getMessage e)})))))
 
