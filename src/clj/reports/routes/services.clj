@@ -34,25 +34,25 @@
    (db/insert-title! {:login login :title title})))
 
 (defn upload!
-  "受け取った multiplart-params を login/{id}/filename にセーブする。
-   id = html の時は login 直下とする。"
+  "受け取った multiplart-params を login/{type}/filename にセーブする。
+   type = html の時は login 直下とする。"
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)]
-    (log/debug login type filename tempfile size)
-    (log/debug dir)
+    (log/info "keys upload" (keys upload))
+    (log/info login type filename tempfile size)
     (try
       (when (empty? filename)
-        (throw (Exception. "did not select a file.")))
+        (throw (Exception. "could not select a file.")))
       (sh "mkdir" "-p" dir)
-      (io/copy tempfile (io/file (str dir "/" filename)))
+      (io/copy tempfile (io/file dir filename)) ; throws if error
       (db/create-upload! {:login login :filename filename})
 
       ;; 0.9.0, insert title into `titles` table
       (when (= "index.html" filename)
-        (log/debug "when")
+        (log/info "upload! found index.html")
         (when-let [title (find-title tempfile)]
-          (log/debug  "when-let")
+          (log/info  "upload! found title")
           (upsert! login title)))
 
       ;; is this flash displayed?
@@ -86,7 +86,7 @@
   (response/ok (db/records)))
 
 (defn record-login [{{:keys [login]} :path-params}]
-  (log/debug "record-login logn=" login)
+  (log/debug "record-login login" login)
   (response/ok (db/record {:login login})))
 
 (defn services-routes []

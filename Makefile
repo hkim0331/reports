@@ -8,7 +8,7 @@ clean:
 	${RM} -r target
 
 uberjar: clean
-#	yarn release
+	shadow-cljs release app
 	lein uberjar
 
 deploy: uberjar

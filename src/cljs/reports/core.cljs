@@ -12,10 +12,11 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
+;; これは？
+;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.17.3")
-(def ^:private now "2023-05-31 13:47:36")
+(def ^:private version "1.18.0")
+(def ^:private now "2023-06-01 14:27:29")
 
 (defonce session (r/atom {:page :home}))
 
@@ -31,8 +32,7 @@
 (defonce record-login   (r/atom []))
 
 (defn- admin?
-  "cljs のため。
-   本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
+  "cljs のため。本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
   [user]
   (= "hkimura" user))
 
@@ -40,7 +40,6 @@
   (if (admin? js/login)
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
-
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -83,8 +82,7 @@
   (let [name js/login
         url (str js/hp_url name)]
     [:section.section>div.container>div.content
-     [:p "〆切間際のやっつけレポートは点数低い。"
-      "課題の意味わかってない証拠。"]
+     [:p "〆切際にやっつけたサイトは点数低い。作成途中を評価するレポート。"]
      [:p "check your report => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
@@ -138,16 +136,16 @@
      [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
-      [:li "*.md ファイルは一番上、'/' からアップロードしてください。
-             プレビューは "
-       [:a {:href (str "/r/preview/" js/login)} "preview"]
-       " から。"]
-      [:li "アップロードはファイルひとつずつ。"]
-      [:li "フォルダはアップロードできない。"]
+      ;; [:li "*.md ファイルは一番上、'/' からアップロードしてください。
+      ;;        プレビューは "
+      ;;  [:a {:href (str "/r/preview/" js/login)} "preview"]
+      ;;  " から。"]
+      [:li "アップロードはファイルひとつずつ。フォルダはアップロードできない。"]
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
-      [:li "同じファイル名でアップロードすると上書きする。"]
-      [:li "/js/ はやれる人用。授業では扱っていない。"]
-      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]]]))
+      [:li "同じファイル名でアップロードすると上書き。"]
+      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
+      [:li "アップロードが反映されない時、エラーないとすると例のアレすると良い。"]
+      [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
 
 (defn- upload-ends []
   [:div
@@ -157,9 +155,7 @@
 (defn record-columns []
   [:div
    [:h3#records "Uploaded"]
-   [:p "レポート出題は 5/18, 提出サイト動き出しは 5/24, レポート〆切は 6/8。"
-    [:br]
-    "〆切間際の駆け込みアップロードの評価は高くない。友人の作品、じっくり見れたか？"]
+   [:p "レポート〆切は 6/19 の正午。"]
    [:div.columns {:style {:margin-left "0rem"}}
     [:div#all.column
      [:h4 "全体"]
@@ -214,19 +210,12 @@
   [:section.section>div.container>div.content
    [:h2 "Browse & Comments"]
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
-    (str (count @users))
-    " 人。残りはいったい？"
-    "やっつけでいけると思っていたらそれは誤解です。"
-    "ページが出ません、イメージ出ません、リンクできませんって必ずなるだろう。"
-    "〆切間際の質問にはじゅうぶんに答えられない。勉強にもならない。"
-    "大好きな「平常点」も毎日失ってることにも気づこうな。"
-    "平常点は平常につくんだ。"]
+    (str (count @users)) "人。平常点は平常につく。"]
    [:ul
     [:li "good を押したあと「送信しました」が表示されない時、
-        ページを再読み込みして good し直してください🙏
-        再読み込みの前にメッセージはコピーしとくと吉。"]
-    [:li "レポート評価基準は下の hkimura から。
-          サイト開設日からそこにある。コツコツ書き足した。"]]
+        ページを再読み込みして good し直してください🙏"]
+    [:li "再読み込みの前にメッセージをコピーしとくと吉。"]
+    ]
    [:div
     [:input {:type "radio"
              :checked @random?
@@ -449,7 +438,7 @@
   (GET "https://l22.melt.kyutech.ac.jp/api/logins"
     {:headers {"Accept" "application/json"}
      :handler #(reset! users-all (set %))
-     :error-handler #(println (str "error:" %))}))
+     :error-handler #(.log js/console "reset-users-all!! error:" %)}))
 
 (defn reset-records-all! []
   (GET "/api/records"
