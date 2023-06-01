@@ -34,13 +34,13 @@
    (db/insert-title! {:login login :title title})))
 
 (defn upload!
-  "受け取った multiplart-params を login/{id}/filename にセーブする。
-   id = html の時は login 直下とする。"
+  "受け取った multiplart-params を login/{type}/filename にセーブする。
+   type = html の時は login 直下とする。"
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)]
-    ;; (log/info login type filename tempfile size)
-    (log/info "upload!" login type filename size dir)
+    (log/info "keys upload" (keys upload))
+    (log/info login type filename tempfile size)
     (try
       (when (empty? filename)
         (throw (Exception. "could not select a file.")))
@@ -86,7 +86,7 @@
   (response/ok (db/records)))
 
 (defn record-login [{{:keys [login]} :path-params}]
-  (log/debug "record-login logn=" login)
+  (log/debug "record-login login" login)
   (response/ok (db/record {:login login})))
 
 (defn services-routes []
