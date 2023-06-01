@@ -39,7 +39,7 @@
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)]
-    (log/info "keys upload" (keys upload))
+    ;;(log/info "keys upload" (keys upload))
     (log/info login type filename tempfile size)
     (try
       (when (empty? filename)
