@@ -12,10 +12,11 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
+;; これは？
+;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.17.3")
-(def ^:private now "2023-05-31 13:47:36")
+(def ^:private version "1.18.0-SNAPSHOT")
+(def ^:private now "2023-06-01 12:40:43")
 
 (defonce session (r/atom {:page :home}))
 
@@ -39,7 +40,6 @@
   (if (admin? js/login)
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
-
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -213,11 +213,8 @@
     (str (count @users)) "人。平常点は平常につく。"]
    [:ul
     [:li "good を押したあと「送信しました」が表示されない時、
-        ページを再読み込みして good し直してください🙏 時々、失敗します。"]
-    [:li
-     "再読み込みの前にメッセージをコピーしとくと吉。"]
-    ;; [:li "レポート評価基準は下の hkimura から。
-    ;;       サイト開設日からそこにある。コツコツ書き足した。"]
+        ページを再読み込みして good し直してください🙏"]
+    [:li "再読み込みの前にメッセージをコピーしとくと吉。"]
     ]
    [:div
     [:input {:type "radio"
@@ -441,7 +438,7 @@
   (GET "https://l22.melt.kyutech.ac.jp/api/logins"
     {:headers {"Accept" "application/json"}
      :handler #(reset! users-all (set %))
-     :error-handler #(println (str "error:" %))}))
+     :error-handler #(.log js/console "reset-users-all!! error:" %)}))
 
 (defn reset-records-all! []
   (GET "/api/records"
