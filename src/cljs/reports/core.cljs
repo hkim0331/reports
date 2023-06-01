@@ -12,10 +12,11 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-;;(set! js/XMLHttpRequest (nodejs/require "xhr2"))
+;; これは？
+;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.17.2")
-(def ^:private now "2023-05-31 02:08:33")
+(def ^:private version "1.18.1")
+(def ^:private now "2023-06-02 08:44:10")
 
 (defonce session (r/atom {:page :home}))
 
@@ -31,8 +32,7 @@
 (defonce record-login   (r/atom []))
 
 (defn- admin?
-  "cljs のため。
-   本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
+  "cljs のため。本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
   [user]
   (= "hkimura" user))
 
@@ -40,7 +40,6 @@
   (if (admin? js/login)
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
-
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -83,7 +82,7 @@
   (let [name js/login
         url (str js/hp_url name)]
     [:section.section>div.container>div.content
-     [:p "〆切間際のやっつけは点数低い。時間をかけて、失敗しながら学ぶってレポート。"]
+     [:p "〆切際にやっつけたサイトは点数低い。作成途中を評価するレポート。"]
      [:p "check your report => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
@@ -148,10 +147,10 @@
       [:li "アップロードが反映されない時、エラーないとすると例のアレすると良い。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
 
-(defn- upload-ends []
-  [:div
-   [:h2 "Upload 停止"]
-   [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
+;; (defn- upload-ends []
+;;   [:div
+;;    [:h2 "Upload 停止"]
+;;    [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
 
 (defn record-columns []
   [:div
@@ -163,7 +162,8 @@
      (make-table @records-all)]
     [:div#you.column
      [:h4 js/login]
-     (make-table @record-login)]
+     (make-table @record-login)
+     #_(make-table js/login)]
     [:div#hkim.column
      [:h4 "hkimura"]
      (make-table @record-hkimura)]
@@ -211,14 +211,12 @@
   [:section.section>div.container>div.content
    [:h2 "Browse & Comments"]
    [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
-    (str (count @users))
-    "平常点は平常につく。"]
+    (str (count @users)) "人。平常点は平常につく。"]
    [:ul
     [:li "good を押したあと「送信しました」が表示されない時、
-        ページを再読み込みして good し直してください。時々失敗します🙏
-        再読み込みの前にメッセージはコピーしとくと吉。"]
-    #_[:li "レポート評価基準は下の hkimura から。
-          サイト開設日からそこにある。コツコツ書き足した。"]]
+        ページを再読み込みして good し直してください🙏"]
+    [:li "再読み込みの前にメッセージをコピーしとくと吉。"]
+    ]
    [:div
     [:input {:type "radio"
              :checked @random?
@@ -351,9 +349,7 @@
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → " [:b name] " → " s]))))])
 
-;; 幼児化が進んでいる。
 ;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
-;; のレベルではない。好き、嫌いの第一次欲求、漫画好き好きばっかだ。
 (defn messages []
   [:section.section>div.container>div.content
    [:h2 "Goods (Messages)"]
@@ -441,7 +437,7 @@
   (GET "https://l22.melt.kyutech.ac.jp/api/logins"
     {:headers {"Accept" "application/json"}
      :handler #(reset! users-all (set %))
-     :error-handler #(println (str "error:" %))}))
+     :error-handler #(.log js/console "reset-users-all!! error:" %)}))
 
 (defn reset-records-all! []
   (GET "/api/records"
@@ -461,6 +457,7 @@
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
+
   (reset-users!)
   (reset-goods!)
   (reset-titles!)

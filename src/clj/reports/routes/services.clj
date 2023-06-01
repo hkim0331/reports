@@ -21,45 +21,59 @@
 
 (defn find-title
   "テキストファイル f 中の <title> ~ </title> に挟まれる文字列を返す。
-   取れないときは戻りは空文字列。一般化する？"
+   取れないときは戻りは nil"
   [f]
   (try
     (-> (re-find #"<title>[^<]*" (slurp f))
         (subs (count "<title>")))
-    (catch Exception _ "")))
+    (catch Exception _ nil)))
 
 (defn upsert! [login title]
  (if-let [_ (db/find-title {:login login})]
    (db/update-title! {:login login :title title})
    (db/insert-title! {:login login :title title})))
 
+(comment
+  (count (slurp "/tmp/hello.txt"))
+  :rcf)
+
 (defn upload!
-  "受け取った multiplart-params を login/{id}/filename にセーブする。
-   id = html の時は login 直下とする。"
+  "受け取った multiplart-params を login/{type}/filename にセーブする。
+   type = html の時は login 直下とする。"
   [{{:strs [type login upload]} :multipart-params :as request}]
   (let [{:keys [filename tempfile size]} upload
-        dir (dest-dir login type)]
-    (log/debug login type filename tempfile size)
-    (log/debug dir)
+        dir (dest-dir login type)
+        dest (io/file dir filename)]
+    (log/info "dir:" dir "dest:" dest)
     (try
       (when (empty? filename)
-        (throw (Exception. "did not select a file.")))
+        (throw (Exception. "choose a file to upload.")))
       (sh "mkdir" "-p" dir)
-      (io/copy tempfile (io/file (str dir "/" filename)))
+ ;;;;
+      (log/info type login filename size dir tempfile)
+      (when (zero? size)
+        (throw (Exception. "upload parameter size is 0")))
+      (when (zero? (count (slurp tempfile)))
+        (throw (Exception. "upload file length is 0")))
+      (io/copy tempfile dest)
+      (when (zero? (count (slurp dest)))
+        (throw (Exception. "saved file length is 0")))
+
       (db/create-upload! {:login login :filename filename})
-
-      ;; 0.9.0, insert title into `titles` table
       (when (= "index.html" filename)
-        (log/debug "when")
+        ;; (log/info "uploaded index.html:" (slurp tempfile))
         (when-let [title (find-title tempfile)]
-          (log/debug  "when-let")
+          ;; (log/info "upload! found title" title)
           (upsert! login title)))
+      (log/info login "upload success")
 
-      ;; is this flash displayed?
-      (-> (response/found "/r/#/upload")
-          (assoc :flash (str "uploaded " filename)))
+      ;; FIXME URL
+      (response/found (str "https://hp.melt.kyutech.ac.jp/" login))
+
       (catch Exception e
-        (layout/render [request] "error.html" {:message (.getMessage e)})))))
+        (let [message (.getMessage e)]
+          (log/error "upload! error:" message)
+          (layout/render [request] "error.html" {:message message}))))))
 
 (defn users
   "distinct users order by `uploaded_at`"
@@ -86,7 +100,7 @@
   (response/ok (db/records)))
 
 (defn record-login [{{:keys [login]} :path-params}]
-  (log/debug "record-login logn=" login)
+  (log/debug "record-login login" login)
   (response/ok (db/record {:login login})))
 
 (defn services-routes []
