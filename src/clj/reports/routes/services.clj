@@ -65,6 +65,9 @@
         (when-let [title (find-title tempfile)]
           ;; (log/info "upload! found title" title)
           (upsert! login title)))
+      (log/info login "upload success")
+
+      ;; FIXME URL
       (response/found (str "https://hp.melt.kyutech.ac.jp/" login))
 
       (catch Exception e
