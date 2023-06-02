@@ -26,6 +26,79 @@
   型情報を与えてやるのかな？
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
 
+## 1.18.2-SNAPSHOT
+```
+% clojure -Tantq outdated
+[##################################################] 52/52
+
+|       :file |                                           :name |  :current |   :latest |
+|-------------+-------------------------------------------------+-----------+-----------|
+| project.clj |                              binaryage/devtools |     1.0.4 |     1.0.7 |
+|             |                                buddy/buddy-core |  1.10.413 |  1.11.418 |
+|             |                             buddy/buddy-hashers |   1.8.158 |   2.0.162 |
+|             |                                buddy/buddy-sign |   3.4.333 |   3.5.346 |
+|             |                  ch.qos.logback/logback-classic |    1.2.10 |     1.4.7 |
+|             |                               cider/cider-nrepl |    0.26.0 |    0.30.0 |
+|             |             clojure.java-time/clojure.java-time |     0.3.3 |     1.2.0 |
+|             |                       com.cognitect/transit-clj |   1.0.329 |   1.0.333 |
+|             |                      com.cognitect/transit-cljs |   0.8.269 |   0.8.280 |
+|             | com.google.javascript/closure-compiler-unshaded | v20220301 | v20230502 |
+|             |               com.jakemccrary/lein-test-refresh |    0.24.1 |    0.25.0 |
+|             |                                   conman/conman |     0.9.3 |     0.9.6 |
+|             |                                       hato/hato |     0.8.2 |     0.9.0 |
+|             |                                 jonase/eastwood |     0.3.5 |     1.4.0 |
+|             |           luminus-migrations/luminus-migrations |     0.7.2 |     0.7.5 |
+|             |                 luminus-transit/luminus-transit |     0.1.5 |     0.1.6 |
+|             |               luminus-undertow/luminus-undertow |    0.1.14 |    0.1.18 |
+|             |                       markdown-clj/markdown-clj |    1.11.1 |    1.11.4 |
+|             |                                  metosin/reitit |    0.5.15 |     0.6.0 |
+|             |                                     mount/mount |    0.1.16 |    0.1.17 |
+|             |                                     nrepl/nrepl |     0.9.0 |     1.0.0 |
+|             |                       org.clojure/clojurescript |   1.11.51 |   1.11.60 |
+|             |                          org.clojure/core.async |   1.5.648 |   1.6.673 |
+|             |                           org.clojure/tools.cli |   1.0.206 |   1.0.219 |
+|             |                     org.clojure/tools.namespace |     1.2.0 |     1.4.4 |
+|             |                       org.postgresql/postgresql |    42.3.2 |    42.6.0 |
+|             |                           org.webjars.npm/bulma |     0.9.3 |     0.9.4 |
+|             |                  org.webjars.npm/material-icons |     1.0.0 |    1.13.2 |
+|             |                     org.webjars/webjars-locator |      0.42 |      0.46 |
+|             |                                 reagent/reagent |     1.1.0 |     1.2.0 |
+|             |                                  ring/ring-core |     1.9.5 |    1.10.0 |
+|             |                              ring/ring-defaults |     0.3.3 |     0.3.4 |
+|             |                                 ring/ring-devel |     1.9.5 |    1.10.0 |
+|             |                                   selmer/selmer |   1.12.50 |   1.12.58 |
+|             |                            thheller/shadow-cljs |    2.18.0 |    2.23.3 |
+
+Available changes:
+- https://github.com/binaryage/cljs-devtools/compare/v1.0.4...v1.0.7
+- https://github.com/funcool/buddy-hashers/blob/2.0.162/CHANGES.md
+- https://github.com/funcool/buddy-sign/blob/3.5.346/CHANGES.md
+- https://github.com/clojure-emacs/cider-nrepl/blob/v0.30.0/CHANGELOG.md
+- https://github.com/dm3/clojure.java-time/blob/1.2.0/CHANGELOG.md
+- https://github.com/cognitect/transit-clj/blob/v1.0.333/CHANGES.md
+- https://github.com/cognitect/transit-cljs/compare/v0.8.269...v0.8.280
+- https://github.com/jakemcc/lein-test-refresh/blob/v0.25.0/CHANGES.md
+- https://github.com/luminus-framework/conman/blob/head/CHANGELOG.md
+- https://github.com/gnarroway/hato/blob/v0.9.0/CHANGELOG.md
+- https://github.com/jonase/eastwood/blob/v1.4.0/changes.md
+- https://github.com/luminus-framework/luminus-migrations/blob/head/CHANGELOG.md
+- https://github.com/metosin/reitit/blob/0.6.0/CHANGELOG.md
+- https://github.com/tolitius/mount/blob/head/CHANGELOG.md
+- https://github.com/nrepl/nrepl/blob/1.0.0/CHANGELOG.md
+- https://github.com/clojure/clojurescript/blob/r1.11.60/changes.md
+- https://github.com/clojure/core.async/compare/v1.5.648...v1.6.673
+- https://github.com/clojure/tools.cli/blob/v1.0.219/CHANGELOG.md
+- https://github.com/clojure/tools.namespace/blob/v1.4.4/CHANGES.md
+- https://github.com/pgjdbc/pgjdbc/blob/REL42.6.0/CHANGELOG.md
+- https://github.com/jgthms/bulma/blob/0.9.4/CHANGELOG.md
+- https://github.com/marella/material-icons/compare/v1.0.0...v1.13.2
+- https://github.com/webjars/webjars-locator/compare/webjars-locator-0.42...webjars-locator-0.46
+- https://github.com/reagent-project/reagent/blob/v1.2.0/CHANGELOG.md
+- https://github.com/ring-clojure/ring/blob/1.10.0/CHANGELOG.md
+- https://github.com/ring-clojure/ring-defaults/compare/0.3.3...0.3.4
+- https://github.com/yogthos/Selmer/blob/head/changes.md
+- https://github.com/thheller/shadow-cljs/blob/head/CHANGELOG.md
+```
 
 ## 1.18.0 - 2023-06-01
 - tiger.melt nginx の l22 設定見直し。cors 対応はアプリ(l22)に任せる。
