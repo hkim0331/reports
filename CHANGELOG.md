@@ -27,6 +27,30 @@
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
 
 ## 1.18.2-SNAPSHOT
+### after
+buddy, metosin, ring を残した。一旦ここでタグをうつ。
+```
+% clojure -Tantq outdated
+[##################################################] 52/52
+
+|       :file |                          :name | :current |  :latest |
+|-------------+--------------------------------+----------+----------|
+| project.clj |               buddy/buddy-core | 1.10.413 | 1.11.418 |
+|             |            buddy/buddy-hashers |  1.8.158 |  2.0.162 |
+|             |               buddy/buddy-sign |  3.4.333 |  3.5.346 |
+|             | ch.qos.logback/logback-classic |   1.2.10 |    1.4.7 |
+|             |                 metosin/reitit |   0.5.15 |    0.6.0 |
+|             |                 ring/ring-core |    1.9.5 |   1.10.0 |
+|             |                ring/ring-devel |    1.9.5 |   1.10.0 |
+
+Available changes:
+- https://github.com/funcool/buddy-hashers/blob/2.0.162/CHANGES.md
+- https://github.com/funcool/buddy-sign/blob/3.5.346/CHANGES.md
+- https://github.com/metosin/reitit/blob/0.6.0/CHANGELOG.md
+- https://github.com/ring-clojure/ring/blob/1.10.0/CHANGELOG.md
+```
+
+### before
 ```
 % clojure -Tantq outdated
 [##################################################] 52/52
