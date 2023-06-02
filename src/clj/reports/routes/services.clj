@@ -50,20 +50,18 @@
         (throw (Exception. "choose a file to upload.")))
       (sh "mkdir" "-p" dir)
  ;;;;
-      (log/info type login filename size dir tempfile)
+      (log/info login type filename size dir tempfile)
       (when (zero? size)
-        (throw (Exception. "upload parameter size is 0")))
+        (throw (Exception. "parameter size is 0")))
       (when (zero? (count (slurp tempfile)))
-        (throw (Exception. "upload file length is 0")))
+        (throw (Exception. "file length is 0")))
       (io/copy tempfile dest)
       (when (zero? (count (slurp dest)))
         (throw (Exception. "saved file length is 0")))
 
       (db/create-upload! {:login login :filename filename})
       (when (= "index.html" filename)
-        ;; (log/info "uploaded index.html:" (slurp tempfile))
         (when-let [title (find-title tempfile)]
-          ;; (log/info "upload! found title" title)
           (upsert! login title)))
       (log/info login "upload success")
 
