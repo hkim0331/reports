@@ -25,12 +25,19 @@
   Cannot infer target type in expression (. (:date r) -rep)
   型情報を与えてやるのかな？
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
+- メニュー、ナビの改良
+- 2022 学生を表示しない
+- (.-rep) の警告を克服する
+
+
+## 1.18.3
+- ログの整理
+- エラーメッセージ
 
 ## 1.18.2
 - (reports.config/env :hp-url) で dev-config.edb の内容を読める。
-
-## 1.18.2-SNAPSHOT
-### after
+- defined login/redirect-to-reports
+### antq upgrade, after
 buddy, metosin, ring を残した。一旦ここでタグをうつ。
 ```
 % clojure -Tantq outdated
@@ -53,7 +60,7 @@ Available changes:
 - https://github.com/ring-clojure/ring/blob/1.10.0/CHANGELOG.md
 ```
 
-### before
+### antq upgrade, before
 ```
 % clojure -Tantq outdated
 [##################################################] 52/52
