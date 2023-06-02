@@ -15,8 +15,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.2")
-(def ^:private now "2023-06-03 07:14:09")
+(def ^:private version "1.18.3")
+(def ^:private now "2023-06-03 07:40:41")
 
 (defonce session (r/atom {:page :home}))
 
@@ -60,10 +60,13 @@
      [:div#nav-menu.navbar-menu
       {:class (when @expanded? :is-active)}
       [:div.navbar-start
-       [nav-link "#/" "Home" :home]
-       [nav-link "/login" "Login"]
-       [nav-link "/logout" "Logout"]
-       [nav-link "#/about" "About" :about]]]]))
+       ;;[nav-link "#/" "Home" :home]
+       [nav-link "#/upload" "Upload"]
+       [nav-link "#/browse" "Browse"]
+       [nav-link "#/goods"  "Goods"]
+       [nav-link "/login"   "Login"]
+       [nav-link "/logout"  "Logout"]
+       [nav-link "#/about"  "About" :about]]]]))
 
 ;; -------------------------
 ;; About
@@ -82,17 +85,16 @@
   (let [name js/login
         url (str js/hp_url name)]
     [:section.section>div.container>div.content
-     [:p "〆切際にやっつけたサイトは点数低い。作成途中を評価するレポート。"]
-     [:p "check your report => "
-      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+     [:p "〆切際のやっつけサイトは点数低い。作成途中を評価するレポート。"]
+     [:p "自分レポート => "
+      [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
      [:ul
-      [:li [:a {:href "#/upload"} "Upload, uploaded"]]
-      [:li [:a {:href "#/browse"} "Browse & Comments"]]
+      [:li [:a {:href "#/upload"} "アップロード"]]
+      [:li [:a {:href "#/browse"} "ユーザーページ、コメント送信"]]
       [:li [:a {:href "#/goods"}  "Goods"]
-       " | "
-       [:a {:href "#/recv-sent"} "Received & Sent"]
-       " | "
-       [:a {:href "#/messages"} "messages"]]]
+       [:ul
+        [:li [:a {:href "#/recv-sent"} "誰から誰へ"]]
+        [:li [:a {:href "#/messages"} "一覧"]]]]]
      [:hr]
      "hkimura, " version]))
 

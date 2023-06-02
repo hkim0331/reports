@@ -33,10 +33,6 @@
    (db/update-title! {:login login :title title})
    (db/insert-title! {:login login :title title})))
 
-(comment
-  (count (slurp "/tmp/hello.txt"))
-  :rcf)
-
 (defn upload!
   "受け取った multiplart-params を login/{type}/filename にセーブする。
    type = html の時は login 直下とする。"
@@ -49,31 +45,24 @@
       (when (empty? filename)
         (throw (Exception. "choose a file to upload.")))
       (sh "mkdir" "-p" dir)
- ;;;;
       (log/info login type filename size dir tempfile)
       (when (zero? size)
-        (throw (Exception. "parameter size is 0")))
-      (when (zero? (count (slurp tempfile)))
-        (throw (Exception. "file length is 0")))
+        (throw (Exception. "size is 0")))
+      ;; (when (zero? (count (slurp tempfile)))
+      ;;   (throw (Exception. "file length is 0")))
       (io/copy tempfile dest)
       (when (zero? (count (slurp dest)))
         (throw (Exception. "saved file length is 0")))
-
       (db/create-upload! {:login login :filename filename})
       (when (= "index.html" filename)
         (when-let [title (find-title tempfile)]
           (upsert! login title)))
       (log/info login "upload success")
-
-      (comment
-        (reports.config/env :hp-url)
-        :rcf)
-
       (response/found (str (reports.config/env :hp-url) login))
 
       (catch Exception e
         (let [message (.getMessage e)]
-          (log/error "upload! error:" message)
+          (log/error "upload! error:" login message)
           (layout/render [request] "error.html" {:message message}))))))
 
 (defn users
