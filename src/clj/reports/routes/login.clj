@@ -27,8 +27,7 @@
           ret (hc/get url {:as :json})
           body (:body ret)]
       (if (and (some? body) (hashers/check password (:password body)))
-        (-> (response/found "/r/") ; restricted page
-            (assoc-in  [:session :identity] (keyword login)))
+        (redirect-to-reports login)
         (-> (response/found "/login")
             (assoc :session {}
                    :flash "login failed"))))))
