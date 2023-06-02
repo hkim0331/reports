@@ -65,8 +65,11 @@
           (upsert! login title)))
       (log/info login "upload success")
 
-      ;; FIXME URL
-      (response/found (str "https://hp.melt.kyutech.ac.jp/" login))
+      (comment
+        (reports.config/env :hp-url)
+        :rcf)
+
+      (response/found (str (reports.config/env :hp-url) login))
 
       (catch Exception e
         (let [message (.getMessage e)]

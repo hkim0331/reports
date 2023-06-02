@@ -26,6 +26,10 @@
   型情報を与えてやるのかな？
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
 
+## 1.18.3-SNAPSHOT, debug-login
+- (reports.config/env :hp-url) で dev-config.edb の内容を読める。
+
+
 ## 1.18.2-SNAPSHOT
 ### after
 buddy, metosin, ring を残した。一旦ここでタグをうつ。
