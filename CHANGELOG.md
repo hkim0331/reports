@@ -27,6 +27,8 @@
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
 - Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
 - commons.js:2 Channel: Error in handleResponse UNK/SW_UNREACHABLE broadcastEventToTab clipper_state_changed
+- Error in handleResponse UNK/SW_UNREACHABLE isLogsEnabled
+- Error in handleResponse UNK/SW_UNREACHABLE options getValues
 
 ## 1.18.6 - 2023-06-03
 - メッセージの使い回しはダメよ。
