@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.5")
-(def ^:private now "2023-06-03 12:01:34")
+(def ^:private version "0.18.6")
+(def ^:private now "2023-06-03 15:18:58")
 
 (defonce session (r/atom {:page :home}))
 
@@ -128,14 +128,23 @@
   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
     (doseq [r records]
       ;;(js/alert (.-rep (:date r)))
-      ;;(swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
-      (swap! s concat "| "
-             (.-rep (wrap-string (:date r)))
-             " | "
-             (str (:count r))
-             " |\n")
-      [:div {:dangerouslySetInnerHTML
-             {:__html (md->html (apply str @s))}}])))
+      ;;(swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n"))
+      (swap! s
+             concat
+             (str "| "
+                  (.-rep (wrap-string (:date r)))
+                  " | "
+                  (str (:count r))
+                  " |\n")))
+    [:div {:dangerouslySetInnerHTML
+           {:__html (md->html (apply str @s))}}]))
+
+;; (defn- make-table [records]
+;;   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
+;;     (doseq [r records]
+;;       (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
+;;     [:div {:dangerouslySetInnerHTML
+;;            {:__html (md->html (apply str @s))}}]))
 
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
@@ -219,16 +228,15 @@
 (defn- report-url [user]
   (str js/hp_url user))
 
+(defonce type-count (r/atom 0))
+
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse & Comments"]
-   [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
-    (str (count @users)) "人。平常点は平常につく。"]
+   [:p "現在までのアップロードは " (str (count @users)) "人。"]
    [:ul
-    [:li "good を押したあと「送信しました」が表示されない時、
-        ページを再読み込みして good し直してください🙏"]
-    [:li "再読み込みの前にメッセージをコピーしとくと吉。"]
-    ]
+    [:li "コピペのメッセージは送信しない。"]
+    [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる"]]
    [:div
     [:input {:type "radio"
              :checked @random?
@@ -239,25 +247,30 @@
              :on-change #(swap! random? not)}]
     " hot "]
    [:br]
-   (for [[i u] ((filters @random?) (map-indexed vector @users))]
-     [:div.columns {:key i}
-      [:div.column.is-one-quarter
-       [:a {:href (report-url u)
-            :class (if (= u "hkimura") "hkimura" "other")}
-        u]
-       " "
-       (get @titles u)]
-      [:div.column
-       " "
-       [:input {:id i
+   (doall (for [[i u] ((filters @random?) (map-indexed vector @users))]
+            [:div.columns {:key i}
+             [:div.column.is-one-quarter
+              [:a {:href (report-url u)
+                   :class (if (= u "hkimura") "hkimura" "other")}
+               u]
+              " "
+              (get @titles u)]
+             [:div.column
+              " "
+              [:input
+               {:on-key-up #(swap! type-count inc)
+                :id i
                 :placeholder (str min-mesg " 文字以上のメッセージ")
                 :size 80}]
-       [:button
-        {:on-click
-         #(let [obj (.getElementById js/document i)]
-            (send-message! u (.-value obj))
-             ;; クリアしない方が誰にコメントしたかわかる。
-            #_(set! (.-innerHTML obj) ""))} "good!"]]])])
+              [:button
+               {:on-click
+                #(let [obj (.getElementById js/document i)]
+                   (when (< 9 @type-count)
+                     (send-message! u (.-value obj))
+                     (reset! type-count 0)
+                     ;; クリアしない方が誰にコメントしたかわかる。
+                     (set! (.-innerHTML obj) "")))}
+                "good!"]]]))])
 
 ;; -------------------------
 ;; Goods

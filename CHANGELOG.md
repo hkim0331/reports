@@ -25,7 +25,11 @@
   Cannot infer target type in expression (. (:date r) -rep)
   型情報を与えてやるのかな？
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
+- Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+- commons.js:2 Channel: Error in handleResponse UNK/SW_UNREACHABLE broadcastEventToTab clipper_state_changed
 
+## 1.18.6 - 2023-06-03
+- メッセージの使い回しはダメよ。
 
 ## 1.18.5 - 2023-06-03
 - (.-rep) の警告を克服する
