@@ -25,10 +25,17 @@
   Cannot infer target type in expression (. (:date r) -rep)
   型情報を与えてやるのかな？
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
-- 2022 学生を表示しない
+
+
+## 1.18.5 - 2023-06-03
 - (.-rep) の警告を克服する
+```
+(defn- wrap-string [^String d] d)
+(.-rep (wrap-string (:date r)))
+```
 
 ## 1.18.4 - 2023-06-03
+- 2022 学生を表示しない
 - l22/api/logins は　["login" "login" ...] を返す。
 - l22/api/subj/:subj を作成した。{:users [{"login": "login"} ...]} が返ってくる。
 

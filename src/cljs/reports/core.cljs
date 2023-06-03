@@ -120,12 +120,22 @@
     [:div.column s2 [:input {:type "file" :name "upload"}]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
+;; FIXME
+;; Cannot infer target type in expression (. (:date r) -rep)
+(defn- wrap-string [^String d] d)
+
 (defn- make-table [records]
   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
     (doseq [r records]
-      (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
-    [:div {:dangerouslySetInnerHTML
-           {:__html (md->html (apply str @s))}}]))
+      ;;(js/alert (.-rep (:date r)))
+      ;;(swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
+      (swap! s concat "| "
+             (.-rep (wrap-string (:date r)))
+             " | "
+             (str (:count r))
+             " |\n")
+      [:div {:dangerouslySetInnerHTML
+             {:__html (md->html (apply str @s))}}])))
 
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
@@ -165,8 +175,7 @@
      (make-table @records-all)]
     [:div#you.column
      [:h4 js/login]
-     (make-table @record-login)
-     #_(make-table js/login)]
+     (make-table @record-login)]
     [:div#hkim.column
      [:h4 "hkimura"]
      (make-table @record-hkimura)]
