@@ -9,14 +9,15 @@
    [reitit.core :as reitit]
    [reports.ajax :as ajax]
    [goog.events :as events]
-   [goog.history.EventType :as HistoryEventType])
+   [goog.history.EventType :as HistoryEventType]
+   #_[cheshire.core :as json])
   (:import goog.History))
 
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.3")
-(def ^:private now "2023-06-03 07:40:41")
+(def ^:private version "1.18.4")
+(def ^:private now "2023-06-03 10:31:45")
 
 (defonce session (r/atom {:page :home}))
 
@@ -252,7 +253,7 @@
 ;; -------------------------
 ;; Goods
 
-;; FIXME
+;; FIXME, dirty
 (defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
@@ -309,7 +310,7 @@
        (doall
         (for [[id u] (map-indexed
                       vector
-                      (difference @users-all
+                      (difference (set @users-all)
                                   (set (map #(:rcv %) sent))))]
           [:p {:key (str "n" id)}
            (if (neg? (.indexOf @users u))
@@ -436,9 +437,10 @@
      :error-handler #(.log js/console "reset-titles! error:" %)}))
 
 (defn- reset-users-all! []
-  (GET "https://l22.melt.kyutech.ac.jp/api/logins"
-    {:headers {"Accept" "application/json"}
-     :handler #(reset! users-all (set %))
+  (GET "https://l22.melt.kyutech.ac.jp/api/subj/literacy"
+    {:handler #(reset! users-all (->> %
+                                      :users
+                                      (map :login)))
      :error-handler #(.log js/console "reset-users-all!! error:" %)}))
 
 (defn reset-records-all! []
