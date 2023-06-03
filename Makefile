@@ -8,8 +8,6 @@ clean:
 	${RM} -r target
 
 uberjar: clean
-	# no use
-	# shadow-cljs release app
 	lein uberjar
 
 deploy: uberjar
