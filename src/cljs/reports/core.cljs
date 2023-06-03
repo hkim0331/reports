@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.5")
-(def ^:private now "2023-06-03 12:01:34")
+(def ^:private version "0.18.6")
+(def ^:private now "2023-06-03 15:18:58")
 
 (defonce session (r/atom {:page :home}))
 
