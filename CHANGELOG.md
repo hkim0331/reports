@@ -25,7 +25,9 @@
   Cannot infer target type in expression (. (:date r) -rep)
   型情報を与えてやるのかな？
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
+- acess to XMLHttpRequest at 'https://l22.melt.kyutech.ac.jp/api/subj/literacy' from origin 'https://rp.melt.kyutech.ac.jp' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 
+## 1.18.6-CORS
 
 ## 1.18.5 - 2023-06-03
 - (.-rep) の警告を克服する
