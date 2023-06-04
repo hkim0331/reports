@@ -30,6 +30,7 @@
 - Error in handleResponse UNK/SW_UNREACHABLE isLogsEnabled
 - Error in handleResponse UNK/SW_UNREACHABLE options getValues
 
+
 ## 1.18.6 - 2023-06-03
 - メッセージの使い回しはダメよ。
 
