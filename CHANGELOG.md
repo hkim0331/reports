@@ -31,6 +31,9 @@
 - Error in handleResponse UNK/SW_UNREACHABLE options getValues
 - :flash が使えてない。
 - Re の表示を短く
+- docker? dev container?
+- goods ページ、横割り
+
 
 ## 1.18.8 - 2023-06-04
 - core.cljs/upload-column {:accept MIME-TYPE} を引数に追加した。
