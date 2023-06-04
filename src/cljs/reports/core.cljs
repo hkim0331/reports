@@ -318,7 +318,7 @@
           "to " [:b (abbrev-if-contains-re s)] ", " (time-format (:timestamp s)) ","
           [:br]
           (:message s)])]
-      [:div.column
+      [:div.column.is-one-fifth
        [:h2 "Not Yet"]
        (doall
         (for [[id u] (map-indexed
