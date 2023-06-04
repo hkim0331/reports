@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.8")
-(def ^:private now "2023-06-04 14:19:01")
+(def ^:private version "1.18.9")
+(def ^:private now "2023-06-04 16:46:33")
 
 (defonce session (r/atom {:page :home}))
 
@@ -318,7 +318,7 @@
           "to " [:b (abbrev-if-contains-re s)] ", " (time-format (:timestamp s)) ","
           [:br]
           (:message s)])]
-      [:div.column
+      [:div.column.is-one-fifth
        [:h2 "Not Yet"]
        (doall
         (for [[id u] (map-indexed
