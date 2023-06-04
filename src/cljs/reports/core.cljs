@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "0.18.6")
-(def ^:private now "2023-06-03 15:18:58")
+(def ^:private version "1.18.8")
+(def ^:private now "2023-06-04 14:19:01")
 
 (defonce session (r/atom {:page :home}))
 
@@ -108,7 +108,8 @@
 ;; Uploads
 
 ;; not ajax. form.
-(defn- upload-column [s1 s2 type]
+(defn- upload-column
+  [s1 s2 type accept]
   [:form {:method "post"
           :action "/api/upload"
           :enc-type "multipart/form-data"}
@@ -117,18 +118,15 @@
    [hidden-field "login" js/login]
    [:div.columns
     [:div.column.is-one-fifth s1]
-    [:div.column s2 [:input {:type "file" :name "upload"}]]
+    [:div.column s2 [:input
+                     (merge {:type "file" :name "upload"} accept)]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
-;; FIXME
-;; Cannot infer target type in expression (. (:date r) -rep)
 (defn- wrap-string [^String d] d)
 
 (defn- make-table [records]
   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
     (doseq [r records]
-      ;;(js/alert (.-rep (:date r)))
-      ;;(swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n"))
       (swap! s
              concat
              (str "| "
@@ -139,22 +137,15 @@
     [:div {:dangerouslySetInnerHTML
            {:__html (md->html (apply str @s))}}]))
 
-;; (defn- make-table [records]
-;;   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
-;;     (doseq [r records]
-;;       (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
-;;     [:div {:dangerouslySetInnerHTML
-;;            {:__html (md->html (apply str @s))}}]))
-
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
     [:div
      [:h2 "Upload"]
      [:div
-      [upload-column (str js/login) "/ " "html"]
-      [upload-column "" "/css/ " "css"]
-      [upload-column "" "/images/ " "images"]
-      [upload-column "" "/js/ " "js"]]
+      [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
+      [upload-column "" "/css/ " "css" {:accept "text/css"}]
+      [upload-column "" "/images/ " "images" {:accept "image/*"}]
+      [upload-column "" "/js/ " "js" {:accept "text/javascript"}]]
      [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul

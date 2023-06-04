@@ -13,7 +13,9 @@
   (if-let [login (get-in request [:session :identity])]
     (layout/render [request] "home.html" {:login  (name login)
                                           :hp-url (:hp-url env)})
-    (layout/render [request] "error.html")))
+    (layout/render [request]
+                   "error.html"
+                   {:flash (:frash request)})))
 
 ;; ex1 answers.md
 ;; ex2 ex2-python.md

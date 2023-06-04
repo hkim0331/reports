@@ -27,6 +27,16 @@
 - message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
 - Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
 - commons.js:2 Channel: Error in handleResponse UNK/SW_UNREACHABLE broadcastEventToTab clipper_state_changed
+- Error in handleResponse UNK/SW_UNREACHABLE isLogsEnabled
+- Error in handleResponse UNK/SW_UNREACHABLE options getValues
+- :flash が使えてない。
+
+
+## 1.18.8 - 2023-06-04
+- core.cljs/upload-column {:accept MIME-TYPE} を引数に追加した。
+
+## 1.18.7 - 2023-06-04
+- auth 切れをエラーにせずに /login にリダイレクト。
 
 ## 1.18.6 - 2023-06-03
 - メッセージの使い回しはダメよ。
