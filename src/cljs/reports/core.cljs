@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.11")
-(def ^:private now "2023-06-05 21:14:39")
+(def ^:private version "1.18.12")
+(def ^:private now "2023-06-05 22:43:19")
 
 ;-------------------------------------------
 ; r/atom
@@ -30,10 +30,33 @@
 (defonce random?    (r/atom false))
 (defonce type-count (r/atom 0))
 
+(defonce uploads-by-date-all (r/atom []))
+(defonce uploads-by-date     (r/atom []))
+;---------------------------------------------
 
-(defonce updates-by-date-all (r/atom []))
-(defonce updates-by-date     (r/atom []))
+;----------
 
+(defn- wrap-string [^String d] d)
+
+(defn js-date [s] (.-rep (wrap-string s)))
+
+(defn coerce-date-count
+  [m]
+  (apply merge
+         (map (fn [x] {(js-date (:date x)) (:count x)})
+              m)))
+
+(defn reset-uploads-by-date-all! []
+  (GET "/api/records"
+    {:handler #(reset! uploads-by-date-all (coerce-date-count %))
+     :error-handler #(.log js/console "reset-uploads-by-date-all! error:" %)}))
+
+(defn reset-uploads-by-date!
+  [user]
+  (GET (str "/api/record/" user)
+    {:handler #(reset! uploads-by-date (coerce-date-count %))
+     :error-handler #(.log js/console "reset-records-login! error:" %)}))
+;-----------
 
 (defn admin?
   "cljs のため。本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
@@ -46,6 +69,7 @@
   (if (admin? js/login)
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
+
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -77,32 +101,36 @@
 ;; -------------------------
 ;; About
 
-(defn about-page []
-  [:section.section>div.container>div.content
-   [:img {:src "/img/warning_clojure.png"}]
-   [:p "program: hkimura" [:br]
-    "version: " version [:br]
-    "update: " now]])
+(defn about-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [:img {:src "/img/warning_clojure.png"}]
+     [:p "program: hkimura" [:br]
+      "version: " version [:br]
+      "update: " now]]))
 
 ;; -------------------------
 ;; Home
 
-(defn home-page []
-  (let [name js/login
-        url (str js/hp_url name)]
-    [:section.section>div.container>div.content
-     [:p "作成途中を評価するレポート。〆切際のやっつけサイトは点数低い。"]
-     [:p "自分レポート => "
-      [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
-     [:ul
-      [:li [:a {:href "#/upload"} "アップロード"]]
-      [:li [:a {:href "#/browse"} "ユーザーページ、コメント送信"]]
-      [:li [:a {:href "#/goods"}  "Goods"]
+(defn home-page
+  []
+  (fn []
+    (let [name js/login
+          url (str js/hp_url name)]
+      [:section.section>div.container>div.content
+       [:p "作成途中を評価するレポート。〆切際のやっつけサイトは点数低い。"]
+       [:p "自分レポート => "
+        [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
        [:ul
-        [:li [:a {:href "#/recv-sent"} "誰から誰へ"]]
-        [:li [:a {:href "#/messages"} "一覧"]]]]]
-     [:hr]
-     "hkimura, " version]))
+        [:li [:a {:href "#/upload"} "アップロード"]]
+        [:li [:a {:href "#/browse"} "ユーザーページ、コメント送信"]]
+        [:li [:a {:href "#/goods"}  "Goods"]
+         [:ul
+          [:li [:a {:href "#/recv-sent"} "誰から誰へ"]]
+          [:li [:a {:href "#/messages"} "一覧"]]]]]
+       [:hr]
+       "hkimura, " version])))
 
 (defn- hidden-field [name value]
   [:input {:type "hidden"
@@ -127,20 +155,19 @@
                      (merge {:type "file" :name "upload"} accept)]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
-(defn- wrap-string [^String d] d)
 
-(defn- make-table [records]
-  (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
-    (doseq [r records]
-      (swap! s
-             concat
-             (str "| "
-                  (.-rep (wrap-string (:date r)))
-                  " | "
-                  (str (:count r))
-                  " |\n")))
-    [:div {:dangerouslySetInnerHTML
-           {:__html (md->html (apply str @s))}}]))
+;; (defn- make-table [records]
+;;   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
+;;     (doseq [r records]
+;;       (swap! s
+;;              concat
+;;              (str "| "
+;;                   (js-date (:date r))
+;;                   " | "
+;;                   (str (:count r))
+;;                   " |\n")))
+;;     [:div {:dangerouslySetInnerHTML
+;;            {:__html (md->html (apply str @s))}}]))
 
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
@@ -154,10 +181,6 @@
      [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
-      ;; [:li "*.md ファイルは一番上、'/' からアップロードしてください。
-      ;;        プレビューは "
-      ;;  [:a {:href (str "/r/preview/" js/login)} "preview"]
-      ;;  " から。"]
       [:li "アップロードはファイルひとつずつ。フォルダはアップロードできない。"]
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書き。"]
@@ -165,24 +188,29 @@
       [:li "アップロードが反映されない時、アレ思い出せ。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
 
-(defn record-columns []
+(defn uploaded-column
+  []
   [:div
    [:h3#records "Uploaded"]
    [:p "レポート〆切は 6/19 の正午。出来上がりじゃなく過程を評価するレポート。"]
-   [:div.columns {:style {:margin-left "0rem"}}
-    [:div#all.column
-     [:h4 "全体"]
-     (make-table @updates-by-date-all)]
-    [:div#you.column
-     [:h4 js/login]
-     (make-table @updates-by-date)]
-    [:div.column]]])
+   [:div.columns
+    [:div.column.is-one-third
+     [:table.table.is-striped
+      [:thead [:tr [:th "date"] [:th "全体"] [:th js/login]]]
+      [:tbody
+       (for [date (keys @uploads-by-date-all)]
+         [:tr
+          [:td date]
+          [:td (@uploads-by-date-all date)]
+          [:td (@uploads-by-date date)]])]]]]])
 
-(defn upload-page []
-  [:section.section>div.container>div.content
-   [upload-columns]
-   [:br]
-   [record-columns]])
+(defn upload-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [upload-columns]
+     [:br]
+     [uploaded-column]]))
 
 ;; -------------------------
 ;; Browse
@@ -211,57 +239,59 @@
 (defn- report-url [user]
   (str js/hp_url user))
 
-(defn browse-page []
-  [:section.section>div.container>div.content
-   [:h2 "Browse & Comments"]
-   [:ul
-    [:li "現在までのアップロードは " (str (count @users)) "人。"
-     "約" (str (- 165 (count @users))) "人はレポート平常点つかないよ。"
-     [:span.red "出来上がりを評価するレポートではない"]
-     "。"]
-    [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
-    [:li "何を目標とするレポートなのか？"
-     "「写真がきれいでよかった」だと、隣の小学生と疑われないか？"
-     "アップロードした人もそれで十分か？"
-     "ホームページを作りながら、なんかを学ばせようと思ってんだよね、主催者は。"]
-    [:li "もちろーん、接点のなかったクラスメートとこのレポートを通じて知り合えた、
+(defn browse-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [:h2 "Browse & Comments"]
+     [:ul
+      [:li "現在までのアップロードは " (str (count @users)) "人。"
+       "約" (str (- 165 (count @users))) "人はレポート平常点つかないよ。"
+       [:span.red "出来上がりを評価するレポートではない"]
+       "。"]
+      [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
+      [:li "何を目標とするレポートなのか？"
+       "「写真がきれいでよかった」だと、隣の小学生と疑われないか？"
+       "アップロードした人もそれで十分か？"
+       "ホームページを作りながら、なんかを学ばせようと思ってんだよね、主催者は。"]
+      [:li "もちろーん、接点のなかったクラスメートとこのレポートを通じて知り合えた、
           なんてサイコーと思ってるよ。"]
-    [:li "メッセージのコピペ使い回しは不可。当たり前に超失礼だろ？悪質点数稼ぎじゃね？"
-     "ちゃんと見て、きちんと批判しよう。批判と非難とは別物だ。"]]
-   [:div
-    [:input {:type "radio"
-             :checked @random?
-             :on-change #(swap! random? not)}]
-    " random "
-    [:input {:type "radio"
-             :checked (not @random?)
-             :on-change #(swap! random? not)}]
-    " hot "]
-   [:br]
-   (doall (for [[i u] ((filters @random?) (map-indexed vector @users))]
-            [:div.columns {:key i}
-             [:div.column.is-one-quarter
-              [:a {:href (report-url u)
-                   :class (if (= u "hkimura") "hkimura" "other")}
-               u]
-              " "
-              (get @titles u)]
-             [:div.column
-              " "
-              [:input
-               {:on-key-up #(swap! type-count inc)
-                :id i
-                :placeholder (str min-mesg " 文字以上のメッセージ")
-                :size 80}]
-              [:button
-               {:on-click
-                #(let [obj (.getElementById js/document i)]
-                   (when (< 9 @type-count)
-                     (send-message! u (.-value obj))
-                     (reset! type-count 0)
+      [:li "メッセージのコピペ使い回しは不可。当たり前に超失礼だろ？悪質点数稼ぎじゃね？"
+       "ちゃんと見て、きちんと批判しよう。批判と非難とは別物だ。"]]
+     [:div
+      [:input {:type "radio"
+               :checked @random?
+               :on-change #(swap! random? not)}]
+      " random "
+      [:input {:type "radio"
+               :checked (not @random?)
+               :on-change #(swap! random? not)}]
+      " hot "]
+     [:br]
+     (doall (for [[i u] ((filters @random?) (map-indexed vector @users))]
+              [:div.columns {:key i}
+               [:div.column.is-one-quarter
+                [:a {:href (report-url u)
+                     :class (if (= u "hkimura") "hkimura" "other")}
+                 u]
+                " "
+                (get @titles u)]
+               [:div.column
+                " "
+                [:input
+                 {:on-key-up #(swap! type-count inc)
+                  :id i
+                  :placeholder (str min-mesg " 文字以上のメッセージ")
+                  :size 80}]
+                [:button
+                 {:on-click
+                  #(let [obj (.getElementById js/document i)]
+                     (when (< 9 @type-count)
+                       (send-message! u (.-value obj))
+                       (reset! type-count 0)
                      ;; クリアしない方が誰にコメントしたかわかる。
-                     (set! (.-innerHTML obj) "")))}
-               "good!"]]]))])
+                       (set! (.-innerHTML obj) "")))}
+                 "good!"]]]))]))
 
 ;; -------------------------
 ;; Goods
@@ -290,47 +320,49 @@
       (abbrev receiver)
       receiver)))
 
-(defn goods-page []
-  (let [received (filter-goods-by :rcv)
-        sent     (filter-goods-by :snd)]
-    [:section.section>div.container>div.content
-     [:ul
-      [:li "Goods Received に表示される good! には reply で返信できます。"]
-      [:li "Not Yet は自分が一度も good! を出してない人。
+(defn goods-page
+  []
+  (fn []
+    (let [received (filter-goods-by :rcv)
+          sent     (filter-goods-by :snd)]
+      [:section.section>div.container>div.content
+       [:ul
+        [:li "Goods Received に表示される good! には reply で返信できます。"]
+        [:li "Not Yet は自分が一度も good! を出してない人。
             青色は一度以上アップロードした人。黒はまだアップロードしない人。"]]
-     [:div.columns
-      [:div.column
-       [:h2 "Goods Received (" (count received) ")"]
-       (for [[id g] (map-indexed vector received)]
-         [:p {:key (str "r" id)}
-          "from " [:b (abbrev (:snd g))] ", " (time-format (:timestamp g)) ","
-          [:br]
-          (:message g)
-          [:br]
-          [:button.button.is-success.is-small
-           {:on-click #(reply? g)}
-           "reply"]])]
-      [:div.column
-       [:h2 "Goods Sent (" (count sent) ")"]
-       (for [[id s] (map-indexed vector sent)]
-         [:p {:key (str "g" id)}
-          "to "
-          [:b (abbrev-if-contains-re s)]
-          ", "
-          (time-format (:timestamp s)) ","
-          [:br]
-          (:message s)])]
-      [:div.column.is-one-fifth
-       [:h2 "Not Yet"]
-       (doall
-        (for [[id u] (map-indexed
-                      vector
-                      (difference (set @users-all)
-                                  (set (map #(:rcv %) sent))))]
-          [:p {:key (str "n" id)}
-           (if (neg? (.indexOf @users u))
-             u
-             [:a {:href (report-url u)} u])]))]]]))
+       [:div.columns
+        [:div.column
+         [:h2 "Goods Received (" (count received) ")"]
+         (for [[id g] (map-indexed vector received)]
+           [:p {:key (str "r" id)}
+            "from " [:b (abbrev (:snd g))] ", " (time-format (:timestamp g)) ","
+            [:br]
+            (:message g)
+            [:br]
+            [:button.button.is-success.is-small
+             {:on-click #(reply? g)}
+             "reply"]])]
+        [:div.column
+         [:h2 "Goods Sent (" (count sent) ")"]
+         (for [[id s] (map-indexed vector sent)]
+           [:p {:key (str "g" id)}
+            "to "
+            [:b (abbrev-if-contains-re s)]
+            ", "
+            (time-format (:timestamp s)) ","
+            [:br]
+            (:message s)])]
+        [:div.column.is-one-fifth
+         [:h2 "Not Yet"]
+         (doall
+          (for [[id u] (map-indexed
+                        vector
+                        (difference (set @users-all)
+                                    (set (map #(:rcv %) sent))))]
+            [:p {:key (str "n" id)}
+             (if (neg? (.indexOf @users u))
+               u
+               [:a {:href (report-url u)} u])]))]]])))
 
 ;; -------------------------
 ;; Histgram
@@ -458,18 +490,6 @@
                                       (map :login)))
      :error-handler #(.log js/console "reset-users-all!! error:" %)}))
 
-;----------
-(defn reset-updates-by-date-all! []
-  (GET "/api/records"
-    {:handler #(reset! updates-by-date-all %)
-     :error-handler #(.log js/console "reset-updates-by-date-all! error:" %)}))
-
-(defn reset-updates-by-date! []
-  (GET (str "/api/record/" js/login)
-    {:handler #(reset! updates-by-date %)
-     :error-handler #(.log js/console "reset-records-login! error:" %)}))
-;-----------
-
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
@@ -479,7 +499,7 @@
   (reset-titles!)
   (reset-users-all!)
 
-  (reset-updates-by-date-all!)
-  (reset-updates-by-date!)
+  (reset-uploads-by-date-all!)
+  (reset-uploads-by-date! js/login)
 
   (mount-components))
