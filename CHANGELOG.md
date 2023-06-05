@@ -29,15 +29,23 @@
 - commons.js:2 Channel: Error in handleResponse UNK/SW_UNREACHABLE broadcastEventToTab clipper_state_changed
 - Error in handleResponse UNK/SW_UNREACHABLE isLogsEnabled
 - Error in handleResponse UNK/SW_UNREACHABLE options getValues
-- :flash が使えてない。
 - Re の表示を短く
 - docker? dev container?
-- uploaded を日付-全体-you になるように。上に詰まったら比較にならない。
 
+
+## 1.18.13 - 2023-06-06
+- /r/#/recv-sent からリンク
+
+## 1.18.12 - 2023-06-05
+- uploaded を日付-全体-you になるように。
+  テーブルが日付バラバラ、上に詰まったら比較にならない。
+
+## 1.18.11
+REFACTOR
 
 ## 1.18.10 - 2023-06-05
 - Calva: Server + Client での動作確認。ブラウザを立ち上げ、つなげ!
-- login 失敗で赤フラッシュ
+- login 失敗で赤フラッシュできるようになった
 - uploaded の hkimura コラム削除
 
 ## 1.18.9 - 2023-06-04
