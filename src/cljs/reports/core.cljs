@@ -30,10 +30,9 @@
 (defonce random?    (r/atom false))
 (defonce type-count (r/atom 0))
 
-
 (defonce updates-by-date-all (r/atom []))
 (defonce updates-by-date     (r/atom []))
-
+;---------------------------------------------
 
 (defn admin?
   "cljs のため。本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
@@ -46,6 +45,11 @@
   (if (admin? js/login)
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
+
+
+(defn- wrap-string [^String d] d)
+
+(defn js-date [s] (.-rep (wrap-string s)))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -127,7 +131,6 @@
                      (merge {:type "file" :name "upload"} accept)]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
-(defn- wrap-string [^String d] d)
 
 (defn- make-table [records]
   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
@@ -135,7 +138,7 @@
       (swap! s
              concat
              (str "| "
-                  (.-rep (wrap-string (:date r)))
+                  (js-date (:date r))
                   " | "
                   (str (:count r))
                   " |\n")))
@@ -459,14 +462,20 @@
      :error-handler #(.log js/console "reset-users-all!! error:" %)}))
 
 ;----------
+(defn coerce-date-count
+  [m]
+  (apply merge
+         (map (fn [x] {(js-date (:date x)) (:count x)}) m)))
+
 (defn reset-updates-by-date-all! []
   (GET "/api/records"
-    {:handler #(reset! updates-by-date-all %)
+    {:handler #(reset! updates-by-date-all (coerce-date-count %))
      :error-handler #(.log js/console "reset-updates-by-date-all! error:" %)}))
 
-(defn reset-updates-by-date! []
-  (GET (str "/api/record/" js/login)
-    {:handler #(reset! updates-by-date %)
+(defn reset-updates-by-date!
+  [user]
+  (GET (str "/api/record/" user)
+    {:handler #(reset! updates-by-date (coerce-date-count %))
      :error-handler #(.log js/console "reset-records-login! error:" %)}))
 ;-----------
 
@@ -480,6 +489,6 @@
   (reset-users-all!)
 
   (reset-updates-by-date-all!)
-  (reset-updates-by-date!)
+  (reset-updates-by-date! js/login)
 
   (mount-components))
