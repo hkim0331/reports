@@ -1,4 +1,4 @@
-(defproject reports "1.18.9"
+(defproject reports "1.18.11"
 
   :description "reports for literacy 2022"
   :url "https://rp.melt.kyutech.ac.jp"
@@ -83,7 +83,8 @@
 
                   :source-paths ["env/dev/clj"  "env/dev/cljs" "test/cljs"]
                   :resource-paths ["env/dev/resources"]
-                  :repl-options {:init-ns user
+                  :repl-options {;;:nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]
+                                 :init-ns user
                                  :timeout 120000}
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
