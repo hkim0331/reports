@@ -41,3 +41,5 @@ a.hkimura:hover { font-size: larger;
 div#all  {background-color: rgb(255, 240, 240);}
 div#you  {background-color: rgb(233, 252, 253);}
 div#hkim {background-color: rgb(255, 255, 228);}
+
+.red {color:red;}

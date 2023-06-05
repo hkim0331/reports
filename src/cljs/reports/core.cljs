@@ -176,7 +176,7 @@
     [:div#you.column
      [:h4 js/login]
      (make-table @record-login)]
-    [:div#hkim.column
+    #_[:div#hkim.column
      [:h4 "hkimura"]
      (make-table @record-hkimura)]
     [:div.column]]])
