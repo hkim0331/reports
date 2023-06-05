@@ -1,7 +1,7 @@
 (ns reports.core
   (:require
    [ajax.core :refer [GET POST]]
-   [clojure.string :refer [replace starts-with?]]
+   [clojure.string :as str]
    [clojure.set :refer [difference]]
    [markdown.core :refer [md->html]]
    [reagent.core :as r]
@@ -19,25 +19,30 @@
 (def ^:private version "1.18.10")
 (def ^:private now "2023-06-05 13:14:58")
 
-(defonce session (r/atom {:page :home}))
-
-;; サイトアクセス時にデータベースから取ってくる。
-;; atom だと、ブラウザの reload で消えちゃう。
+;-------------------------------------------
+; r/atom
+(defonce session   (r/atom {:page :home}))
 (defonce users     (r/atom []))
 (defonce goods     (r/atom []))
 (defonce users-all (r/atom []))
 (defonce titles    (r/atom {}))
 
-(defonce records-all    (r/atom []))
-(defonce record-hkimura (r/atom []))
-(defonce record-login   (r/atom []))
+(defonce random?    (r/atom false))
+(defonce type-count (r/atom 0))
 
-(defn- admin?
+
+(defonce updates-by-date-all (r/atom []))
+(defonce updates-by-date     (r/atom []))
+
+
+(defn admin?
   "cljs のため。本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
   [user]
   (= "hkimura" user))
 
-(defn- abbrev [s]
+(defn abbrev
+  "いいね送信者を隠す。"
+  [s]
   (if (admin? js/login)
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
@@ -86,7 +91,7 @@
   (let [name js/login
         url (str js/hp_url name)]
     [:section.section>div.container>div.content
-     [:p "〆切際のやっつけサイトは点数低い。作成途中を評価するレポート。"]
+     [:p "作成途中を評価するレポート。〆切際のやっつけサイトは点数低い。"]
      [:p "自分レポート => "
       [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
      [:ul
@@ -157,46 +162,33 @@
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書き。"]
       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
-      [:li "アップロードが反映されない時、エラーないとすると例のアレすると良い。"]
+      [:li "アップロードが反映されない時、アレ思い出せ。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
-
-;; (defn- upload-ends []
-;;   [:div
-;;    [:h2 "Upload 停止"]
-;;    [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
 
 (defn record-columns []
   [:div
    [:h3#records "Uploaded"]
-   [:p "レポート〆切は 6/19 の正午。"]
+   [:p "レポート〆切は 6/19 の正午。出来上がりじゃなく過程を評価するレポート。"]
    [:div.columns {:style {:margin-left "0rem"}}
     [:div#all.column
      [:h4 "全体"]
-     (make-table @records-all)]
+     (make-table @updates-by-date-all)]
     [:div#you.column
      [:h4 js/login]
-     (make-table @record-login)]
-    #_[:div#hkim.column
-     [:h4 "hkimura"]
-     (make-table @record-hkimura)]
+     (make-table @updates-by-date)]
     [:div.column]]])
 
 (defn upload-page []
   [:section.section>div.container>div.content
    [upload-columns]
-    ;;[upload-ends]
    [:br]
    [record-columns]])
 
 ;; -------------------------
 ;; Browse
-
-;; browse ページローカル。random と shuffle のどちらを表示するか。
-;; 関数にローカルにできないか？
-(defonce random? (r/atom false))
 (def ^:private filters {true shuffle false identity})
 
-;; send-message! と browse-page で参照する。
+;; mesg must have `min-mesg` length.
 (def ^:private min-mesg 10)
 
 (defn- post-message [sender receiver message]
@@ -219,15 +211,23 @@
 (defn- report-url [user]
   (str js/hp_url user))
 
-(defonce type-count (r/atom 0))
-
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse & Comments"]
-   [:p "現在までのアップロードは " (str (count @users)) "人。"]
    [:ul
-    [:li "コピペのメッセージは送信しない。"]
-    [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる"]]
+    [:li "現在までのアップロードは " (str (count @users)) "人。"
+     "約" (str (- 165 (count @users))) "人はレポート平常点つかないよ。"
+     [:span.red "出来上がりを評価するレポートではない"]
+     "。"]
+    [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
+    [:li "何を目標とするレポートなのか？"
+     "「写真がきれいでよかった」だと、隣の小学生と疑われないか？"
+     "アップロードした人もそれで十分か？"
+     "ホームページを作りながら、なんかを学ばせようと思ってんだよね、主催者は。"]
+    [:li "もちろーん、接点のなかったクラスメートとこのレポートを通じて知り合えた、
+          なんてサイコーと思ってるよ。"]
+    [:li "メッセージのコピペ使い回しは不可。当たり前に超失礼だろ？悪質点数稼ぎじゃね？"
+     "ちゃんと見て、きちんと批判しよう。批判と非難とは別物だ。"]]
    [:div
     [:input {:type "radio"
              :checked @random?
@@ -261,7 +261,7 @@
                      (reset! type-count 0)
                      ;; クリアしない方が誰にコメントしたかわかる。
                      (set! (.-innerHTML obj) "")))}
-                "good!"]]]))])
+               "good!"]]]))])
 
 ;; -------------------------
 ;; Goods
@@ -296,9 +296,8 @@
     [:section.section>div.container>div.content
      [:ul
       [:li "Goods Received に表示される good! には reply で返信できます。"]
-      [:li "Not Yet は自分が一度も good! を出してない人のリスト。
-            青色のリンクで表示されるのは一度以上アップロードした人（ページが見えるとは限らない）。
-            黒はまだ何もアップロードしない人。"]]
+      [:li "Not Yet は自分が一度も good! を出してない人。
+            青色は一度以上アップロードした人。黒はまだアップロードしない人。"]]
      [:div.columns
       [:div.column
        [:h2 "Goods Received (" (count received) ")"]
@@ -315,7 +314,10 @@
        [:h2 "Goods Sent (" (count sent) ")"]
        (for [[id s] (map-indexed vector sent)]
          [:p {:key (str "g" id)}
-          "to " [:b (abbrev-if-contains-re s)] ", " (time-format (:timestamp s)) ","
+          "to "
+          [:b (abbrev-if-contains-re s)]
+          ", "
+          (time-format (:timestamp s)) ","
           [:br]
           (:message s)])]
       [:div.column.is-one-fifth
@@ -405,7 +407,7 @@
     ["/messages"  :messages]]))
 
 (defn match-route [uri]
-  (->> (or (not-empty (replace uri #"^.*#" "")) "/")
+  (->> (or (not-empty (str/replace uri #"^.*#" "")) "/")
        (reitit/match-by-path router)
        :data
        :name))
@@ -456,20 +458,17 @@
                                       (map :login)))
      :error-handler #(.log js/console "reset-users-all!! error:" %)}))
 
-(defn reset-records-all! []
+;----------
+(defn reset-updates-by-date-all! []
   (GET "/api/records"
-    {:handler #(reset! records-all %)
-     :error-handler #(.log js/console "reset-records-all! error:" %)}))
+    {:handler #(reset! updates-by-date-all %)
+     :error-handler #(.log js/console "reset-updates-by-date-all! error:" %)}))
 
-(defn reset-record-login! []
+(defn reset-updates-by-date! []
   (GET (str "/api/record/" js/login)
-    {:handler #(reset! record-login %)
+    {:handler #(reset! updates-by-date %)
      :error-handler #(.log js/console "reset-records-login! error:" %)}))
-
-(defn reset-record-hkimura! []
-  (GET "/api/record/hkimura"
-    {:handler #(reset! record-hkimura %)
-     :error-handler #(.log js/console "reset-records-hkimura! error:" %)}))
+;-----------
 
 (defn init! []
   (ajax/load-interceptors!)
@@ -480,8 +479,7 @@
   (reset-titles!)
   (reset-users-all!)
 
-  (reset-records-all!)
-  (reset-record-login!)
-  (reset-record-hkimura!)
+  (reset-updates-by-date-all!)
+  (reset-updates-by-date!)
 
   (mount-components))
