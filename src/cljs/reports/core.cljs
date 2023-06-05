@@ -9,14 +9,15 @@
    [reitit.core :as reitit]
    [reports.ajax :as ajax]
    [goog.events :as events]
-   [goog.history.EventType :as HistoryEventType])
+   [goog.history.EventType :as HistoryEventType]
+   #_[cheshire.core :as json])
   (:import goog.History))
 
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.0")
-(def ^:private now "2023-06-01 14:27:29")
+(def ^:private version "1.18.10")
+(def ^:private now "2023-06-05 13:14:58")
 
 (defonce session (r/atom {:page :home}))
 
@@ -60,10 +61,13 @@
      [:div#nav-menu.navbar-menu
       {:class (when @expanded? :is-active)}
       [:div.navbar-start
-       [nav-link "#/" "Home" :home]
-       [nav-link "/login" "Login"]
-       [nav-link "/logout" "Logout"]
-       [nav-link "#/about" "About" :about]]]]))
+       ;;[nav-link "#/" "Home" :home]
+       [nav-link "#/upload" "Upload"]
+       [nav-link "#/browse" "Browse"]
+       [nav-link "#/goods"  "Goods"]
+       [nav-link "/login"   "Login"]
+       [nav-link "/logout"  "Logout"]
+       [nav-link "#/about"  "About" :about]]]]))
 
 ;; -------------------------
 ;; About
@@ -82,17 +86,16 @@
   (let [name js/login
         url (str js/hp_url name)]
     [:section.section>div.container>div.content
-     [:p "〆切際にやっつけたサイトは点数低い。作成途中を評価するレポート。"]
-     [:p "check your report => "
-      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+     [:p "〆切際のやっつけサイトは点数低い。作成途中を評価するレポート。"]
+     [:p "自分レポート => "
+      [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
      [:ul
-      [:li [:a {:href "#/upload"} "Upload, uploaded"]]
-      [:li [:a {:href "#/browse"} "Browse & Comments"]]
+      [:li [:a {:href "#/upload"} "アップロード"]]
+      [:li [:a {:href "#/browse"} "ユーザーページ、コメント送信"]]
       [:li [:a {:href "#/goods"}  "Goods"]
-       " | "
-       [:a {:href "#/recv-sent"} "Received & Sent"]
-       " | "
-       [:a {:href "#/messages"} "messages"]]]
+       [:ul
+        [:li [:a {:href "#/recv-sent"} "誰から誰へ"]]
+        [:li [:a {:href "#/messages"} "一覧"]]]]]
      [:hr]
      "hkimura, " version]))
 
@@ -105,7 +108,8 @@
 ;; Uploads
 
 ;; not ajax. form.
-(defn- upload-column [s1 s2 type]
+(defn- upload-column
+  [s1 s2 type accept]
   [:form {:method "post"
           :action "/api/upload"
           :enc-type "multipart/form-data"}
@@ -114,13 +118,22 @@
    [hidden-field "login" js/login]
    [:div.columns
     [:div.column.is-one-fifth s1]
-    [:div.column s2 [:input {:type "file" :name "upload"}]]
+    [:div.column s2 [:input
+                     (merge {:type "file" :name "upload"} accept)]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
+
+(defn- wrap-string [^String d] d)
 
 (defn- make-table [records]
   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
     (doseq [r records]
-      (swap! s concat (str "| " (.-rep (:date r)) " | " (:count r) " |\n")))
+      (swap! s
+             concat
+             (str "| "
+                  (.-rep (wrap-string (:date r)))
+                  " | "
+                  (str (:count r))
+                  " |\n")))
     [:div {:dangerouslySetInnerHTML
            {:__html (md->html (apply str @s))}}]))
 
@@ -129,10 +142,10 @@
     [:div
      [:h2 "Upload"]
      [:div
-      [upload-column (str js/login) "/ " "html"]
-      [upload-column "" "/css/ " "css"]
-      [upload-column "" "/images/ " "images"]
-      [upload-column "" "/js/ " "js"]]
+      [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
+      [upload-column "" "/css/ " "css" {:accept "text/css"}]
+      [upload-column "" "/images/ " "images" {:accept "image/*"}]
+      [upload-column "" "/js/ " "js" {:accept "text/javascript"}]]
      [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
@@ -147,10 +160,10 @@
       [:li "アップロードが反映されない時、エラーないとすると例のアレすると良い。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
 
-(defn- upload-ends []
-  [:div
-   [:h2 "Upload 停止"]
-   [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
+;; (defn- upload-ends []
+;;   [:div
+;;    [:h2 "Upload 停止"]
+;;    [:p "Upload は停止中です。テスト回答、あげる時期になったら有効化する。"]])
 
 (defn record-columns []
   [:div
@@ -163,7 +176,7 @@
     [:div#you.column
      [:h4 js/login]
      (make-table @record-login)]
-    [:div#hkim.column
+    #_[:div#hkim.column
      [:h4 "hkimura"]
      (make-table @record-hkimura)]
     [:div.column]]])
@@ -206,16 +219,15 @@
 (defn- report-url [user]
   (str js/hp_url user))
 
+(defonce type-count (r/atom 0))
+
 (defn browse-page []
   [:section.section>div.container>div.content
    [:h2 "Browse & Comments"]
-   [:p "リストにあるのはアップロードを一度以上実行した人。合計 "
-    (str (count @users)) "人。平常点は平常につく。"]
+   [:p "現在までのアップロードは " (str (count @users)) "人。"]
    [:ul
-    [:li "good を押したあと「送信しました」が表示されない時、
-        ページを再読み込みして good し直してください🙏"]
-    [:li "再読み込みの前にメッセージをコピーしとくと吉。"]
-    ]
+    [:li "コピペのメッセージは送信しない。"]
+    [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる"]]
    [:div
     [:input {:type "radio"
              :checked @random?
@@ -226,30 +238,35 @@
              :on-change #(swap! random? not)}]
     " hot "]
    [:br]
-   (for [[i u] ((filters @random?) (map-indexed vector @users))]
-     [:div.columns {:key i}
-      [:div.column.is-one-quarter
-       [:a {:href (report-url u)
-            :class (if (= u "hkimura") "hkimura" "other")}
-        u]
-       " "
-       (get @titles u)]
-      [:div.column
-       " "
-       [:input {:id i
+   (doall (for [[i u] ((filters @random?) (map-indexed vector @users))]
+            [:div.columns {:key i}
+             [:div.column.is-one-quarter
+              [:a {:href (report-url u)
+                   :class (if (= u "hkimura") "hkimura" "other")}
+               u]
+              " "
+              (get @titles u)]
+             [:div.column
+              " "
+              [:input
+               {:on-key-up #(swap! type-count inc)
+                :id i
                 :placeholder (str min-mesg " 文字以上のメッセージ")
                 :size 80}]
-       [:button
-        {:on-click
-         #(let [obj (.getElementById js/document i)]
-            (send-message! u (.-value obj))
-             ;; クリアしない方が誰にコメントしたかわかる。
-            #_(set! (.-innerHTML obj) ""))} "good!"]]])])
+              [:button
+               {:on-click
+                #(let [obj (.getElementById js/document i)]
+                   (when (< 9 @type-count)
+                     (send-message! u (.-value obj))
+                     (reset! type-count 0)
+                     ;; クリアしない方が誰にコメントしたかわかる。
+                     (set! (.-innerHTML obj) "")))}
+                "good!"]]]))])
 
 ;; -------------------------
 ;; Goods
 
-;; FIXME
+;; FIXME, dirty
 (defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
@@ -301,12 +318,12 @@
           "to " [:b (abbrev-if-contains-re s)] ", " (time-format (:timestamp s)) ","
           [:br]
           (:message s)])]
-      [:div.column
+      [:div.column.is-one-fifth
        [:h2 "Not Yet"]
        (doall
         (for [[id u] (map-indexed
                       vector
-                      (difference @users-all
+                      (difference (set @users-all)
                                   (set (map #(:rcv %) sent))))]
           [:p {:key (str "n" id)}
            (if (neg? (.indexOf @users u))
@@ -348,9 +365,7 @@
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → " [:b name] " → " s]))))])
 
-;; 幼児化が進んでいる。
 ;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
-;; のレベルではない。好き、嫌いの第一次欲求、漫画好き好きばっかだ。
 (defn messages []
   [:section.section>div.container>div.content
    [:h2 "Goods (Messages)"]
@@ -435,9 +450,10 @@
      :error-handler #(.log js/console "reset-titles! error:" %)}))
 
 (defn- reset-users-all! []
-  (GET "https://l22.melt.kyutech.ac.jp/api/logins"
-    {:headers {"Accept" "application/json"}
-     :handler #(reset! users-all (set %))
+  (GET "https://l22.melt.kyutech.ac.jp/api/subj/literacy"
+    {:handler #(reset! users-all (->> %
+                                      :users
+                                      (map :login)))
      :error-handler #(.log js/console "reset-users-all!! error:" %)}))
 
 (defn reset-records-all! []
@@ -458,6 +474,7 @@
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
+
   (reset-users!)
   (reset-goods!)
   (reset-titles!)
