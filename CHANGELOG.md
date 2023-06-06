@@ -31,6 +31,7 @@
 - Error in handleResponse UNK/SW_UNREACHABLE options getValues
 - Re の表示を短く
 - docker? dev container?
+- 2022 からランダムに出す
 
 
 ## 1.18.13 - 2023-06-06
