@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.12")
-(def ^:private now "2023-06-05 22:43:19")
+(def ^:private version "1.18.16-SNAPSHOT")
+(def ^:private now "2023-06-06 17:43:18")
 
 ;-------------------------------------------
 ; r/atom
@@ -34,8 +34,6 @@
 (defonce uploads-by-date     (r/atom []))
 ;---------------------------------------------
 
-;----------
-
 (defn- wrap-string [^String d] d)
 
 (defn js-date [s] (.-rep (wrap-string s)))
@@ -46,17 +44,8 @@
          (map (fn [x] {(js-date (:date x)) (:count x)})
               m)))
 
-(defn reset-uploads-by-date-all! []
-  (GET "/api/records"
-    {:handler #(reset! uploads-by-date-all (coerce-date-count %))
-     :error-handler #(.log js/console "reset-uploads-by-date-all! error:" %)}))
-
-(defn reset-uploads-by-date!
-  [user]
-  (GET (str "/api/record/" user)
-    {:handler #(reset! uploads-by-date (coerce-date-count %))
-     :error-handler #(.log js/console "reset-records-login! error:" %)}))
-;-----------
+(defn- report-url [user]
+  (str js/hp_url user))
 
 (defn admin?
   "cljs のため。本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
@@ -69,6 +58,12 @@
   (if (admin? js/login)
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
+
+(defn- hidden-field [name value]
+  [:input {:type "hidden"
+           :name name
+           :value value}])
+
 
 
 (defn nav-link [uri title page]
@@ -132,10 +127,6 @@
        [:hr]
        "hkimura, " version])))
 
-(defn- hidden-field [name value]
-  [:input {:type "hidden"
-           :name name
-           :value value}])
 
 ;; -------------------------
 ;; Uploads
@@ -154,20 +145,6 @@
     [:div.column s2 [:input
                      (merge {:type "file" :name "upload"} accept)]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
-
-
-;; (defn- make-table [records]
-;;   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
-;;     (doseq [r records]
-;;       (swap! s
-;;              concat
-;;              (str "| "
-;;                   (js-date (:date r))
-;;                   " | "
-;;                   (str (:count r))
-;;                   " |\n")))
-;;     [:div {:dangerouslySetInnerHTML
-;;            {:__html (md->html (apply str @s))}}]))
 
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
@@ -188,6 +165,7 @@
       [:li "アップロードが反映されない時、アレ思い出せ。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
 
+;; FIXME: @uploads-by-date は nil のケースがある。
 (defn uploaded-column
   []
   [:div
@@ -202,7 +180,8 @@
          [:tr
           [:td date]
           [:td (@uploads-by-date-all date)]
-          [:td (@uploads-by-date date)]])]]]]])
+          [:td (when-not (empty? @uploads-by-date)
+                 (@uploads-by-date date))]])]]]]])
 
 (defn upload-page
   []
@@ -236,9 +215,6 @@
         :else
         (post-message js/login recv mesg)))
 
-(defn- report-url [user]
-  (str js/hp_url user))
-
 (defn browse-page
   []
   (fn []
@@ -246,8 +222,7 @@
      [:h2 "Browse & Comments"]
      [:ul
       [:li "現在までのアップロードは " (str (count @users)) "人。"]
-      [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
-      [:li "メッセージのコピペ使い回しは不可。"]]
+      [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]]
      [:div
       [:input {:type "radio"
                :checked @random?
@@ -354,11 +329,8 @@
                u
                [:a {:href (report-url u)} u])]))]]])))
 
-;; -------------------------
-;; Histgram
-
-(defn good-marks [n]
-  (repeat n "👍"))
+;; -------------------------------------
+;; messages received-sent (was Histgram)
 
 (defn- goods-f [f]
   (->> (group-by f @goods)
@@ -371,7 +343,7 @@
     :else (get-count (rest v) key)))
 
 ;; FIXME: too complex. make this simpler.
-(defn histogram-both []
+(defn recv-sent []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
    #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
@@ -384,10 +356,12 @@
          goods (group-by :id (concat snd rcv))]
      (for [[i g] (map-indexed vector goods)]
        (let [name (abbrev (key g))
-             r (-> g val (get-count :rcv) good-marks)
-             s (-> g val (get-count :snd) good-marks)]
+             r (-> g val (get-count :rcv) (repeat "😀"))
+             s (-> g val (get-count :snd) (repeat "🤗"))]
          (when-not (= "REPLY" (key g))
-           [:p {:key i} r " → " [:b name] " → " s]))))])
+           [:p {:key i} r " → "
+            [:a {:href (report-url name)} name] " → " s]))))])
+
 
 ;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
 (defn messages []
@@ -409,7 +383,7 @@
    :upload #'upload-page
    :browse #'browse-page
    :goods  #'goods-page
-   :histogram-both #'histogram-both
+   :recv-sent #'recv-sent
    :messages #'messages})
 
 (defn page []
@@ -425,7 +399,7 @@
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]
-    ["/recv-sent" :histogram-both]
+    ["/recv-sent" :recv-sent]
     ["/messages"  :messages]]))
 
 (defn match-route [uri]
@@ -479,6 +453,26 @@
                                       :users
                                       (map :login)))
      :error-handler #(.log js/console "reset-users-all!! error:" %)}))
+
+;------------------------------------------------
+
+(defn reset-uploads-by-date-all! []
+  (GET "/api/records"
+    {:handler #(reset! uploads-by-date-all (coerce-date-count %))
+     :error-handler #(.log js/console "reset-uploads-by-date-all! error:" %)}))
+
+(defn reset-uploads-by-date!
+  [user]
+  (GET (str "/api/record/" user)
+    {:handler #(reset! uploads-by-date (coerce-date-count %))
+     :error-handler #(.log js/console "reset-records-login! error:" %)}))
+
+(comment
+  (GET "/api/record/nobody"
+    {:handler #(js/alert (coerce-date-count %))})
+  ; => null
+  :rcf)
+;----------------------------------------------------------------
 
 (defn init! []
   (ajax/load-interceptors!)
