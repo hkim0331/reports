@@ -60,7 +60,8 @@
 
   :profiles
   {:uberjar {:omit-source true
-             :prep-tasks ["compile" ["run" "-m" "shadow.cljs.devtools.cli" "release" "app"]]
+             :prep-tasks ["compile"
+                          ["run" "-m" "shadow.cljs.devtools.cli" "release" "app"]]
              :aot :all
              :uberjar-name "reports.jar"
              :source-paths ["env/prod/clj"  "env/prod/cljs"]

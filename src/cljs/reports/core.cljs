@@ -64,19 +64,7 @@
            :name name
            :value value}])
 
-;------------------------------------------------
 
-(defn reset-uploads-by-date-all! []
-  (GET "/api/records"
-    {:handler #(reset! uploads-by-date-all (coerce-date-count %))
-     :error-handler #(.log js/console "reset-uploads-by-date-all! error:" %)}))
-
-(defn reset-uploads-by-date!
-  [user]
-  (GET (str "/api/record/" user)
-    {:handler #(reset! uploads-by-date (coerce-date-count %))
-     :error-handler #(.log js/console "reset-records-login! error:" %)}))
-;----------------------------------------------------------------
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -177,6 +165,7 @@
       [:li "アップロードが反映されない時、アレ思い出せ。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
 
+;; FIXME: @uploads-by-date は nil のケースがある。
 (defn uploaded-column
   []
   [:div
@@ -191,7 +180,8 @@
          [:tr
           [:td date]
           [:td (@uploads-by-date-all date)]
-          [:td (@uploads-by-date date)]])]]]]])
+          [:td (when-not (empty? @uploads-by-date)
+                 (@uploads-by-date date))]])]]]]])
 
 (defn upload-page
   []
@@ -199,7 +189,7 @@
     [:section.section>div.container>div.content
      [upload-columns]
      [:br]
-     #_[uploaded-column]]))
+     [uploaded-column]]))
 
 ;; -------------------------
 ;; Browse
@@ -344,9 +334,6 @@
 ;; -------------------------------------
 ;; messages received-sent (was Histgram)
 
-(defn good-marks [n]
-  (repeat n "👍"))
-
 (defn- goods-f [f]
   (->> (group-by f @goods)
        (map (fn [x] {:id (first x) f (count (second x))}))))
@@ -371,8 +358,8 @@
          goods (group-by :id (concat snd rcv))]
      (for [[i g] (map-indexed vector goods)]
        (let [name (abbrev (key g))
-             r (-> g val (get-count :rcv)  (repeat n "😀"))
-             s (-> g val (get-count :snd)  (repeat n "🤗")]
+             r (-> g val (get-count :rcv) (repeat "😀"))
+             s (-> g val (get-count :snd) (repeat "🤗"))]
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → "
             [:a {:href (report-url name)} name] " → " s]))))])
@@ -468,6 +455,26 @@
                                       :users
                                       (map :login)))
      :error-handler #(.log js/console "reset-users-all!! error:" %)}))
+
+;------------------------------------------------
+
+(defn reset-uploads-by-date-all! []
+  (GET "/api/records"
+    {:handler #(reset! uploads-by-date-all (coerce-date-count %))
+     :error-handler #(.log js/console "reset-uploads-by-date-all! error:" %)}))
+
+(defn reset-uploads-by-date!
+  [user]
+  (GET (str "/api/record/" user)
+    {:handler #(reset! uploads-by-date (coerce-date-count %))
+     :error-handler #(.log js/console "reset-records-login! error:" %)}))
+
+(comment
+  (GET "/api/record/nobody"
+    {:handler #(js/alert (coerce-date-count %))})
+  ; => null
+  :rcf)
+;----------------------------------------------------------------
 
 (defn init! []
   (ajax/load-interceptors!)
