@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.14")
-(def ^:private now "2023-06-06 09:55:19")
+(def ^:private version "1.18.15-SNAPSHOT")
+(def ^:private now "2023-06-06 14:45:05")
 
 ;-------------------------------------------
 ; r/atom
@@ -199,7 +199,7 @@
     [:section.section>div.container>div.content
      [upload-columns]
      [:br]
-     [uploaded-column]]))
+     #_[uploaded-column]]))
 
 ;; -------------------------
 ;; Browse
@@ -371,8 +371,8 @@
          goods (group-by :id (concat snd rcv))]
      (for [[i g] (map-indexed vector goods)]
        (let [name (abbrev (key g))
-             r (-> g val (get-count :rcv) good-marks)
-             s (-> g val (get-count :snd) good-marks)]
+             r (-> g val (get-count :rcv)  (repeat n "😀"))
+             s (-> g val (get-count :snd)  (repeat n "🤗")]
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → "
             [:a {:href (report-url name)} name] " → " s]))))])
