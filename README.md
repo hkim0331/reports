@@ -17,6 +17,8 @@ You will need [Leiningen][1] 2.0 or above installed.
 
 ## Develop
 
+    % cd reports
+    % code .
     % cat dev-config.edn
     % npm install
     % lein repl
@@ -25,11 +27,6 @@ You will need [Leiningen][1] 2.0 or above installed.
     or in Calva,
     1, choose start Server and Client
     2, open http://localhost:3000 after ensuring shadow-clj launched
-
-    choosing Leiningen+shadow-cljs
-
-
-
 
 
 ## Running

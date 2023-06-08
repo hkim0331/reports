@@ -31,11 +31,14 @@
 - Error in handleResponse UNK/SW_UNREACHABLE options getValues
 - Re の表示を短く
 - docker? dev container?
-- 2022 からランダムに出す
 
+
+## 1.18.17 - 2023-06-08
+- sort uploaded date
 
 ## 1.18.16-SNAPSHOT
 - fixed empty uloaded-date bug
+- 2022 から選択、reports/public/2022 にコピー
 
 ## 1.18.13 - 2023-06-06
 - /r/#/recv-sent からリンク

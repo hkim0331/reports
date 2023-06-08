@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.16-SNAPSHOT")
-(def ^:private now "2023-06-06 17:43:18")
+(def ^:private version "1.18.17")
+(def ^:private now "2023-06-08 10:55:21")
 
 ;-------------------------------------------
 ; r/atom
@@ -176,7 +176,7 @@
      [:table.table.is-striped
       [:thead [:tr [:th "date"] [:th "全体"] [:th js/login]]]
       [:tbody
-       (for [date (keys @uploads-by-date-all)]
+       (for [date (sort (keys @uploads-by-date-all))]
          [:tr
           [:td date]
           [:td (@uploads-by-date-all date)]
