@@ -33,6 +33,13 @@
 - docker? dev container?
 
 
+## 1.18.17 - 2023-06-08
+- sort uploaded date
+
+## 1.18.16-SNAPSHOT
+- fixed empty uloaded-date bug
+- 2022 から選択、reports/public/2022 にコピー
+
 ## 1.18.13 - 2023-06-06
 - /r/#/recv-sent からリンク
 
@@ -42,6 +49,7 @@
 
 ## 1.18.11
 REFACTOR
+- Re の表示を短く
 
 ## 1.18.10 - 2023-06-05
 - Calva: Server + Client での動作確認。ブラウザを立ち上げ、つなげ!

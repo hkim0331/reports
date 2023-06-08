@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.13")
-(def ^:private now "2023-06-06 08:37:22")
+(def ^:private version "1.18.17")
+(def ^:private now "2023-06-08 10:58:12")
 
 ;-------------------------------------------
 ; r/atom
@@ -64,19 +64,7 @@
            :name name
            :value value}])
 
-;------------------------------------------------
 
-(defn reset-uploads-by-date-all! []
-  (GET "/api/records"
-    {:handler #(reset! uploads-by-date-all (coerce-date-count %))
-     :error-handler #(.log js/console "reset-uploads-by-date-all! error:" %)}))
-
-(defn reset-uploads-by-date!
-  [user]
-  (GET (str "/api/record/" user)
-    {:handler #(reset! uploads-by-date (coerce-date-count %))
-     :error-handler #(.log js/console "reset-records-login! error:" %)}))
-;----------------------------------------------------------------
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -177,6 +165,7 @@
       [:li "アップロードが反映されない時、アレ思い出せ。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
 
+;; FIXME: @uploads-by-date は nil のケースがある。
 (defn uploaded-column
   []
   [:div
@@ -187,11 +176,12 @@
      [:table.table.is-striped
       [:thead [:tr [:th "date"] [:th "全体"] [:th js/login]]]
       [:tbody
-       (for [date (keys @uploads-by-date-all)]
+       (for [date (sort (keys @uploads-by-date-all))]
          [:tr
           [:td date]
           [:td (@uploads-by-date-all date)]
-          [:td (@uploads-by-date date)]])]]]]])
+          [:td (when-not (empty? @uploads-by-date)
+                 (@uploads-by-date date))]])]]]]])
 
 (defn upload-page
   []
@@ -231,19 +221,13 @@
     [:section.section>div.container>div.content
      [:h2 "Browse & Comments"]
      [:ul
-      [:li "現在までのアップロードは " (str (count @users)) "人。"
-       "約" (str (- 165 (count @users))) "人はレポート平常点つかないよ。"
-       [:span.red "出来上がりを評価するレポートではない"]
-       "。"]
+      [:li "現在までのアップロードは " (str (count @users)) "人。"]
       [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
-      [:li "何を目標とするレポートなのか？"
-       "「写真がきれいでよかった」だと、隣の小学生と疑われないか？"
-       "アップロードした人もそれで十分か？"
-       "ホームページを作りながら、なんかを学ばせようと思ってんだよね、主催者は。"]
-      [:li "もちろーん、接点のなかったクラスメートとこのレポートを通じて知り合えた、
-          なんてサイコーと思ってるよ。"]
-      [:li "メッセージのコピペ使い回しは不可。当たり前に超失礼だろ？悪質点数稼ぎじゃね？"
-       "ちゃんと見て、きちんと批判しよう。批判と非難とは別物だ。"]]
+      [:li "ホームページのプログラム内容に関係するコメント、質問、回答が
+            ボコボコ交換されるのを期待してます。"]
+      [:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
+       [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"
+            } "2022"]]]
      [:div
       [:input {:type "radio"
                :checked @random?
@@ -353,9 +337,6 @@
 ;; -------------------------------------
 ;; messages received-sent (was Histgram)
 
-(defn good-marks [n]
-  (repeat n "👍"))
-
 (defn- goods-f [f]
   (->> (group-by f @goods)
        (map (fn [x] {:id (first x) f (count (second x))}))))
@@ -380,8 +361,8 @@
          goods (group-by :id (concat snd rcv))]
      (for [[i g] (map-indexed vector goods)]
        (let [name (abbrev (key g))
-             r (-> g val (get-count :rcv) good-marks)
-             s (-> g val (get-count :snd) good-marks)]
+             r (-> g val (get-count :rcv) (repeat "😀"))
+             s (-> g val (get-count :snd) (repeat "🤗"))]
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → "
             [:a {:href (report-url name)} name] " → " s]))))])
@@ -477,6 +458,26 @@
                                       :users
                                       (map :login)))
      :error-handler #(.log js/console "reset-users-all!! error:" %)}))
+
+;------------------------------------------------
+
+(defn reset-uploads-by-date-all! []
+  (GET "/api/records"
+    {:handler #(reset! uploads-by-date-all (coerce-date-count %))
+     :error-handler #(.log js/console "reset-uploads-by-date-all! error:" %)}))
+
+(defn reset-uploads-by-date!
+  [user]
+  (GET (str "/api/record/" user)
+    {:handler #(reset! uploads-by-date (coerce-date-count %))
+     :error-handler #(.log js/console "reset-records-login! error:" %)}))
+
+(comment
+  (GET "/api/record/nobody"
+    {:handler #(js/alert (coerce-date-count %))})
+  ; => null
+  :rcf)
+;----------------------------------------------------------------
 
 (defn init! []
   (ajax/load-interceptors!)
