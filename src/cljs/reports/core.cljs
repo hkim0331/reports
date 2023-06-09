@@ -152,6 +152,7 @@
       [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
       [upload-column "" "/css/ " "css" {:accept "text/css"}]
       [upload-column "" "/images/ " "images" {:accept "image/*"}]
+      [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
       [upload-column "" "/js/ " "js" {:accept "text/javascript"}]]
      [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
