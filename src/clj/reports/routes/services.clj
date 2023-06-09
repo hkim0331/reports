@@ -40,12 +40,13 @@
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)
         dest (io/file dir filename)]
-    (log/info "dir:" dir "dest:" dest)
+    ;; (log/info "dir:" dir "dest:" dest)
     (try
       (when (empty? filename)
         (throw (Exception. "choose a file to upload.")))
       (sh "mkdir" "-p" dir)
-      (log/info login type filename size dir tempfile)
+      ;; (log/info login type filename size dir tempfile)
+      (log/info login type filename size dir)
       (when (zero? size)
         (throw (Exception. "size is 0")))
       ;; (when (zero? (count (slurp tempfile)))

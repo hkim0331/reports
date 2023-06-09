@@ -29,20 +29,38 @@
 - commons.js:2 Channel: Error in handleResponse UNK/SW_UNREACHABLE broadcastEventToTab clipper_state_changed
 - Error in handleResponse UNK/SW_UNREACHABLE isLogsEnabled
 - Error in handleResponse UNK/SW_UNREACHABLE options getValues
-- :flash が使えてない。
 - Re の表示を短く
 - docker? dev container?
-- uploaded を日付-全体-you になるように。上に詰まったら比較にならない。
+
+## 1.19.0 - 2023-06-09
+- can upload mpvies
+- 🌞 and 🌳
+
+## 1.18.18 - 2023-06-09
+- goods abbrev を解いて、リンク復活
+- 自分のアカウントアンカーの背景を赤、フォント色白で強調。
+
+## 1.18.17 - 2023-06-08
+- sort uploaded date
+
+## 1.18.16-SNAPSHOT
+- fixed empty uloaded-date bug
+- 2022 から選択、reports/public/2022 にコピー
+
+## 1.18.13 - 2023-06-06
+- /r/#/recv-sent からリンク
 
 ## 1.18.12 - 2023-06-05
-- uploaded table
+- uploaded を日付-全体-you になるように。
+  テーブルが日付バラバラ、上に詰まったら比較にならない。
 
 ## 1.18.11
 REFACTOR
+- Re の表示を短く
 
 ## 1.18.10 - 2023-06-05
 - Calva: Server + Client での動作確認。ブラウザを立ち上げ、つなげ!
-- login 失敗で赤フラッシュ
+- login 失敗で赤フラッシュできるようになった
 - uploaded の hkimura コラム削除
 
 ## 1.18.9 - 2023-06-04

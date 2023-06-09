@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.12")
-(def ^:private now "2023-06-05 22:43:19")
+(def ^:private version "1.19.0")
+(def ^:private now "2023-06-09 22:31:30")
 
 ;-------------------------------------------
 ; r/atom
@@ -34,8 +34,6 @@
 (defonce uploads-by-date     (r/atom []))
 ;---------------------------------------------
 
-;----------
-
 (defn- wrap-string [^String d] d)
 
 (defn js-date [s] (.-rep (wrap-string s)))
@@ -46,17 +44,8 @@
          (map (fn [x] {(js-date (:date x)) (:count x)})
               m)))
 
-(defn reset-uploads-by-date-all! []
-  (GET "/api/records"
-    {:handler #(reset! uploads-by-date-all (coerce-date-count %))
-     :error-handler #(.log js/console "reset-uploads-by-date-all! error:" %)}))
-
-(defn reset-uploads-by-date!
-  [user]
-  (GET (str "/api/record/" user)
-    {:handler #(reset! uploads-by-date (coerce-date-count %))
-     :error-handler #(.log js/console "reset-records-login! error:" %)}))
-;-----------
+(defn- report-url [user]
+  (str js/hp_url user))
 
 (defn admin?
   "cljs のため。本来はデータベーステーブル中の is-admin フィールドを参照すべき。"
@@ -70,6 +59,10 @@
     s
     (concat (first s) (map (fn [_] "?") (rest s)))))
 
+(defn- hidden-field [name value]
+  [:input {:type "hidden"
+           :name name
+           :value value}])
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -132,10 +125,6 @@
        [:hr]
        "hkimura, " version])))
 
-(defn- hidden-field [name value]
-  [:input {:type "hidden"
-           :name name
-           :value value}])
 
 ;; -------------------------
 ;; Uploads
@@ -155,20 +144,6 @@
                      (merge {:type "file" :name "upload"} accept)]]
     [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
 
-
-;; (defn- make-table [records]
-;;   (let [s (atom "| date | uploads |\n| :---: | ---: |\n")]
-;;     (doseq [r records]
-;;       (swap! s
-;;              concat
-;;              (str "| "
-;;                   (js-date (:date r))
-;;                   " | "
-;;                   (str (:count r))
-;;                   " |\n")))
-;;     [:div {:dangerouslySetInnerHTML
-;;            {:__html (md->html (apply str @s))}}]))
-
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
     [:div
@@ -177,6 +152,7 @@
       [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
       [upload-column "" "/css/ " "css" {:accept "text/css"}]
       [upload-column "" "/images/ " "images" {:accept "image/*"}]
+      [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
       [upload-column "" "/js/ " "js" {:accept "text/javascript"}]]
      [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
@@ -188,6 +164,7 @@
       [:li "アップロードが反映されない時、アレ思い出せ。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
 
+;; FIXME: @uploads-by-date は nil のケースがある。
 (defn uploaded-column
   []
   [:div
@@ -198,11 +175,12 @@
      [:table.table.is-striped
       [:thead [:tr [:th "date"] [:th "全体"] [:th js/login]]]
       [:tbody
-       (for [date (keys @uploads-by-date-all)]
+       (for [date (sort (keys @uploads-by-date-all))]
          [:tr
           [:td date]
           [:td (@uploads-by-date-all date)]
-          [:td (@uploads-by-date date)]])]]]]])
+          [:td (when-not (empty? @uploads-by-date)
+                 (@uploads-by-date date))]])]]]]])
 
 (defn upload-page
   []
@@ -236,28 +214,19 @@
         :else
         (post-message js/login recv mesg)))
 
-(defn- report-url [user]
-  (str js/hp_url user))
-
 (defn browse-page
   []
   (fn []
     [:section.section>div.container>div.content
      [:h2 "Browse & Comments"]
      [:ul
-      [:li "現在までのアップロードは " (str (count @users)) "人。"
-       "約" (str (- 165 (count @users))) "人はレポート平常点つかないよ。"
-       [:span.red "出来上がりを評価するレポートではない"]
-       "。"]
+      [:li "現在までのアップロードは " (str (count @users)) "人。"]
       [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
-      [:li "何を目標とするレポートなのか？"
-       "「写真がきれいでよかった」だと、隣の小学生と疑われないか？"
-       "アップロードした人もそれで十分か？"
-       "ホームページを作りながら、なんかを学ばせようと思ってんだよね、主催者は。"]
-      [:li "もちろーん、接点のなかったクラスメートとこのレポートを通じて知り合えた、
-          なんてサイコーと思ってるよ。"]
-      [:li "メッセージのコピペ使い回しは不可。当たり前に超失礼だろ？悪質点数稼ぎじゃね？"
-       "ちゃんと見て、きちんと批判しよう。批判と非難とは別物だ。"]]
+      [:li "ホームページのプログラム内容に関係するコメント、質問、回答が
+            ボコボコ交換されるのを期待してます。"]
+      [:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
+       [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"
+            } "2022"]]]
      [:div
       [:input {:type "radio"
                :checked @random?
@@ -364,11 +333,8 @@
                u
                [:a {:href (report-url u)} u])]))]]])))
 
-;; -------------------------
-;; Histgram
-
-(defn good-marks [n]
-  (repeat n "👍"))
+;; -------------------------------------
+;; messages received-sent
 
 (defn- goods-f [f]
   (->> (group-by f @goods)
@@ -381,7 +347,8 @@
     :else (get-count (rest v) key)))
 
 ;; FIXME: too complex. make this simpler.
-(defn histogram-both []
+(defn recv-sent
+  []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
    #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
@@ -393,11 +360,21 @@
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
      (for [[i g] (map-indexed vector goods)]
-       (let [name (abbrev (key g))
-             r (-> g val (get-count :rcv) good-marks)
-             s (-> g val (get-count :snd) good-marks)]
+       (let [name (key g)
+             r (-> g val (get-count :rcv) (repeat "🌞"))
+             s (-> g val (get-count :snd) (repeat "🌳"))]
          (when-not (= "REPLY" (key g))
-           [:p {:key i} r " → " [:b name] " → " s]))))])
+           [:p {:key i} r " → "
+            [:a {:href (report-url name)
+                 :class (if (= name js/login)
+                          "me"
+                          "other")}
+             name]
+            ;; (if (= name js/login)
+            ;;   [:a {:href (report-url name)} name]
+            ;;   (abbrev name))
+            " → " s]))))])
+
 
 ;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
 (defn messages []
@@ -419,7 +396,7 @@
    :upload #'upload-page
    :browse #'browse-page
    :goods  #'goods-page
-   :histogram-both #'histogram-both
+   :recv-sent #'recv-sent
    :messages #'messages})
 
 (defn page []
@@ -435,7 +412,7 @@
     ["/upload" :upload]
     ["/browse" :browse]
     ["/goods"  :goods]
-    ["/recv-sent" :histogram-both]
+    ["/recv-sent" :recv-sent]
     ["/messages"  :messages]]))
 
 (defn match-route [uri]
@@ -489,6 +466,26 @@
                                       :users
                                       (map :login)))
      :error-handler #(.log js/console "reset-users-all!! error:" %)}))
+
+;------------------------------------------------
+
+(defn reset-uploads-by-date-all! []
+  (GET "/api/records"
+    {:handler #(reset! uploads-by-date-all (coerce-date-count %))
+     :error-handler #(.log js/console "reset-uploads-by-date-all! error:" %)}))
+
+(defn reset-uploads-by-date!
+  [user]
+  (GET (str "/api/record/" user)
+    {:handler #(reset! uploads-by-date (coerce-date-count %))
+     :error-handler #(.log js/console "reset-records-login! error:" %)}))
+
+(comment
+  (GET "/api/record/nobody"
+    {:handler #(js/alert (coerce-date-count %))})
+  ; => null
+  :rcf)
+;----------------------------------------------------------------
 
 (defn init! []
   (ajax/load-interceptors!)
