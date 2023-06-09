@@ -360,8 +360,8 @@
          goods (group-by :id (concat snd rcv))]
      (for [[i g] (map-indexed vector goods)]
        (let [name (key g)
-             r (-> g val (get-count :rcv) (repeat "😀"))
-             s (-> g val (get-count :snd) (repeat "🤗"))]
+             r (-> g val (get-count :rcv) (repeat "🌞"))
+             s (-> g val (get-count :snd) (repeat "🌳"))]
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → "
             [:a {:href (report-url name)
