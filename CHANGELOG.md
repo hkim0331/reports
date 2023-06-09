@@ -33,6 +33,10 @@
 - docker? dev container?
 
 
+## 1.18.18 - 2023-06-09
+- goods abbrev を解いて、リンク復活
+- 自分のアカウントアンカーの背景を赤、フォント色白で強調。
+
 ## 1.18.17 - 2023-06-08
 - sort uploaded date
 

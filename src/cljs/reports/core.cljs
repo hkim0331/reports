@@ -64,8 +64,6 @@
            :name name
            :value value}])
 
-
-
 (defn nav-link [uri title page]
   [:a.navbar-item
    {:href   uri
@@ -335,7 +333,7 @@
                [:a {:href (report-url u)} u])]))]]])))
 
 ;; -------------------------------------
-;; messages received-sent (was Histgram)
+;; messages received-sent
 
 (defn- goods-f [f]
   (->> (group-by f @goods)
@@ -348,7 +346,8 @@
     :else (get-count (rest v) key)))
 
 ;; FIXME: too complex. make this simpler.
-(defn recv-sent []
+(defn recv-sent
+  []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
    #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
@@ -360,12 +359,20 @@
          rcv (goods-f :rcv)
          goods (group-by :id (concat snd rcv))]
      (for [[i g] (map-indexed vector goods)]
-       (let [name (abbrev (key g))
+       (let [name (key g)
              r (-> g val (get-count :rcv) (repeat "😀"))
              s (-> g val (get-count :snd) (repeat "🤗"))]
          (when-not (= "REPLY" (key g))
            [:p {:key i} r " → "
-            [:a {:href (report-url name)} name] " → " s]))))])
+            [:a {:href (report-url name)
+                 :class (if (= name js/login)
+                          "me"
+                          "other")}
+             name]
+            ;; (if (= name js/login)
+            ;;   [:a {:href (report-url name)} name]
+            ;;   (abbrev name))
+            " → " s]))))])
 
 
 ;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
