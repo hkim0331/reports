@@ -1,4 +1,4 @@
-(defproject reports "1.18.17"
+(defproject reports "1.18.18"
 
   :description "reports for literacy 2022"
   :url "https://rp.melt.kyutech.ac.jp"
