@@ -32,6 +32,9 @@
 - Re の表示を短く
 - docker? dev container?
 
+## 1.19.0 - 2023-06-09
+- can upload mpvies
+- 🌞 and 🌳
 
 ## 1.18.18 - 2023-06-09
 - goods abbrev を解いて、リンク復活
