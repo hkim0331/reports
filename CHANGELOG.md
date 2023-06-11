@@ -32,6 +32,10 @@
 - Re の表示を短く
 - docker? dev container?
 
+## 1.20.0 - 2023-06-11
+- exam mode
+services.clj/upload! returns {:status 200 :body "upload success}
+
 ## 1.19.0 - 2023-06-09
 - can upload mpvies
 - 🌞 and 🌳
