@@ -32,6 +32,16 @@
 - Re の表示を短く
 - docker? dev container?
 
+## 1.20.1 - 2023-06-12
+- finish midterm exam. resume.
+
+## 1.20.0 - 2023-06-11
+- exam mode
+services.clj/upload! returns {:status 200 :body "upload success}
+
+## 1.19.0 - 2023-06-09
+- can upload mpvies
+- 🌞 and 🌳
 
 ## 1.18.18 - 2023-06-09
 - goods abbrev を解いて、リンク復活
