@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.18.18")
-(def ^:private now "2023-06-09 15:20:59")
+(def ^:private version "1.20.0")
+(def ^:private now "2023-06-11 21:02:49")
 
 ;-------------------------------------------
 ; r/atom
@@ -152,6 +152,7 @@
       [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
       [upload-column "" "/css/ " "css" {:accept "text/css"}]
       [upload-column "" "/images/ " "images" {:accept "image/*"}]
+      [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
       [upload-column "" "/js/ " "js" {:accept "text/javascript"}]]
      [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
