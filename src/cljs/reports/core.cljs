@@ -330,8 +330,7 @@
    (doall
     (for [s sent]
       [:p {:key (str "g" (:id s))}
-       (str (:id s))
-       " to "
+       "to "
        [:b (abbrev-if-contains-re s)]
        ", "
        (time-format (:timestamp s)) ","
