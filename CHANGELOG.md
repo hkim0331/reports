@@ -32,6 +32,13 @@
 - Re の表示を短く
 - docker? dev container?
 
+## 1.20.2 - 2023-06-15
+### Refactored
+- 送信メッセージのvalidation を早めに
+### CHANGED
+- /api/goods returns order by id desc
+
+
 ## 1.20.1 - 2023-06-12
 - finish midterm exam. resume.
 

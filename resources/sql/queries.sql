@@ -39,6 +39,7 @@ WHERE snd = :snd order by id desc
 -- :name goods :? :*
 -- :doc retrieve goods all
 SELECT * FROM goods
+ORDER BY id DESC
 
 -----------------------------------
 -- titles

@@ -28,6 +28,9 @@ You will need [Leiningen][1] 2.0 or above installed.
     1, choose start Server and Client
     2, open http://localhost:3000 after ensuring shadow-clj launched
 
+### develop on dev-container
+
+(not ready)
 
 ## Running
 
