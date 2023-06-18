@@ -121,7 +121,8 @@
         [:li [:a {:href "#/goods"}  "Goods"]
          [:ul
           [:li [:a {:href "#/recv-sent"} "誰から誰へ"]]
-          [:li [:a {:href "#/messages"} "一覧"]]]]]
+          [:li [:a {:href "#/messages"} "一覧"]]
+          [:li [:a {:href "#/day-by-day"} "Day by day"]]]]]
        [:hr]
        "hkimura, " version])))
 
@@ -422,6 +423,35 @@
       (:message g)])])
 
 ;; -------------------------
+;; messages day by day
+
+(comment
+  (take 3 @goods)
+
+  :rcf)
+
+(defn- sent-goods
+  [login]
+  (->> (filter #(= login (:snd %)) @goods)
+       (map #(.-rep (wrap-string (:timestamp %))))
+       (map #(subs % 0 10))
+       sort
+       (group-by identity)
+       (map (fn [x] [(key x) (count (val x))]))
+       sort))
+
+(defn day-by-day
+  ([] (day-by-day js/login))
+  ([who]
+   [:section.section>div.container>div.content
+    [:h2 "Goods sent, day by day(" who ")"]
+    (for [g (sent-goods who)]
+      [:li (first g) ", " (second g)])]))
+
+(comment
+  (take 3 @goods)
+  :rcf)
+;; -------------------------
 ;; Pages
 
 (def pages
@@ -431,7 +461,8 @@
    :browse #'browse-page
    :goods  #'goods-page
    :recv-sent #'recv-sent
-   :messages #'messages})
+   :messages  #'messages
+   :day-by-day #'day-by-day})
 
 (defn page []
   [(pages (:page @session))])
@@ -447,7 +478,8 @@
     ["/browse" :browse]
     ["/goods"  :goods]
     ["/recv-sent" :recv-sent]
-    ["/messages"  :messages]]))
+    ["/messages"  :messages]
+    ["/day-by-day" :day-by-day]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (str/replace uri #"^.*#" "")) "/")
@@ -480,7 +512,7 @@
     {:error-handler #(.log js/console "error:" %)}))
 
 (defn- reset-goods! []
-  (GET (str "/api/goods")
+  (GET "/api/goods"
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "reset-goods! error:" %)}))
 
