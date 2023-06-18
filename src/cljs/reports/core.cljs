@@ -3,7 +3,7 @@
    [ajax.core :refer [GET POST]]
    [clojure.string :as str]
    [clojure.set :refer [difference]]
-   [markdown.core :refer [md->html]]
+   #_[markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
    [reitit.core :as reitit]
@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.20.0")
-(def ^:private now "2023-06-11 21:02:49")
+(def ^:private version "1.21.0")
+(def ^:private now "2023-06-18 09:24:31")
 
 ;-------------------------------------------
 ; r/atom
@@ -121,7 +121,8 @@
         [:li [:a {:href "#/goods"}  "Goods"]
          [:ul
           [:li [:a {:href "#/recv-sent"} "誰から誰へ"]]
-          [:li [:a {:href "#/messages"} "一覧"]]]]]
+          [:li [:a {:href "#/messages"} "一覧"]]
+          [:li [:a {:href "#/day-by-day"} "Day by day"]]]]]
        [:hr]
        "hkimura, " version])))
 
@@ -197,36 +198,42 @@
 ;; mesg must have `min-mesg` length.
 (def ^:private min-mesg 10)
 
-(defn- post-message [sender receiver message]
+(defn- post-message! [sender receiver message]
   (POST "/api/save-message"
     {:headers {"x-csrf-field" js/csrfToken}
      :params {:snd sender
               :rcv receiver
               :message message}
      :handler #(js/alert (str "メッセージ「" message "」を送りました。"))
-     :error-handler #(.log js/console (str %))}))
+     :error-handler #(do
+                       (js/alert "送信失敗。時間をおいて再送信してください。")
+                       (.log js/console (str %)))}))
 
-(defn send-message! [recv mesg]
-  (cond (< (count mesg) min-mesg)
-        (js/alert (str "メッセージは " min-mesg "文字以上です。"))
-        (= recv js/login)
-        (js/alert "自分自身へのメッセージは送れません。")
-        :else
-        (post-message js/login recv mesg)))
+;; (defn send-message! [recv mesg]
+;;   (cond (< (count mesg) min-mesg)
+;;         (js/alert (str "メッセージは " min-mesg " 文字以上です。"))
+;;         (= recv js/login)
+;;         (js/alert "自分自身へのメッセージは送れません。")
+;;         :else
+;;         (post-message! js/login recv mesg)))
+
+(defn- browse-comments
+  []
+  [:div
+   [:h2 "Browse & Comments"]
+   [:ul
+    [:li "現在までのアップロードは " (str (count @users)) "人。"]
+    [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
+    [:li "ホームページのプログラム内容に関係するコメント、質問、回答が
+            ボコボコ交換されるのを期待してます。"]
+    [:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
+     [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"} "2022"]]]])
 
 (defn browse-page
   []
   (fn []
     [:section.section>div.container>div.content
-     [:h2 "Browse & Comments"]
-     [:ul
-      [:li "現在までのアップロードは " (str (count @users)) "人。"]
-      [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
-      [:li "ホームページのプログラム内容に関係するコメント、質問、回答が
-            ボコボコ交換されるのを期待してます。"]
-      [:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
-       [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"
-            } "2022"]]]
+     [browse-comments]
      [:div
       [:input {:type "radio"
                :checked @random?
@@ -237,30 +244,33 @@
                :on-change #(swap! random? not)}]
       " hot "]
      [:br]
-     (doall (for [[i u] ((filters @random?) (map-indexed vector @users))]
-              [:div.columns {:key i}
-               [:div.column.is-one-quarter
-                [:a {:href (report-url u)
-                     :class (if (= u "hkimura") "hkimura" "other")}
-                 u]
-                " "
-                (get @titles u)]
-               [:div.column
-                " "
-                [:input
-                 {:on-key-up #(swap! type-count inc)
-                  :id i
-                  :placeholder (str min-mesg " 文字以上のメッセージ")
-                  :size 80}]
-                [:button
-                 {:on-click
-                  #(let [obj (.getElementById js/document i)]
-                     (when (< 9 @type-count)
-                       (send-message! u (.-value obj))
-                       (reset! type-count 0)
-                     ;; クリアしない方が誰にコメントしたかわかる。
-                       (set! (.-innerHTML obj) "")))}
-                 "good!"]]]))]))
+     (doall
+      (for [[i u] ((filters @random?) (map-indexed vector @users))]
+        [:div.columns {:key i}
+         [:div.column.is-one-quarter
+          [:a {:href (report-url u)
+               :class (if (= u "hkimura") "hkimura" "other")}
+           u]
+          " "
+          (get @titles u)]
+         [:div.column
+          " "
+          [:input
+           {:on-key-up #(swap! type-count inc)
+            :id i
+            :placeholder (str min-mesg " 文字以上のメッセージ")
+            :size 80}]
+          [:button
+           {:on-click
+            #(let [mesg (.-value (.getElementById js/document i))]
+               (cond (< (count mesg) min-mesg)
+                     (js/alert (str "メッセージは " min-mesg " 文字以上です。"))
+                     (= u js/login)
+                     (js/alert "自分自身へのメッセージは送れません。")
+                     :else
+                     (post-message! js/login u mesg)))
+            }
+           "good!"]]]))]))
 
 ;; -------------------------
 ;; Goods
@@ -272,22 +282,75 @@
         time (subs s 40 48)]
     (str date " " time)))
 
-(defn- filter-goods-by [f]
-  (reverse (filter #(= js/login (f %)) @goods)))
-
 (defn- reply? [{:keys [snd message]}]
   (when-let [msg (js/prompt "reply?")]
     (if (empty? msg)
       (js/alert "メッセージが空です。")
-      (post-message js/login
-                    snd
-                    (str msg "(Re: " message ")")))))
+      (post-message! js/login
+                     snd
+                     (str msg "(Re: " message ")")))))
 
 (defn- abbrev-if-contains-re [s]
   (let [receiver (:rcv s)]
     (if (re-find #"\(Re:" (:message s))
       (abbrev receiver)
       receiver)))
+
+(defn- filter-goods-by [f]
+  (->> @goods
+       (filterv #(= js/login (f %)))))
+
+(comment
+  (count (filter-goods-by :snd))
+  (first (filter-goods-by :snd))
+  (apply max (map :id @goods))
+  (filter #(< 3050 (:id %)) @goods)
+  :rcf)
+
+(defn- received-column
+  [received]
+  [:div.column
+   [:h2 "Goods Received (" (count received) ")"]
+   ;;(for [[id g] (map-indexed vector received)]
+   (doall
+    (for [g received]
+      [:p {:key (str "r" (:id g))}
+       "from " [:b (abbrev (:snd g))] ", " (time-format (:timestamp g)) ","
+       [:br]
+       (:message g)
+       [:br]
+       [:button.button.is-success.is-small
+        {:on-click #(reply? g)}
+        "reply"]]))])
+
+(defn- sent-column
+  [sent]
+  [:div.column
+   [:h2 "Goods Sent (" (count sent) ")"]
+   ;;(for [[id s] (map-indexed vector sent)]
+   (doall
+    (for [s sent]
+      [:p {:key (str "g" (:id s))}
+       "to "
+       [:b (abbrev-if-contains-re s)]
+       ", "
+       (time-format (:timestamp s)) ","
+       [:br]
+       (:message s)]))])
+
+(defn- not-yet-column
+  [sent]
+  [:div.column.is-one-fifth
+   [:h2 "Not Yet"]
+   (doall
+    (for [[id u] (map-indexed
+                  vector
+                  (difference (set @users-all)
+                              (set (map #(:rcv %) sent))))]
+      [:p {:key (str "n" id)}
+       (if (neg? (.indexOf @users u))
+         u
+         [:a {:href (report-url u)} u])]))])
 
 (defn goods-page
   []
@@ -300,38 +363,10 @@
         [:li "Not Yet は自分が一度も good! を出してない人。
             青色は一度以上アップロードした人。黒はまだアップロードしない人。"]]
        [:div.columns
-        [:div.column
-         [:h2 "Goods Received (" (count received) ")"]
-         (for [[id g] (map-indexed vector received)]
-           [:p {:key (str "r" id)}
-            "from " [:b (abbrev (:snd g))] ", " (time-format (:timestamp g)) ","
-            [:br]
-            (:message g)
-            [:br]
-            [:button.button.is-success.is-small
-             {:on-click #(reply? g)}
-             "reply"]])]
-        [:div.column
-         [:h2 "Goods Sent (" (count sent) ")"]
-         (for [[id s] (map-indexed vector sent)]
-           [:p {:key (str "g" id)}
-            "to "
-            [:b (abbrev-if-contains-re s)]
-            ", "
-            (time-format (:timestamp s)) ","
-            [:br]
-            (:message s)])]
-        [:div.column.is-one-fifth
-         [:h2 "Not Yet"]
-         (doall
-          (for [[id u] (map-indexed
-                        vector
-                        (difference (set @users-all)
-                                    (set (map #(:rcv %) sent))))]
-            [:p {:key (str "n" id)}
-             (if (neg? (.indexOf @users u))
-               u
-               [:a {:href (report-url u)} u])]))]]])))
+        [received-column received]
+        [sent-column sent]
+        [not-yet-column sent]
+        ]])))
 
 ;; -------------------------------------
 ;; messages received-sent
@@ -380,13 +415,42 @@
 (defn messages []
   [:section.section>div.container>div.content
    [:h2 "Goods (Messages)"]
-   (for [g (-> @goods reverse)]
+   (for [g @goods]
      [:p {:key (:id g)} (time-format (:timestamp g))
       ", from " [:b (abbrev (:snd g))]
       " to " [:b (abbrev (:rcv g))] ","
       [:br]
       (:message g)])])
 
+;; -------------------------
+;; messages day by day
+
+(comment
+  (take 3 @goods)
+
+  :rcf)
+
+(defn- sent-goods
+  [login]
+  (->> (filter #(= login (:snd %)) @goods)
+       (map #(.-rep (wrap-string (:timestamp %))))
+       (map #(subs % 0 10))
+       sort
+       (group-by identity)
+       (map (fn [x] [(key x) (count (val x))]))
+       sort))
+
+(defn day-by-day
+  ([] (day-by-day js/login))
+  ([who]
+   [:section.section>div.container>div.content
+    [:h2 "Goods sent, day by day(" who ")"]
+    (for [g (sent-goods who)]
+      [:li (first g) ", " (second g)])]))
+
+(comment
+  (take 3 @goods)
+  :rcf)
 ;; -------------------------
 ;; Pages
 
@@ -397,7 +461,8 @@
    :browse #'browse-page
    :goods  #'goods-page
    :recv-sent #'recv-sent
-   :messages #'messages})
+   :messages  #'messages
+   :day-by-day #'day-by-day})
 
 (defn page []
   [(pages (:page @session))])
@@ -413,7 +478,8 @@
     ["/browse" :browse]
     ["/goods"  :goods]
     ["/recv-sent" :recv-sent]
-    ["/messages"  :messages]]))
+    ["/messages"  :messages]
+    ["/day-by-day" :day-by-day]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (str/replace uri #"^.*#" "")) "/")
@@ -446,7 +512,7 @@
     {:error-handler #(.log js/console "error:" %)}))
 
 (defn- reset-goods! []
-  (GET (str "/api/goods")
+  (GET "/api/goods"
     {:handler #(reset! goods %)
      :error-handler #(.log js/console "reset-goods! error:" %)}))
 

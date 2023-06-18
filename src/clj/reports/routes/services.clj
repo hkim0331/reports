@@ -59,11 +59,11 @@
         (when-let [title (find-title tempfile)]
           (upsert! login title)))
       (log/info login "upload success")
-      ;; midterm exam
-      ;; (response/found (str (reports.config/env :hp-url) login))
-      {:status 200
-       :headers {"content-type" "text/html"}
-       :body "upload success (exam mode)"}
+      (response/found (str (reports.config/env :hp-url) login))
+      ;; midterm exam, 2023-06-12.
+      ;; {:status 200
+      ;;  :headers {"content-type" "text/html"}
+      ;;  :body "upload success (exam mode)"}
 
       (catch Exception e
         (let [message (.getMessage e)]
