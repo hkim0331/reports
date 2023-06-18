@@ -32,6 +32,9 @@
 - Re の表示を短く
 - docker? dev container?
 
+## 1.21.0 - 2023-06-18
+- /day-by-day Goods sent, day by day
+
 ## 1.20.2 - 2023-06-15
 ### Refactored
 - 送信メッセージのvalidation を早めに
