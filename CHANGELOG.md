@@ -32,6 +32,9 @@
 - Re の表示を短く
 - docker? dev container?
 
+## 1.22.0 - 2023-07-05
+- can upload zip files
+
 ## 1.21.0 - 2023-06-18
 - /day-by-day Goods sent, day by day
 
