@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.21.0")
-(def ^:private now "2023-06-18 09:24:31")
+(def ^:private version "1.22.0")
+(def ^:private now "2023-07-05 07:40:59")
 
 ;-------------------------------------------
 ; r/atom
@@ -154,7 +154,8 @@
       [upload-column "" "/css/ " "css" {:accept "text/css"}]
       [upload-column "" "/images/ " "images" {:accept "image/*"}]
       [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
-      [upload-column "" "/js/ " "js" {:accept "text/javascript"}]]
+      [upload-column "" "/js/ " "js" {:accept "text/javascript"}]
+      [upload-column "" "(zip) " "zip" {:accept "application/zip"}]]
      [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
@@ -424,11 +425,6 @@
 
 ;; -------------------------
 ;; messages day by day
-
-(comment
-  (take 3 @goods)
-
-  :rcf)
 
 (defn- sent-goods
   [login]
