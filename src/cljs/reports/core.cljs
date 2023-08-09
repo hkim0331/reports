@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.22.0")
-(def ^:private now "2023-07-05 07:40:59")
+(def ^:private version "1.23.0")
+(def ^:private now "2023-08-10 08:47:55")
 
 ;-------------------------------------------
 ; r/atom
