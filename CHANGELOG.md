@@ -32,6 +32,12 @@
 - Re の表示を短く
 - docker? dev container?
 
+## 1.23.0-snapshot
+- updated start.sh, stop.sh
+  launch/stop public/start.sh inside the scripts.
+- **FIXME**
+  can upload other than *.md files from upload md form.
+
 ## 1.22.0 - 2023-07-05
 - can upload zip files
 
