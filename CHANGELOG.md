@@ -32,6 +32,19 @@
 - Re の表示を短く
 - docker? dev container?
 
+## 1.24.0 - 2023-08-23
+- updated start.sh, stop.sh
+  launch/stop public/start.sh inside the scripts.
+- FIXED: can upload other than *.md files from upload md form.
+  {:accept text/markdown} を指定しても、ほとんどのブラウザは text/plain と解釈してしまう。
+  /app/upload でチェックした。
+```clojure
+      (when (= type "md")
+        (when-not (str/ends-with? filename ".md")
+          (throw (Exception. "*.md only"))))
+```
+
+
 ## 1.22.0 - 2023-07-05
 - can upload zip files
 
