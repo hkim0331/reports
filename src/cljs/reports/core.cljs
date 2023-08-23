@@ -155,8 +155,8 @@
       [upload-column "" "/images/ " "images" {:accept "image/*"}]
       [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
       [upload-column "" "/js/ " "js" {:accept "text/javascript"}]
-      [upload-column "" "(zip) " "zip" {:accept "application/zip"}]
-      [upload-column "" "(md) " "md" {:accept "text/markdown"}]]
+      [upload-column "" "zip " "zip" {:accept "application/zip"}]
+      [upload-column "" "md "  "md"   {:accept "text/markdown"}]]
      [:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
      [:ul
@@ -165,7 +165,8 @@
       [:li "同じファイル名でアップロードすると上書き。"]
       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
       [:li "アップロードが反映されない時、アレ思い出せ。"]
-      [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]]]))
+      [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]
+      [:li "md から markdown 以外をアップロードするのは間違いです。"]]]))
 
 ;; FIXME: @uploads-by-date は nil のケースがある。
 (defn uploaded-column
