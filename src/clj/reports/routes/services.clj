@@ -53,9 +53,11 @@
       ;; (when (zero? (count (slurp tempfile)))
       ;;   (throw (Exception. "file length is 0")))
       ;; 2023-08-23 md ファイル以下には md だけ
+      (prn "type" type "filename" filename)
       (when (= type "md")
         (when-not (str/ends-with? filename ".md")
           (throw (Exception. "*.md only"))))
+      (prn "pass")
       ;;
       (io/copy tempfile dest)
       (when (zero? (count (slurp dest)))
