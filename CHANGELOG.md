@@ -32,6 +32,9 @@
 - Re の表示を短く
 - docker? dev container?
 
+## 1.24.1-SNAPSHOT
+- **FIXME** アップロードできなくなった。
+
 ## 1.24.0 - 2023-08-23
 - updated start.sh, stop.sh
   launch/stop public/start.sh inside the scripts.
