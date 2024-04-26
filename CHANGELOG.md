@@ -32,7 +32,15 @@
 - Re の表示を短く
 - docker? dev container?
 
-## 1.24.1-SNAPSHOT
+
+## v2.0-SNAPSHOT / 2024-04-26
+- 2024 started
+- nrepl port 7004
+- app port 3004
+- bump-version.sh will update CHANGELOG.md
+
+
+## v2.0-SNAPSHOT / 2024-04-26
 - **FIXME** アップロードできなくなった。
 
 ## 1.24.0 - 2023-08-23
@@ -79,7 +87,7 @@ services.clj/upload! returns {:status 200 :body "upload success}
 ## 1.18.17 - 2023-06-08
 - sort uploaded date
 
-## 1.18.16-SNAPSHOT
+## v2.0-SNAPSHOT / 2024-04-26
 - fixed empty uloaded-date bug
 - 2022 から選択、reports/public/2022 にコピー
 
@@ -350,7 +358,7 @@ app.js?ver=0.12.1 でキャッシュが外れるか？
 - タイトルを login のリンクの横に表示する
   -> title 書いてる人少ない。やめるか。
 
-## 0.9.0-SNAPSHOT
+## v2.0-SNAPSHOT / 2024-04-26
 - dswcj 通りの (migrate) は期待通りに行かず、
   lein run migrate 20220602044123 を
   実行した。

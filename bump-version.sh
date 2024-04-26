@@ -37,3 +37,9 @@ ${SED} -i \
 ${SED} -i \
  -e "s/app.js\?version=.*/app.js?version=$1\" %}/" \
     resources/html/home.html
+
+# CHANGELOG.md
+VER=$1
+TODAY=`date +%F`
+${SED} -i -e "/SNAPSHOT/c\
+## ${VER} / ${TODAY}" CHANGELOG.md

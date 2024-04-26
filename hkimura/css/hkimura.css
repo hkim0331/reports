@@ -1,0 +1,10 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: cornsilk;
+  color: brown;
+}
+
+p#title {
+  font-size: 1cm;
+  color: red;
+}
