@@ -2,9 +2,22 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: cornsilk;
   color: brown;
+  background-image: url(../images/kodama.jpg)
+}
+
+div.container {
+  margin: 2em;
 }
 
 p#title {
   font-size: 1cm;
   color: red;
 }
+
+/*
+p#totoro{
+  font-size: 0.8cm;
+  color:bisque;
+  background-color: aqua;
+}
+*/
