@@ -42,8 +42,6 @@
 - bump-version.sh will update CHANGELOG.md
 - hkimura 'sample' page
 
-
-
 ## 1.24.0 - 2023-08-23
 - updated start.sh, stop.sh
   launch/stop public/start.sh inside the scripts.
