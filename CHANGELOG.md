@@ -32,6 +32,8 @@
 - Re の表示を短く
 - docker? dev container?
 
+## v2.0.`git-rev`
+- delete the link to 2022 reports.
 
 ## v2.0.516 / 2024-04-26
 - 2024 started

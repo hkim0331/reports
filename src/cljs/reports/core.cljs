@@ -229,8 +229,8 @@
     [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
     [:li "ホームページのプログラム内容に関係するコメント、質問、回答が
             ボコボコ交換されるのを期待してます。"]
-    [:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
-     [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"} "2022"]]]])
+    #_[:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
+       [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"} "2022"]]]])
 
 (defn browse-page
   []
@@ -271,8 +271,7 @@
                      (= u js/login)
                      (js/alert "自分自身へのメッセージは送れません。")
                      :else
-                     (post-message! js/login u mesg)))
-            }
+                     (post-message! js/login u mesg)))}
            "good!"]]]))]))
 
 ;; -------------------------
@@ -368,8 +367,7 @@
        [:div.columns
         [received-column received]
         [sent-column sent]
-        [not-yet-column sent]
-        ]])))
+        [not-yet-column sent]]])))
 
 ;; -------------------------------------
 ;; messages received-sent
