@@ -32,6 +32,32 @@
 - Re の表示を短く
 - docker? dev container?
 
+
+## v2.0.516 / 2024-04-26
+- 2024 started
+- nrepl port 7004
+- app port 3004
+- bump-version.sh will update CHANGELOG.md
+- hkimura 'sample' page
+
+
+
+## 1.24.0 - 2023-08-23
+- updated start.sh, stop.sh
+  launch/stop public/start.sh inside the scripts.
+- FIXED: can upload other than *.md files from upload md form.
+  {:accept text/markdown} を指定しても、ほとんどのブラウザは text/plain と解釈してしまう。
+  /app/upload でチェックした。
+```clojure
+      (when (= type "md")
+        (when-not (str/ends-with? filename ".md")
+          (throw (Exception. "*.md only"))))
+```
+
+
+## 1.22.0 - 2023-07-05
+- can upload zip files
+
 ## 1.21.0 - 2023-06-18
 - /day-by-day Goods sent, day by day
 
@@ -60,7 +86,7 @@ services.clj/upload! returns {:status 200 :body "upload success}
 ## 1.18.17 - 2023-06-08
 - sort uploaded date
 
-## 1.18.16-SNAPSHOT
+## v2.0.516 / 2024-04-26
 - fixed empty uloaded-date bug
 - 2022 から選択、reports/public/2022 にコピー
 
@@ -331,7 +357,7 @@ app.js?ver=0.12.1 でキャッシュが外れるか？
 - タイトルを login のリンクの横に表示する
   -> title 書いてる人少ない。やめるか。
 
-## 0.9.0-SNAPSHOT
+## v2.0.516 / 2024-04-26
 - dswcj 通りの (migrate) は期待通りに行かず、
   lein run migrate 20220602044123 を
   実行した。

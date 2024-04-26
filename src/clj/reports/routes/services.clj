@@ -2,6 +2,7 @@
   (:require
    [clojure.java.io :as io]
    [clojure.java.shell :refer [sh]]
+   [clojure.string :as str]
    [clojure.tools.logging :as log]
    [reports.config :refer [env]]
    [reports.db.core :as db]
@@ -51,6 +52,13 @@
         (throw (Exception. "size is 0")))
       ;; (when (zero? (count (slurp tempfile)))
       ;;   (throw (Exception. "file length is 0")))
+      ;; 2023-08-23 md ファイル以下には md だけ
+      (prn "type" type "filename" filename)
+      (when (= type "md")
+        (when-not (str/ends-with? filename ".md")
+          (throw (Exception. "*.md only"))))
+      (prn "pass")
+      ;;
       (io/copy tempfile dest)
       (when (zero? (count (slurp dest)))
         (throw (Exception. "saved file length is 0")))
