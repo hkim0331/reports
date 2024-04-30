@@ -33,8 +33,7 @@
 - docker? dev container?
 
 ## v2.1.534 / 2024-04-30
-- Consider using [org.webjars.npm/bulma "1.0.0" :exclusions [org.webjars.npm/is-number]].
-
+- [org.webjars.npm/bulma "0.9.4"] not "1.0.0"
 
 ## v2.1.530 / 2024-04-30
 - updated libraries
