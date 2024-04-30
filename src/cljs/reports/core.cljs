@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "v2.1.530")
-(def ^:private now "2024-04-30 21:32:38")
+(def ^:private version "v2.1.534")
+(def ^:private now "2024-04-30 21:40:39")
 
 ;-------------------------------------------
 ; r/atom
@@ -119,9 +119,9 @@
         [:li [:a {:href "#/upload"} "アップロード"]]
         [:li [:a {:href "#/browse"} "ユーザーページ（コメント送信もここから）"]]
         [:li [:a {:href "#/goods"}  "自分が出した goods, 自分に届いた goods"]]
-        [:li [:a {:href "#/day-by-day"} "Your goods sent, day by day"]]
-        [:li [:a {:href "#/recv-sent"} "Goods 誰から誰へ"]]
-        [:li [:a {:href "#/messages"} "Goods 一覧（後日、最新の n 件にします）"]]]
+        [:li [:a {:href "#/day-by-day"} "日々の goods"]]
+        [:li [:a {:href "#/recv-sent"} "誰から誰へ goods が飛んでるか"]]
+        [:li [:a {:href "#/messages"} "Goods の内容一覧（後日、最新の n 件にします）"]]]
        [:hr]
        "hkimura, " version])))
 
