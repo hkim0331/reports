@@ -117,7 +117,7 @@
         [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
        [:ul
         [:li [:a {:href "#/upload"} "アップロード"]]
-        [:li [:a {:href "#/browse"} "ユーザーページ、コメント送信"]]
+        [:li [:a {:href "#/browse"} "ユーザーページ（コメント送信もここから）"]]
         [:li [:a {:href "#/goods"}  "Goods"]
          [:ul
           [:li [:a {:href "#/recv-sent"} "誰から誰へ"]]
