@@ -32,7 +32,7 @@
 - Re の表示を短く
 - docker? dev container?
 
-## v2.1-SNAPSHOT
+## v2.1.530 / 2024-04-30
 - updated libraries
 
 | :file       | :name                                           | :current  | :latest   |
