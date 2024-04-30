@@ -40,4 +40,4 @@ To start a web server for the application, run:
 
 ## License
 
-Copyright © 2022,2023 Hiroshi Kimura
+Copyright © 2022,2023,2024 Hiroshi Kimura
