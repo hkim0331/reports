@@ -32,7 +32,7 @@
 - Re の表示を短く
 - docker? dev container?
 
-## v2.1-SNAPSHOT
+## v2.1.534 / 2024-04-30
 - Consider using [org.webjars.npm/bulma "1.0.0" :exclusions [org.webjars.npm/is-number]].
 
 
