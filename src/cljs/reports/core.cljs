@@ -172,7 +172,7 @@
   []
   [:div
    [:h3#records "Uploaded"]
-   [:p "レポート〆切は 6/19 の正午。出来上がりじゃなく過程を評価するレポート。"]
+   [:p "中間試験は6/5って。その1週間前は5/29だ。"]
    [:div.columns
     [:div.column.is-one-third
      [:table.table.is-striped
