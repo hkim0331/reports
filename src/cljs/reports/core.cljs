@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "v2.1.534")
-(def ^:private now "2024-04-30 21:40:39")
+(def ^:private version "v2.1.539")
+(def ^:private now "2024-05-05 13:32:31")
 
 ;-------------------------------------------
 ; r/atom
@@ -172,7 +172,7 @@
   []
   [:div
    [:h3#records "Uploaded"]
-   [:p "レポート〆切は 6/19 の正午。出来上がりじゃなく過程を評価するレポート。"]
+   [:p "中間試験は6/5って。その1週間前は5/29だ。"]
    [:div.columns
     [:div.column.is-one-third
      [:table.table.is-striped

@@ -32,9 +32,11 @@
 - Re の表示を短く
 - docker? dev container?
 
-## v2.1.534 / 2024-04-30
-- Consider using [org.webjars.npm/bulma "1.0.0" :exclusions [org.webjars.npm/is-number]].
+## v2.1.539 / 2024-05-05
+- 中間試験は 6/5。レポート〆切は 5/29 だ。
 
+## v2.1.534 / 2024-04-30
+- [org.webjars.npm/bulma "0.9.4"] not "1.0.0"
 
 ## v2.1.530 / 2024-04-30
 - updated libraries
