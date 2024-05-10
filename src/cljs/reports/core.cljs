@@ -153,7 +153,7 @@
       [upload-column "" "/css/ " "css" {:accept "text/css"}]
       [upload-column "" "/images/ " "images" {:accept "image/*"}]
       [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
-      [upload-column "" "/sounds/" "sounds" {:accept "sound/*"}]
+      [upload-column "" "/sounds/" "sounds" {:accept "audio/mp3"}]
       [upload-column "" "/js/ " "js" {:accept "text/javascript"}]
       [upload-column "" "zip " "zip" {:accept "application/zip"}]
       [upload-column "" "md "  "md"   {:accept "text/markdown"}]]
