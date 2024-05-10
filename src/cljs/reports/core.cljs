@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "v2.1.539")
-(def ^:private now "2024-05-05 13:32:31")
+(def ^:private version "v2.2.544")
+(def ^:private now "2024-05-10 23:55:54")
 
 ;-------------------------------------------
 ; r/atom
@@ -153,6 +153,7 @@
       [upload-column "" "/css/ " "css" {:accept "text/css"}]
       [upload-column "" "/images/ " "images" {:accept "image/*"}]
       [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
+      [upload-column "" "/sounds/" "sounds" {:accept "audio/mp3"}]
       [upload-column "" "/js/ " "js" {:accept "text/javascript"}]
       [upload-column "" "zip " "zip" {:accept "application/zip"}]
       [upload-column "" "md "  "md"   {:accept "text/markdown"}]]
@@ -163,7 +164,7 @@
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書き。"]
       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
-      [:li "アップロードが反映されない時、アレ思い出せ。"]
+      [:li "アップロードが反映されない時、ブラウザの履歴（キャッシュ）をクリア。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]
       [:li "md から markdown 以外をアップロードするのは間違いです。"]]]))
 
