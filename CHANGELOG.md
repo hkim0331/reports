@@ -32,6 +32,10 @@
 - Re の表示を短く
 - docker? dev container?
 
+
+## v2.2-SNAPSHOT
+- core.cljs upload sounds
+
 ## v2.1.539 / 2024-05-05
 - 中間試験は 6/5。レポート〆切は 5/29 だ。
 
