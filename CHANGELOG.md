@@ -33,7 +33,7 @@
 - docker? dev container?
 
 
-## v2.2-SNAPSHOT
+## v2.2.544 / 2024-05-10
 - core.cljs upload sounds
 
 ## v2.1.539 / 2024-05-05
