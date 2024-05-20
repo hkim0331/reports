@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "v2.2.544")
-(def ^:private now "2024-05-10 23:55:54")
+(def ^:private version "v2.3.546")
+(def ^:private now "2024-05-20 10:51:18")
 
 ;-------------------------------------------
 ; r/atom
@@ -373,7 +373,8 @@
        [:ul
         [:li "Goods Received に表示される good! には reply で返信できます。"]
         [:li "Not Yet は自分が一度も good! を出してない人。
-            青色は一度以上アップロードした人。黒はまだアップロードしない人。"]]
+            青色は一度以上アップロードした人。黒はまだアップロードしない人。
+              ほぼ、去年の情報リテラシー受講生だな。"]]
        [:div.columns
         [received-column received]
         [sent-column sent]
