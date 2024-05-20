@@ -32,7 +32,9 @@
 
 (defonce uploads-by-date-all (r/atom []))
 (defonce uploads-by-date     (r/atom []))
-;---------------------------------------------
+
+;; -------------------------
+;; Miscellaneous
 
 (defn- wrap-string [^String d] d)
 
@@ -64,6 +66,8 @@
            :name name
            :value value}])
 
+;; -------------------------
+;; navbar
 (defn nav-link [uri title page]
   [:a.navbar-item
    {:href   uri
@@ -284,13 +288,19 @@
         time (subs s 40 48)]
     (str date " " time)))
 
+(defn- shorten
+  "shorten string `s` max `n` chars."
+  ([s] (shorten s 20))
+  ([s n] (let [pat (re-pattern (str "^(.{" n "}).*"))]
+           (str/replace-first s pat "$1..."))))
+
 (defn- reply? [{:keys [snd message]}]
   (when-let [msg (js/prompt "reply?")]
     (if (empty? msg)
       (js/alert "メッセージが空です。")
       (post-message! js/login
                      snd
-                     (str msg "(Re: " message ")")))))
+                     (str msg "(Re: " (shorten message) ")")))))
 
 (defn- abbrev-if-contains-re [s]
   (let [receiver (:rcv s)]

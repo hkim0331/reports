@@ -33,6 +33,13 @@
 - docker? dev container?
 
 
+## v2.3-SNAPSHOT
+### Added
+- dev-config.edn-model
+  dev-config.edn is gitignored. so, model definitions.
+- defined `core.cljs/shorten`
+
+
 ## v2.2.544 / 2024-05-10
 - core.cljs upload sounds
 
