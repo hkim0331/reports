@@ -33,7 +33,7 @@
 - docker? dev container?
 
 
-## v2.3-SNAPSHOT
+## v2.3.546 / 2024-05-20
 ### Added
 - dev-config.edn-model
   dev-config.edn is gitignored. so, model definitions.
