@@ -373,7 +373,8 @@
        [:ul
         [:li "Goods Received に表示される good! には reply で返信できます。"]
         [:li "Not Yet は自分が一度も good! を出してない人。
-            青色は一度以上アップロードした人。黒はまだアップロードしない人。"]]
+            青色は一度以上アップロードした人。黒はまだアップロードしない人。
+              ほぼ、去年の情報リテラシー受講生だな。"]]
        [:div.columns
         [received-column received]
         [sent-column sent]
