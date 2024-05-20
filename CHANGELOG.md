@@ -32,8 +32,67 @@
 - Re の表示を短く
 - docker? dev container?
 
-## 1.24.1-SNAPSHOT
-- **FIXME** アップロードできなくなった。
+
+## v2.3.546 / 2024-05-20
+### Added
+- dev-config.edn-model
+  dev-config.edn is gitignored. so, model definitions.
+- defined `core.cljs/shorten`
+
+
+## v2.2.544 / 2024-05-10
+- core.cljs upload sounds
+
+## v2.1.539 / 2024-05-05
+- 中間試験は 6/5。レポート〆切は 5/29 だ。
+
+## v2.1.534 / 2024-04-30
+- [org.webjars.npm/bulma "0.9.4"] not "1.0.0"
+
+## v2.1.530 / 2024-04-30
+- updated libraries
+
+| :file       | :name                                           | :current  | :latest   |
+|------------ | ----------------------------------------------- | --------- | ----------|
+| project.clj | buddy/buddy-core                                | 1.10.413  | 1.11.423  |
+|             | buddy/buddy-hashers                             | 1.8.158   | 2.0.167   |
+|             | buddy/buddy-sign                                | 3.4.333   | 3.5.351   |
+|             | ch.qos.logback/logback-classic                  | 1.2.10    | 1.5.6     |
+|             | cider/cider-nrepl                               | 0.30.0    | 0.47.1    |
+|             | clojure.java-time/clojure.java-time             | 1.2.0     | 1.4.2     |
+|             | com.google.javascript/closure-compiler-unshaded | v20230502 | v20240317 |
+|             | cprop/cprop                                     | 0.1.19    | 0.1.20    |
+|             | jonase/eastwood                                 | 1.4.0     | 1.4.2     |
+|             | markdown-clj/markdown-clj                       | 1.11.4    | 1.12.1    |
+|             | metosin/muuntaja                                | 0.6.8     | 0.6.10    |
+|             | metosin/reitit                                  | 0.5.15    | 0.7.0     |
+|             | mount/mount                                     | 0.1.17    | 0.1.18    |
+|             | nrepl/nrepl                                     | 1.0.0     | 1.1.1     |
+|             | org.clojure/clojure                             | 1.11.1    | 1.11.3    |
+|             | org.clojure/clojurescript                       | 1.11.60   | 1.11.132  |
+|             | org.clojure/core.async                          | 1.6.673   | 1.6.681   |
+|             | org.clojure/tools.cli                           | 1.0.219   | 1.1.230   |
+|             | org.clojure/tools.logging                       | 1.2.4     | 1.3.0     |
+|             | org.clojure/tools.namespace                     | 1.4.4     | 1.5.0     |
+|             | org.postgresql/postgresql                       | 42.6.0    | 42.7.3    |
+|             | org.webjars.npm/bulma                           | 0.9.4     | 1.0.0     |
+|             | org.webjars/webjars-locator                     | 0.46      | 0.52      |
+|             | ring/ring-core                                  | 1.9.5     | 1.12.1    |
+|             | ring/ring-defaults                              | 0.3.4     | 0.5.0     |
+|             | ring/ring-devel                                 | 1.9.5     | 1.12.1    |
+|             | selmer/selmer                                   | 1.12.58   | 1.12.59   |
+|             | thheller/shadow-cljs                            | 2.23.3    | 2.28.4    |
+
+
+## v2.0.524 / 2024-04-26
+- delete the link to 2022 reports.
+
+## v2.0.516 / 2024-04-26
+- 2024 started
+- nrepl port 7004
+- app port 3004
+- bump-version.sh will update CHANGELOG.md
+- hkimura 'sample' page
 
 ## 1.24.0 - 2023-08-23
 - updated start.sh, stop.sh
@@ -79,7 +138,7 @@ services.clj/upload! returns {:status 200 :body "upload success}
 ## 1.18.17 - 2023-06-08
 - sort uploaded date
 
-## 1.18.16-SNAPSHOT
+## v2.0.516 / 2024-04-26
 - fixed empty uloaded-date bug
 - 2022 から選択、reports/public/2022 にコピー
 
@@ -138,7 +197,7 @@ buddy, metosin, ring を残した。一旦ここでタグをうつ。
 [##################################################] 52/52
 
 |       :file |                          :name | :current |  :latest |
-|-------------+--------------------------------+----------+----------|
+|------------ | ------------------------------ | -------- | ---------|
 | project.clj |               buddy/buddy-core | 1.10.413 | 1.11.418 |
 |             |            buddy/buddy-hashers |  1.8.158 |  2.0.162 |
 |             |               buddy/buddy-sign |  3.4.333 |  3.5.346 |
@@ -160,7 +219,7 @@ Available changes:
 [##################################################] 52/52
 
 |       :file |                                           :name |  :current |   :latest |
-|-------------+-------------------------------------------------+-----------+-----------|
+|------------ | ----------------------------------------------- | --------- | ----------|
 | project.clj |                              binaryage/devtools |     1.0.4 |     1.0.7 |
 |             |                                buddy/buddy-core |  1.10.413 |  1.11.418 |
 |             |                             buddy/buddy-hashers |   1.8.158 |   2.0.162 |
@@ -242,7 +301,7 @@ Available changes:
 reports=# \d
                List of relations
  Schema |      Name      |   Type   |  Owner
---------+----------------+----------+----------
+------- | -------------- | -------- | ---------
  public | goods          | table    | postgres
  public | goods_id_seq   | sequence | postgres
  public | titles         | table    | postgres
@@ -350,7 +409,7 @@ app.js?ver=0.12.1 でキャッシュが外れるか？
 - タイトルを login のリンクの横に表示する
   -> title 書いてる人少ない。やめるか。
 
-## 0.9.0-SNAPSHOT
+## v2.0.516 / 2024-04-26
 - dswcj 通りの (migrate) は期待通りに行かず、
   lein run migrate 20220602044123 を
   実行した。

@@ -17,6 +17,7 @@ profiles.clj
 
 /db-dumps/*
 !/db-dumps/*.sh
+/db-dumps/2023
 
 /.calva/output-window
 /.clj-kondo/cache

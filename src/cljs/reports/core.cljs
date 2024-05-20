@@ -16,8 +16,8 @@
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "1.24.1")
-(def ^:private now "2023-08-23 09:52:04")
+(def ^:private version "v2.3.546")
+(def ^:private now "2024-05-20 10:51:18")
 
 ;-------------------------------------------
 ; r/atom
@@ -32,7 +32,9 @@
 
 (defonce uploads-by-date-all (r/atom []))
 (defonce uploads-by-date     (r/atom []))
-;---------------------------------------------
+
+;; -------------------------
+;; Miscellaneous
 
 (defn- wrap-string [^String d] d)
 
@@ -64,6 +66,8 @@
            :name name
            :value value}])
 
+;; -------------------------
+;; navbar
 (defn nav-link [uri title page]
   [:a.navbar-item
    {:href   uri
@@ -117,12 +121,11 @@
         [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
        [:ul
         [:li [:a {:href "#/upload"} "アップロード"]]
-        [:li [:a {:href "#/browse"} "ユーザーページ、コメント送信"]]
-        [:li [:a {:href "#/goods"}  "Goods"]
-         [:ul
-          [:li [:a {:href "#/recv-sent"} "誰から誰へ"]]
-          [:li [:a {:href "#/messages"} "一覧"]]
-          [:li [:a {:href "#/day-by-day"} "Day by day"]]]]]
+        [:li [:a {:href "#/browse"} "ユーザーページ（コメント送信もここから）"]]
+        [:li [:a {:href "#/goods"}  "自分が出した goods, 自分に届いた goods"]]
+        [:li [:a {:href "#/day-by-day"} "日々の goods"]]
+        [:li [:a {:href "#/recv-sent"} "誰から誰へ goods が飛んでるか"]]
+        [:li [:a {:href "#/messages"} "Goods の内容一覧（後日、最新の n 件にします）"]]]
        [:hr]
        "hkimura, " version])))
 
@@ -154,6 +157,7 @@
       [upload-column "" "/css/ " "css" {:accept "text/css"}]
       [upload-column "" "/images/ " "images" {:accept "image/*"}]
       [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
+      [upload-column "" "/sounds/" "sounds" {:accept "audio/mp3"}]
       [upload-column "" "/js/ " "js" {:accept "text/javascript"}]
       [upload-column "" "zip " "zip" {:accept "application/zip"}]
       [upload-column "" "md "  "md"   {:accept "text/markdown"}]]
@@ -164,7 +168,7 @@
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書き。"]
       [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
-      [:li "アップロードが反映されない時、アレ思い出せ。"]
+      [:li "アップロードが反映されない時、ブラウザの履歴（キャッシュ）をクリア。"]
       [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]
       [:li "md から markdown 以外をアップロードするのは間違いです。"]]]))
 
@@ -173,7 +177,7 @@
   []
   [:div
    [:h3#records "Uploaded"]
-   [:p "レポート〆切は 6/19 の正午。出来上がりじゃなく過程を評価するレポート。"]
+   [:p "中間試験は6/5って。その1週間前は5/29だ。"]
    [:div.columns
     [:div.column.is-one-third
      [:table.table.is-striped
@@ -229,8 +233,8 @@
     [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
     [:li "ホームページのプログラム内容に関係するコメント、質問、回答が
             ボコボコ交換されるのを期待してます。"]
-    [:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
-     [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"} "2022"]]]])
+    #_[:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
+       [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"} "2022"]]]])
 
 (defn browse-page
   []
@@ -271,8 +275,7 @@
                      (= u js/login)
                      (js/alert "自分自身へのメッセージは送れません。")
                      :else
-                     (post-message! js/login u mesg)))
-            }
+                     (post-message! js/login u mesg)))}
            "good!"]]]))]))
 
 ;; -------------------------
@@ -285,13 +288,19 @@
         time (subs s 40 48)]
     (str date " " time)))
 
+(defn- shorten
+  "shorten string `s` max `n` chars."
+  ([s] (shorten s 20))
+  ([s n] (let [pat (re-pattern (str "^(.{" n "}).*"))]
+           (str/replace-first s pat "$1..."))))
+
 (defn- reply? [{:keys [snd message]}]
   (when-let [msg (js/prompt "reply?")]
     (if (empty? msg)
       (js/alert "メッセージが空です。")
       (post-message! js/login
                      snd
-                     (str msg "(Re: " message ")")))))
+                     (str msg "(Re: " (shorten message) ")")))))
 
 (defn- abbrev-if-contains-re [s]
   (let [receiver (:rcv s)]
@@ -364,12 +373,12 @@
        [:ul
         [:li "Goods Received に表示される good! には reply で返信できます。"]
         [:li "Not Yet は自分が一度も good! を出してない人。
-            青色は一度以上アップロードした人。黒はまだアップロードしない人。"]]
+            青色は一度以上アップロードした人。黒はまだアップロードしない人。
+              ほぼ、去年の情報リテラシー受講生だな。"]]
        [:div.columns
         [received-column received]
         [sent-column sent]
-        [not-yet-column sent]
-        ]])))
+        [not-yet-column sent]]])))
 
 ;; -------------------------------------
 ;; messages received-sent
