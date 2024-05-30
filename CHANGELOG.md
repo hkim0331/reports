@@ -6,11 +6,16 @@
 - dev container?
 - report-pt! - 同人に複数票が入れられる。
 
-## v2.6-SNAPSHOT
+## v2.6.578 / 2024-05-30
+### Added
+- prod only wrap-restricted
+```
+  :middleware [(if (:dev env) identity middleware/wrap-restricted)
+  ...
+```
+- points sent/received
 ### Todo
-- 自分のつけたABCDがわかる。
 - radio よりボタンが良くないか？
-- from you, to you(you はlogin で)
 
 
 ## v2.5.570 / 2024-05-30

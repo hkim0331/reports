@@ -11,23 +11,28 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-
-(def ^:private version "v2.5.570")
-(def ^:private now "2024-05-30 15:32:54")
+(def ^:private version "v2.6.578")
+(def ^:private now "2024-05-30 20:29:54")
 
 ;-------------------------------------------
 ; r/atom
-(defonce session   (r/atom {:page :home}))
-(defonce users     (r/atom []))
 (defonce goods     (r/atom []))
-(defonce users-all (r/atom []))
+(defonce session   (r/atom {:page :home}))
 (defonce titles    (r/atom {}))
+(defonce users     (r/atom []))
+(defonce users-all (r/atom []))
 
 (defonce random?    (r/atom false))
 (defonce type-count (r/atom 0))
 
 (defonce uploads-by-date-all (r/atom []))
 (defonce uploads-by-date     (r/atom []))
+
+(def ^:private how-many 10)
+(defonce users-selected (r/atom nil))
+
+(defonce pt-sent (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
+(defonce pt-recv (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
 
 ;; -------------------------
 ;; Miscellaneous
@@ -268,6 +273,13 @@
 ;; -------------------------
 ;; Student Page
 
+
+(comment
+  @pt-sent
+  (@pt-sent "A")
+  @pt-recv
+  :rcf)
+
 (defn- send-report-point!
   [from to pt]
   (POST "/api/report-pt"
@@ -275,34 +287,45 @@
      :params {:from from
               :to to
               :pt pt}
-     :handler #(js/alert (str "send " from "->" to ": " pt))
+     ;; :handler #(js/alert (str "send " from "->" to ": " pt))
+     :handler #(swap! pt-sent update pt inc)
      :error-handler #(js/alert "送信失敗。時間をおいて再送信してください。")}))
 
-(defn- radio-students
-  [from to pt]
-  [:span [:input {:type "radio"
-                  :name "r"
-                  :on-change #(send-report-point! from to pt)}]
+(defn- send-students-pt
+  [from to pt opt]
+  [:span opt [:input {:type "radio"
+                      :name "r"
+                      :on-change #(send-report-point! from to pt)}]
    pt " "])
 
-(def ^:private how-many 10)
+
+
 
 (defn students-page
   []
   (fn []
     [:section.section>div.container>div.content
-     (doall
-      (for [[i u] (map-indexed vector (take how-many (shuffle @users)))]
-        [:div.columns {:key i}
-         [:div.column.is-one-quarter
-          [:a {:href (report-url u)
-               :class (if (= u "hkimura") "hkimura" "other")}
-           u]
-          " "
-          (get @titles u)]
-         [:div.column
-          (for [p ["A" "B" "C" "D"]]
-            (radio-students js/login u p))]]))]))
+     [:div.columns
+      [:div.column
+       [:h3 "please send your pt"]
+       (doall
+        (for [[i u] (map-indexed vector @users-selected)]
+          [:div.columns {:key i}
+           [:div.column
+            [:a {:href (report-url u) :class "other"}
+             u]
+            " "
+            (get @titles u)]
+           [:div.column
+            (for [[i p] (map-indexed vector ["A" "B" "C" "D"])]
+              (send-students-pt js/login u p {:key i}))]]))]
+      [:div.column
+       [:h3 "points sent"]
+       [:p (str (sort @pt-sent))]
+       [:br]
+       [:h2 "points received"]
+       [:p (str (sort @pt-recv))]]]]))
+
 
 ;; -------------------------
 ;; Exam Page
@@ -540,7 +563,9 @@
 
 (defn- reset-users! []
   (GET "/api/users"
-    {:handler #(reset! users %)}
+    {:handler #(do
+                 (reset! users %)
+                 (reset! users-selected (take how-many (shuffle @users))))}
     {:error-handler #(.log js/console "error:" %)}))
 
 (defn- reset-goods! []
@@ -578,11 +603,6 @@
     {:handler #(reset! uploads-by-date (coerce-date-count %))
      :error-handler #(.log js/console "reset-records-login! error:" %)}))
 
-(comment
-  (GET "/api/record/nobody"
-    {:handler #(js/alert (coerce-date-count %))})
-  ; => null
-  :rcf)
 ;----------------------------------------------------------------
 
 (defn init! []
@@ -593,8 +613,15 @@
   (reset-goods!)
   (reset-titles!)
   (reset-users-all!)
-
   (reset-uploads-by-date-all!)
   (reset-uploads-by-date! js/login)
+
+  (GET (str "/api/points-from/" js/login)
+    {:handler #(reset! pt-sent %)
+     :error-handler #(js/alert "can not set pt-sent")})
+
+  (GET (str "/api/points-to/" js/login)
+    {:handler #(reset! pt-recv %)
+     :error-handler #(js/alert "can not set pt-recv")})
 
   (mount-components))
