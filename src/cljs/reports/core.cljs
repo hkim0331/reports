@@ -11,8 +11,8 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "v2.6.578")
-(def ^:private now "2024-05-30 20:29:54")
+(def ^:private version "v2.6.580")
+(def ^:private now "2024-05-30 21:00:02")
 
 ;-------------------------------------------
 ; r/atom
@@ -273,13 +273,6 @@
 ;; -------------------------
 ;; Student Page
 
-
-(comment
-  @pt-sent
-  (@pt-sent "A")
-  @pt-recv
-  :rcf)
-
 (defn- send-report-point!
   [from to pt]
   (POST "/api/report-pt"
@@ -293,13 +286,9 @@
 
 (defn- send-students-pt
   [from to pt opt]
-  [:span opt [:input {:type "radio"
-                      :name "r"
-                      :on-change #(send-report-point! from to pt)}]
-   pt " "])
-
-
-
+  [:button.button
+   {:on-click #(send-report-point! from to pt)
+    :key (random-uuid)} pt])
 
 (defn students-page
   []
@@ -323,13 +312,18 @@
        [:h3 "points sent"]
        [:p (str (sort @pt-sent))]
        [:br]
-       [:h2 "points received"]
-       [:p (str (sort @pt-recv))]]]]))
-
+       [:h3 "points received"]
+       [:p (str (sort @pt-recv))]
+       [:button.button.
+        {:on-click
+         (fn [e]
+           (GET (str "/api/points-to/" js/login)
+             {:handler #(reset! pt-recv %)
+              :error-handler #(js/alert "can not set pt-recv")}))}
+        "update"]]]]))
 
 ;; -------------------------
 ;; Exam Page
-
 (defn exam-page
   []
   (fn []
