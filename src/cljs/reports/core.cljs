@@ -3,24 +3,14 @@
    [ajax.core :refer [GET POST]]
    [clojure.string :as str]
    [clojure.set :refer [difference]]
-   #_[markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
    [reitit.core :as reitit]
    [reports.ajax :as ajax]
    [goog.events :as events]
-   [goog.history.EventType :as HistoryEventType]
-   #_[cheshire.core :as json])
+   [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(comment
-  js/login
-  js/hp_url
-  js/rp_mode
-  :rcf)
-
-;; これは？
-;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
 (def ^:private version "v2.4.558")
 (def ^:private now "2024-05-30 10:50:50")
@@ -205,7 +195,8 @@
      [uploaded-column]]))
 
 ;; -------------------------
-;; Browse
+;; Browse & Comments
+
 (def ^:private filters {true shuffle false identity})
 
 ;; mesg must have `min-mesg` length.
@@ -222,14 +213,6 @@
                        (js/alert "送信失敗。時間をおいて再送信してください。")
                        (.log js/console (str %)))}))
 
-;; (defn send-message! [recv mesg]
-;;   (cond (< (count mesg) min-mesg)
-;;         (js/alert (str "メッセージは " min-mesg " 文字以上です。"))
-;;         (= recv js/login)
-;;         (js/alert "自分自身へのメッセージは送れません。")
-;;         :else
-;;         (post-message! js/login recv mesg)))
-
 (defn- browse-comments
   []
   [:div
@@ -238,9 +221,7 @@
     [:li "現在までのアップロードは " (str (count @users)) "人。"]
     [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
     [:li "ホームページのプログラム内容に関係するコメント、質問、回答が
-            ボコボコ交換されるのを期待してます。"]
-    #_[:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
-       [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"} "2022"]]]])
+            ボコボコ交換されるのを期待してます。"]]])
 
 (defn browse-page
   []
@@ -283,8 +264,48 @@
                      :else
                      (post-message! js/login u mesg)))}
            "good!"]]]))]))
+
 ;; -------------------------
-;; Exam
+;; Student Page
+
+(defn- send-report-point!
+  [from to pt]
+  (POST "/api/report-pt"
+    {:headers {"x-csrf-field" js/csrfToken}
+     :params {:from from
+              :to to
+              :pt pt}
+     :handler #(js/alert (str "send " from "->" to ": " pt))
+     :error-handler #(js/alert "送信失敗。時間をおいて再送信してください。")}))
+
+(defn- radio-students
+  [from to pt]
+  [:span [:input {:type "radio"
+                  :name "r"
+                  :on-change #(send-report-point! from to pt)}]
+   pt " "])
+
+(def ^:private how-many 10)
+
+(defn students-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     (doall
+      (for [[i u] (map-indexed vector (take how-many (shuffle @users)))]
+        [:div.columns {:key i}
+         [:div.column.is-one-quarter
+          [:a {:href (report-url u)
+               :class (if (= u "hkimura") "hkimura" "other")}
+           u]
+          " "
+          (get @titles u)]
+         [:div.column
+          (for [p ["A" "B" "C" "D"]]
+            (radio-students js/login u p))]]))]))
+
+;; -------------------------
+;; Exam Page
 
 (defn exam-page
   []
@@ -294,12 +315,12 @@
       [:h2 "中間試験"]
       [:ul
        [:li "試験中は他の人のページを見れません。"]
-       [:li "自分回答は Reports　あるいは Upload の check ボタンから。"]]]]))
+       [:li "自分回答は Reports あるいは Upload の check ボタンから。"]]]]))
+
 
 ;; -------------------------
 ;; Goods
 
-;; FIXME, dirty
 (defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
@@ -330,18 +351,10 @@
   (->> @goods
        (filterv #(= js/login (f %)))))
 
-(comment
-  (count (filter-goods-by :snd))
-  (first (filter-goods-by :snd))
-  (apply max (map :id @goods))
-  (filter #(< 3050 (:id %)) @goods)
-  :rcf)
-
 (defn- received-column
   [received]
   [:div.column
    [:h2 "Goods Received (" (count received) ")"]
-   ;;(for [[id g] (map-indexed vector received)]
    (doall
     (for [g received]
       [:p {:key (str "r" (:id g))}
@@ -357,7 +370,6 @@
   [sent]
   [:div.column
    [:h2 "Goods Sent (" (count sent) ")"]
-   ;;(for [[id s] (map-indexed vector sent)]
    (doall
     (for [s sent]
       [:p {:key (str "g" (:id s))}
@@ -416,10 +428,6 @@
   []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
-   #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
-        人気のページがどんなページか見たくない？
-        たくさん good! をつけてくれる優しいお兄さんお姉さんのページ、見たくない？
-        そういうの、刺激になると思うんだけどなあ。"]
    [:p "全 " (count @goods) " goods"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
@@ -440,8 +448,6 @@
             ;;   (abbrev name))
             " → " s]))))])
 
-
-;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
 (defn messages []
   [:section.section>div.container>div.content
    [:h2 "Goods (Messages)"]
@@ -476,17 +482,14 @@
 ;; -------------------------
 ;; Pages
 
-(comment
-  js/login
-
-  :rcf)
-
+;; FIXME: does not determine the value of js/rp_mde in compile time.
 (def pages
   {:home   #'home-page
    :about  #'about-page
    :upload #'upload-page
    :browse (case js/rp_mode
              "exam" #'exam-page
+             "student" #'students-page
              #'browse-page)
    :goods  #'goods-page
    :recv-sent #'recv-sent

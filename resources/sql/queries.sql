@@ -80,3 +80,14 @@ SELECT DATE(uploaded_at), COUNT(*)
 FROM uploads
 WHERE login = :login
 GROUP BY DATE(uploaded_at) ORDER BY DATE(uploaded_at)
+
+----------------------------
+-- reports
+----------------------------
+
+-- :name insert-point :! :1
+-- :doc insert student points to `point` table.
+INSERT INTO points
+(from_user, to_user, pt)
+VALUES
+(:from, :to, :pt)

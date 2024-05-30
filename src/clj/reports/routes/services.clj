@@ -30,9 +30,9 @@
     (catch Exception _ nil)))
 
 (defn upsert! [login title]
- (if-let [_ (db/find-title {:login login})]
-   (db/update-title! {:login login :title title})
-   (db/insert-title! {:login login :title title})))
+  (if-let [_ (db/find-title {:login login})]
+    (db/update-title! {:login login :title title})
+    (db/insert-title! {:login login :title title})))
 
 (defn upload!
   "受け取った multiplart-params を login/{type}/filename にセーブする。
@@ -106,6 +106,10 @@
   (log/debug "record-login login" login)
   (response/ok (db/record {:login login})))
 
+(defn report-pt! [{params :body-params}]
+  (log/debug "params:" params)
+  (response/ok (db/insert-point params)))
+
 (defn services-routes []
   ["/api" {:middleware [middleware/wrap-restricted
                         middleware/wrap-csrf
@@ -116,4 +120,5 @@
    ["/goods"  {:get goods}]
    ["/titles" {:get titles}]
    ["/records" {:get records-all}]
-   ["/record/:login" {:get record-login}]])
+   ["/record/:login" {:get record-login}]
+   ["/report-pt" {:post report-pt!}]])
