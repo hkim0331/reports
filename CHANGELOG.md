@@ -9,6 +9,8 @@
 ## v2.6-SNAPSHOT
 ### Todo
 - 自分のつけたABCDがわかる。
+- radio よりボタンが良くないか？
+- from you, to you(you はlogin で)
 
 
 ## v2.5.570 / 2024-05-30
