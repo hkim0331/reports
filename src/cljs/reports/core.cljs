@@ -284,7 +284,10 @@
 
 (defn radio-students-eval
   [from to pt]
-  [:span [:input {:type "radio" :name "r"}] pt " "])
+  [:span [:input {:type "radio"
+                  :name "r"
+                  :on-change #(js/alert (str from to pt))}]
+   pt " "])
 
 (defn student-page
   []
