@@ -32,7 +32,7 @@
 - Re の表示を短く
 - docker? dev container?
 
-## v2.4-SNAPSHOT
+## v2.4.558 / 2024-05-30
 ### Added
 - `make node_modules`
 - `hp-server.sh` - start python http server to show received reports.
