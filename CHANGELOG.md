@@ -6,6 +6,10 @@
 - dev container?
 - report-pt! - 同人に複数票が入れられる。
 
+## v2.6-SNAPSHOT
+### Todo
+- 自分のつけたABCDがわかる。
+
 
 ## v2.5.570 / 2024-05-30
 ### Added
