@@ -10,7 +10,7 @@
 - ABCD を送信したやつは消す。
 
 
-## v2.6-SNAPSHOT
+## v2.6.584 / 2024-05-30
 - nginx valid_refers server_names は localhost でよい。
 ```
         location / {
