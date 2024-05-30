@@ -287,9 +287,13 @@
      :error-handler #(js/alert "送信失敗。時間をおいて再送信してください。")}))
 
 (defn- send-students-pt
+  ;; no use opt if use (random-uuid)
   [from to pt opt]
   [:button.button
-   {:on-click #(send-report-point! from to pt)
+   {:on-click #(do
+                 (send-report-point! from to pt)
+                 ;; remove to from @users-selected
+                 )
     :key (random-uuid)} pt])
 
 (defn students-page
