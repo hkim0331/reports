@@ -4,23 +4,25 @@
 - with-let の使い方
 - 再読み込みの後じゃないと good! が出ていかないことがある。
 - dev container
-- report-pt! - 同人に複数票が入れられる。
 - colorful buttons.
-- 1:1 -> 2:1
-- ABCD を送信したやつは消す。
 
 
-## v2.6.584 / 2024-05-30
+## v2.6.591 / 2024-05-31
+- Remove users from `users-selected` after rating. By this, it can be avoided to send two or more votes to a user in a session.
+```
+  (swap! users-selected disj to))
+```
+
 - nginx valid_refers server_names は localhost でよい。
 ```
-        location / {
-                 valid_referers server_names
-                         localhost
-                         rp.melt.kyutech.ac.jp;
-                 if ($invalid_referer) { return 403; }
-                 include proxy_params;
-                 proxy_pass http://127.0.0.1:8080;
-        }
+  location / {
+      valid_referers server_names
+          localhost
+          rp.melt.kyutech.ac.jp;
+      if ($invalid_referer) { return 403; }
+      include proxy_params;
+      proxy_pass http://127.0.0.1:8080;
+  }
 ```
 - target="_blank" しないとだめ。
 

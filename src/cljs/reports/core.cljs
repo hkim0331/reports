@@ -11,8 +11,8 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "v2.6.584")
-(def ^:private now "2024-05-30 23:39:22")
+(def ^:private version "v2.6.591")
+(def ^:private now "2024-05-31 00:21:03")
 
 ;-------------------------------------------
 ; r/atom
@@ -287,9 +287,13 @@
      :error-handler #(js/alert "送信失敗。時間をおいて再送信してください。")}))
 
 (defn- send-students-pt
+  ;; no use opt if use (random-uuid)
   [from to pt opt]
   [:button.button
-   {:on-click #(send-report-point! from to pt)
+   {:on-click #(do
+                 (send-report-point! from to pt)
+                 ;; remove to from @users-selected
+                 (swap! users-selected disj to))
     :key (random-uuid)} pt])
 
 (defn students-page
@@ -563,7 +567,8 @@
   (GET "/api/users"
     {:handler #(do
                  (reset! users %)
-                 (reset! users-selected (take how-many (shuffle @users))))}
+                 (reset! users-selected
+                         (apply sorted-set (take how-many (shuffle @users)))))}
     {:error-handler #(.log js/console "error:" %)}))
 
 (defn- reset-goods! []
@@ -606,6 +611,7 @@
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
+
 
   (reset-users!)
   (reset-goods!)
