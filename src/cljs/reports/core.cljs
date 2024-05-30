@@ -282,6 +282,10 @@
 ;; -------------------------
 ;; Student Page
 
+(defn radio-students-eval
+  [from to pt]
+  [:span [:input {:type "radio" :name "r"}] pt " "])
+
 (defn student-page
   []
   (fn []
@@ -297,21 +301,14 @@
           (get @titles u)]
          [:div.column
           " "
-          [:input
-           {:on-key-up #(swap! type-count inc)
-            :id i
-            :placeholder (str min-mesg " 文字以上のメッセージ")
-            :size 80}]
+          [:div
+          ;;  [:input {:type "radio" :name "r"}] "Z1"
+          ;;  [:input {:type "radio" :name "r"}] "Z2"
+           (for [s ["A" "B" "C" "D"]]
+             (radio-students-eval js/login u s))]
           [:button
-           {:on-click
-            #(let [mesg (.-value (.getElementById js/document i))]
-               (cond (< (count mesg) min-mesg)
-                     (js/alert (str "メッセージは " min-mesg " 文字以上です。"))
-                     (= u js/login)
-                     (js/alert "自分自身へのメッセージは送れません。")
-                     :else
-                     (post-message! js/login u mesg)))}
-           "good!"]]]))]))
+           {:on-click #(js/alert "chosen")}
+           "send"]]]))]))
 
 ;; -------------------------
 ;; Exam Page
