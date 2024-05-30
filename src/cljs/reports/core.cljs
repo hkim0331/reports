@@ -13,11 +13,6 @@
    #_[cheshire.core :as json])
   (:import goog.History))
 
-(comment
-  js/login
-  js/hp_url
-  js/rp_mode
-  :rcf)
 
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
@@ -283,8 +278,43 @@
                      :else
                      (post-message! js/login u mesg)))}
            "good!"]]]))]))
+
 ;; -------------------------
-;; Exam
+;; Student Page
+
+(defn student-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     (doall
+      (for [[i u] ((filters true) (map-indexed vector @users))]
+        [:div.columns {:key i}
+         [:div.column.is-one-quarter
+          [:a {:href (report-url u)
+               :class (if (= u "hkimura") "hkimura" "other")}
+           u]
+          " "
+          (get @titles u)]
+         [:div.column
+          " "
+          [:input
+           {:on-key-up #(swap! type-count inc)
+            :id i
+            :placeholder (str min-mesg " 文字以上のメッセージ")
+            :size 80}]
+          [:button
+           {:on-click
+            #(let [mesg (.-value (.getElementById js/document i))]
+               (cond (< (count mesg) min-mesg)
+                     (js/alert (str "メッセージは " min-mesg " 文字以上です。"))
+                     (= u js/login)
+                     (js/alert "自分自身へのメッセージは送れません。")
+                     :else
+                     (post-message! js/login u mesg)))}
+           "good!"]]]))]))
+
+;; -------------------------
+;; Exam Page
 
 (defn exam-page
   []
@@ -295,6 +325,7 @@
       [:ul
        [:li "試験中は他の人のページを見れません。"]
        [:li "自分回答は Reports　あるいは Upload の check ボタンから。"]]]]))
+
 
 ;; -------------------------
 ;; Goods
@@ -476,17 +507,15 @@
 ;; -------------------------
 ;; Pages
 
-(comment
-  js/login
 
-  :rcf)
-
+;; FIXME: does not determine the value of js/rp_mde in compile time.
 (def pages
   {:home   #'home-page
    :about  #'about-page
    :upload #'upload-page
    :browse (case js/rp_mode
              "exam" #'exam-page
+             "student" #'student-page
              #'browse-page)
    :goods  #'goods-page
    :recv-sent #'recv-sent
