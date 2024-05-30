@@ -11,8 +11,8 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "v2.5.570")
-(def ^:private now "2024-05-30 15:32:54")
+(def ^:private version "v2.6.578")
+(def ^:private now "2024-05-30 20:29:54")
 
 ;-------------------------------------------
 ; r/atom
@@ -28,6 +28,7 @@
 (defonce uploads-by-date-all (r/atom []))
 (defonce uploads-by-date     (r/atom []))
 
+(def ^:private how-many 10)
 (defonce users-selected (r/atom nil))
 
 (defonce pt-sent (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
@@ -291,13 +292,13 @@
      :error-handler #(js/alert "送信失敗。時間をおいて再送信してください。")}))
 
 (defn- send-students-pt
-  [from to pt]
-  [:span [:input {:type "radio"
-                  :name "r"
-                  :on-change #(send-report-point! from to pt)}]
+  [from to pt opt]
+  [:span opt [:input {:type "radio"
+                      :name "r"
+                      :on-change #(send-report-point! from to pt)}]
    pt " "])
 
-(def ^:private how-many 10)
+
 
 
 (defn students-page
@@ -316,15 +317,14 @@
             " "
             (get @titles u)]
            [:div.column
-            (for [p ["A" "B" "C" "D"]]
-              (send-students-pt js/login u p))]]))]
+            (for [[i p] (map-indexed vector ["A" "B" "C" "D"])]
+              (send-students-pt js/login u p {:key i}))]]))]
       [:div.column
        [:h3 "points sent"]
-       [:p (str @pt-sent)]
-      ;;  (for [p ["A" "B" "C" "D"]]
-      ;;    [:p p [:span " "] (@pt-sent p)])
+       [:p (str (sort @pt-sent))]
        [:br]
-       [:h2 "points received"]]]]))
+       [:h2 "points received"]
+       [:p (str (sort @pt-recv))]]]]))
 
 
 ;; -------------------------
@@ -565,7 +565,7 @@
   (GET "/api/users"
     {:handler #(do
                  (reset! users %)
-                 (reset! users-selected (take 10 (shuffle @users))))}
+                 (reset! users-selected (take how-many (shuffle @users))))}
     {:error-handler #(.log js/console "error:" %)}))
 
 (defn- reset-goods! []
@@ -613,10 +613,8 @@
   (reset-goods!)
   (reset-titles!)
   (reset-users-all!)
-
   (reset-uploads-by-date-all!)
   (reset-uploads-by-date! js/login)
-
 
   (GET (str "/api/points-from/" js/login)
     {:handler #(reset! pt-sent %)
@@ -625,13 +623,5 @@
   (GET (str "/api/points-to/" js/login)
     {:handler #(reset! pt-recv %)
      :error-handler #(js/alert "can not set pt-recv")})
-
-  ;; (js/alert (str "users" @users))
-  ;; (reset! users-selected
-  ;;         (map-indexed vector (take 10 (shuffle @users))))
-  ;; (js/alert (str @users-selected))
-
-  ;; (.log js/console (str "init! users" @users))
-  ;; (.log js/console (str "init!" @users-selected))
 
   (mount-components))

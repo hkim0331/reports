@@ -17,8 +17,6 @@
       (str public "/" login)
       (str public "/" login "/" subdir))))
 
-;; (defn mkdir-p [dir]
-;;   (sh "mkdir" "-p" dir))
 
 (defn find-title
   "テキストファイル f 中の <title> ~ </title> に挟まれる文字列を返す。
