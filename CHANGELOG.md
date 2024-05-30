@@ -7,7 +7,7 @@
 - colorful buttons.
 
 
-## v2.6-SNAPSHOT / 2024-05-30
+## v2.6.591 / 2024-05-31
 - Remove users from `users-selected` after rating. By this, it can be avoided to send two or more votes to a user in a session.
 ```
   (swap! users-selected disj to))
