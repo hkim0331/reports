@@ -7,7 +7,7 @@
 - report-pt! - 同人に複数票が入れられる。
 
 
-## v2.5-SNAPSHOT
+## v2.5.570 / 2024-05-30
 ### Added
 - db-dumps/create-points.sql (gitignored)
 - core.cljs:student-page and its relatinng functions.
