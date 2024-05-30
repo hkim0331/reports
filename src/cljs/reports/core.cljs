@@ -13,6 +13,12 @@
    #_[cheshire.core :as json])
   (:import goog.History))
 
+(comment
+  js/login
+  js/hp_url
+  js/rp_mode
+  :rcf)
+
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
@@ -455,11 +461,13 @@
     (for [g (sent-goods who)]
       [:li (first g) ", " (second g)])]))
 
-(comment
-  (take 3 @goods)
-  :rcf)
 ;; -------------------------
 ;; Pages
+
+(comment
+  js/login
+
+  :rcf)
 
 (def pages
   {:home   #'home-page

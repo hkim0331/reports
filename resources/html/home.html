@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-      <meta http-equiv="Pragma" content="no-cache">
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Reports</title>
-  </head>
-  <body>
-    <div id="navbar"></div>
-    <div id="app"></div>
 
-    {% style "/assets/bulma/css/bulma.min.css" %}
-    {% style "/assets/material-icons/css/material-icons.min.css" %}
-    {% style "/css/screen.css" %}
+<head>
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reports</title>
+</head>
 
-    <script type="text/javascript">
-        var csrfToken = "{{csrf-token}}";
-        var login     = "{{login}}";
-        var hp_url    = "{{hp-url}}";
-    </script>
-    {% script "/js/app.js?version=v2.3.546" %}
-  </body>
+<body>
+  <div id="navbar"></div>
+  <div id="app"></div>
+
+  {% style "/assets/bulma/css/bulma.min.css" %}
+  {% style "/assets/material-icons/css/material-icons.min.css" %}
+  {% style "/css/screen.css" %}
+
+  <script type="text/javascript">
+    var csrfToken = "{{csrf-token}}";
+    var login = "{{login}}";
+    var hp_url = "{{hp-url}}";
+    var rp_mode = "{{rp-mode}}";
+  </script>
+  {% script "/js/app.js?version=v2.3.546" %}
+</body>
+
 </html>

@@ -32,6 +32,13 @@
 - Re の表示を短く
 - docker? dev container?
 
+## v2.4-SNAPSHOT
+### Added
+- `make node_modules`
+### Fixed
+- `home.clj/home-page` - add {:mode (:mode env)} to params.
+- `home.html` - var mode = "{{mode}}";
+- `layout.clj/render` -  (println "layout/redder params" params)
 
 ## v2.3.546 / 2024-05-20
 ### Added
