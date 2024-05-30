@@ -283,6 +283,18 @@
                      :else
                      (post-message! js/login u mesg)))}
            "good!"]]]))]))
+;; -------------------------
+;; Exam
+
+(defn exam-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [:div
+      [:h2 "中間試験"]
+      [:ul
+       [:li "試験中は他の人のページを見れません。"]
+       [:li "自分回答は Reports　あるいは Upload の check ボタンから。"]]]]))
 
 ;; -------------------------
 ;; Goods
@@ -473,7 +485,9 @@
   {:home   #'home-page
    :about  #'about-page
    :upload #'upload-page
-   :browse #'browse-page
+   :browse (case js/rp_mode
+             "exam" #'exam-page
+             #'browse-page)
    :goods  #'goods-page
    :recv-sent #'recv-sent
    :messages  #'messages

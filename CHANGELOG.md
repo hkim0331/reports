@@ -35,10 +35,12 @@
 ## v2.4-SNAPSHOT
 ### Added
 - `make node_modules`
+- `hp-server.sh` - start python http server to show received reports.
 ### Fixed
 - `home.clj/home-page` - add {:mode (:mode env)} to params.
 - `home.html` - var mode = "{{mode}}";
 - `layout.clj/render` -  (println "layout/redder params" params)
+- `start-local.sh` - export RP_MODE="exam"
 
 ## v2.3.546 / 2024-05-20
 ### Added
