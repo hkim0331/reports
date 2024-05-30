@@ -2,16 +2,9 @@
 
 ## Unreleased
 - with-let の使い方
-- good 送信後の input フィールドのクリア(クリアしない方がいい)
 - 再読み込みの後じゃないと good! が出ていかないことがある。
-- warning
-```
-  127 |      [:p (str (.-rep (:date r)) "," (:count r))]))])
-  ---------------------^------------------------------------
-```
-  Cannot infer target type in expression (. (:date r) -rep)
-  型情報を与えてやるのか？
-- docker? dev container?
+- dev container?
+- report-pt! - 同人に複数票が入れられる。
 
 
 ## v2.5-SNAPSHOT

@@ -106,13 +106,12 @@
   (log/debug "record-login login" login)
   (response/ok (db/record {:login login})))
 
-(defn report-pt! [{{:keys [from to pt]} :body-params :as req}]
-  (log/debug "report-pt!" from to pt)
-  (log/debug "params:" (req :params))
-  (response/ok {:from from :to to :pt pt}))
+(defn report-pt! [{params :body-params}]
+  (log/debug "params:" params)
+  (response/ok (db/insert-point params)))
 
 (defn services-routes []
-  ["/api" {:middleware [;; middleware/wrap-restricted
+  ["/api" {:middleware [middleware/wrap-restricted
                         middleware/wrap-csrf
                         middleware/wrap-formats]}
    ["/upload" {:post upload!}]
