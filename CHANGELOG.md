@@ -2,21 +2,20 @@
 
 ## Unreleased
 - with-let の使い方
-- ERROR: XMLHttpRequest is not defined
 - good 送信後の input フィールドのクリア(クリアしない方がいい)
 - 再読み込みの後じゃないと good! が出ていかないことがある。
 - warning
+```
   127 |      [:p (str (.-rep (:date r)) "," (:count r))]))])
-  ---------------------^-----------------------------------------------
+  ---------------------^------------------------------------
+```
   Cannot infer target type in expression (. (:date r) -rep)
-  型情報を与えてやるのかな？
-- message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
-- Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
-- commons.js:2 Channel: Error in handleResponse UNK/SW_UNREACHABLE broadcastEventToTab clipper_state_changed
-- Error in handleResponse UNK/SW_UNREACHABLE isLogsEnabled
-- Error in handleResponse UNK/SW_UNREACHABLE options getValues
-- Re の表示を短く
+  型情報を与えてやるのか？
 - docker? dev container?
+
+
+## v2.5-SNAPSHOT
+
 
 ## v2.4.558 / 2024-05-30
 ### Added

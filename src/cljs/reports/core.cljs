@@ -3,19 +3,14 @@
    [ajax.core :refer [GET POST]]
    [clojure.string :as str]
    [clojure.set :refer [difference]]
-   #_[markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
    [reitit.core :as reitit]
    [reports.ajax :as ajax]
    [goog.events :as events]
-   [goog.history.EventType :as HistoryEventType]
-   #_[cheshire.core :as json])
+   [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-
-;; これは？
-;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
 (def ^:private version "v2.4.558")
 (def ^:private now "2024-05-30 10:50:50")
@@ -200,7 +195,8 @@
      [uploaded-column]]))
 
 ;; -------------------------
-;; Browse
+;; Browse & Comments
+
 (def ^:private filters {true shuffle false identity})
 
 ;; mesg must have `min-mesg` length.
@@ -217,14 +213,6 @@
                        (js/alert "送信失敗。時間をおいて再送信してください。")
                        (.log js/console (str %)))}))
 
-;; (defn send-message! [recv mesg]
-;;   (cond (< (count mesg) min-mesg)
-;;         (js/alert (str "メッセージは " min-mesg " 文字以上です。"))
-;;         (= recv js/login)
-;;         (js/alert "自分自身へのメッセージは送れません。")
-;;         :else
-;;         (post-message! js/login recv mesg)))
-
 (defn- browse-comments
   []
   [:div
@@ -233,9 +221,7 @@
     [:li "現在までのアップロードは " (str (count @users)) "人。"]
     [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
     [:li "ホームページのプログラム内容に関係するコメント、質問、回答が
-            ボコボコ交換されるのを期待してます。"]
-    #_[:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
-       [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"} "2022"]]]])
+            ボコボコ交換されるのを期待してます。"]]])
 
 (defn browse-page
   []
@@ -281,20 +267,27 @@
 
 ;; -------------------------
 ;; Student Page
+;; FIXME: can not reload this page.
 
-(defn radio-students-eval
+(defn- send-report-point
+  [from to pt]
+  (js/alert (str from " -> " to ": " pt)))
+
+(defn- radio-students
   [from to pt]
   [:span [:input {:type "radio"
                   :name "r"
-                  :on-change #(js/alert (str from to pt))}]
+                  :on-change #(send-report-point from to pt)}]
    pt " "])
 
-(defn student-page
+(def ^:private students-evals 5)
+
+(defn students-page
   []
   (fn []
     [:section.section>div.container>div.content
      (doall
-      (for [[i u] ((filters true) (map-indexed vector @users))]
+      (for [[i u] (map-indexed vector (take students-evals (shuffle @users)))]
         [:div.columns {:key i}
          [:div.column.is-one-quarter
           [:a {:href (report-url u)
@@ -303,15 +296,8 @@
           " "
           (get @titles u)]
          [:div.column
-          " "
-          [:div
-          ;;  [:input {:type "radio" :name "r"}] "Z1"
-          ;;  [:input {:type "radio" :name "r"}] "Z2"
-           (for [s ["A" "B" "C" "D"]]
-             (radio-students-eval js/login u s))]
-          [:button
-           {:on-click #(js/alert "chosen")}
-           "send"]]]))]))
+          (for [p ["A" "B" "C" "D"]]
+            (radio-students js/login u p))]]))]))
 
 ;; -------------------------
 ;; Exam Page
@@ -324,7 +310,7 @@
       [:h2 "中間試験"]
       [:ul
        [:li "試験中は他の人のページを見れません。"]
-       [:li "自分回答は Reports　あるいは Upload の check ボタンから。"]]]]))
+       [:li "自分回答は Reports あるいは Upload の check ボタンから。"]]]]))
 
 
 ;; -------------------------
@@ -515,7 +501,7 @@
    :upload #'upload-page
    :browse (case js/rp_mode
              "exam" #'exam-page
-             "student" #'student-page
+             "student" #'students-page
              #'browse-page)
    :goods  #'goods-page
    :recv-sent #'recv-sent
