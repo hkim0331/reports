@@ -8,7 +8,7 @@
 - colorful buttons.
 - 1:1 -> 2:1
 - ABCD を送信したやつは消す。
-
+- ホットスイッチング（起動中に動作を変える）はしないでよい。
 
 ## v2.6.584 / 2024-05-30
 - nginx valid_refers server_names は localhost でよい。
