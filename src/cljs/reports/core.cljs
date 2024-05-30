@@ -293,7 +293,7 @@
    {:on-click #(do
                  (send-report-point! from to pt)
                  ;; remove to from @users-selected
-                 )
+                 (swap! users-selected disj to))
     :key (random-uuid)} pt])
 
 (defn students-page
@@ -567,7 +567,8 @@
   (GET "/api/users"
     {:handler #(do
                  (reset! users %)
-                 (reset! users-selected (take how-many (shuffle @users))))}
+                 (reset! users-selected
+                         (apply sorted-set (take how-many (shuffle @users)))))}
     {:error-handler #(.log js/console "error:" %)}))
 
 (defn- reset-goods! []
@@ -610,6 +611,7 @@
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
+
 
   (reset-users!)
   (reset-goods!)
