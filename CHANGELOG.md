@@ -5,6 +5,25 @@
 - 再読み込みの後じゃないと good! が出ていかないことがある。
 - dev container?
 - report-pt! - 同人に複数票が入れられる。
+- colorful buttons.
+- 1:1 -> 2:1
+
+## v2.6-SNAPSHOT
+
+## v2.6.580 / 2024-05-30
+### Added
+- update button to `points received`.
+### Changed
+- radio to buttons
+
+## v2.6.578 / 2024-05-30
+### Added
+- prod only wrap-restricted
+```
+  :middleware [(if (:dev env) identity middleware/wrap-restricted)
+  ...
+```
+- points sent
 
 
 ## v2.5.570 / 2024-05-30
