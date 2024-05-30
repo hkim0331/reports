@@ -13,6 +13,12 @@
    #_[cheshire.core :as json])
   (:import goog.History))
 
+(comment
+  js/login
+  js/hp_url
+  js/rp_mode
+  :rcf)
+
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
@@ -277,6 +283,18 @@
                      :else
                      (post-message! js/login u mesg)))}
            "good!"]]]))]))
+;; -------------------------
+;; Exam
+
+(defn exam-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [:div
+      [:h2 "中間試験"]
+      [:ul
+       [:li "試験中は他の人のページを見れません。"]
+       [:li "自分回答は Reports　あるいは Upload の check ボタンから。"]]]]))
 
 ;; -------------------------
 ;; Goods
@@ -455,17 +473,21 @@
     (for [g (sent-goods who)]
       [:li (first g) ", " (second g)])]))
 
-(comment
-  (take 3 @goods)
-  :rcf)
 ;; -------------------------
 ;; Pages
+
+(comment
+  js/login
+
+  :rcf)
 
 (def pages
   {:home   #'home-page
    :about  #'about-page
    :upload #'upload-page
-   :browse #'browse-page
+   :browse (case js/rp_mode
+             "exam" #'exam-page
+             #'browse-page)
    :goods  #'goods-page
    :recv-sent #'recv-sent
    :messages  #'messages

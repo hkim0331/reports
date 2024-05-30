@@ -4,6 +4,10 @@ DEST=${SERV}:reports/reports.jar
 #build:
 #	docker build -t hkim0331/reports .
 
+node_modules:
+	npm install
+	npm audit fix
+
 clean:
 	${RM} -r target
 
