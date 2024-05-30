@@ -8,14 +8,15 @@
 
 ## v2.6-SNAPSHOT
 ### Todo
-- 自分のつけたABCDがわかる。
-- radio よりボタンが良くないか？
-- from you, to you(you はlogin で)
-- dev only wrap-restricted
+- prod only wrap-restricted
 ```
   :middleware [(if (:dev env) identity middleware/wrap-restricted)
   ...
 ```
+- 自分のつけたABCDがわかる。
+- radio よりボタンが良くないか？
+- from you, to you(you はlogin で)
+
 
 ## v2.5.570 / 2024-05-30
 ### Added

@@ -11,7 +11,6 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-
 (def ^:private version "v2.5.570")
 (def ^:private now "2024-05-30 15:32:54")
 
@@ -28,6 +27,10 @@
 
 (defonce uploads-by-date-all (r/atom []))
 (defonce uploads-by-date     (r/atom []))
+
+(defonce reports (r/atom nil))
+(defonce pt-sent (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
+(defonce pt-recv (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
 
 ;; -------------------------
 ;; Miscellaneous
@@ -268,6 +271,13 @@
 ;; -------------------------
 ;; Student Page
 
+
+(comment
+  @pt-sent
+  (@pt-sent "A")
+  @pt-recv
+  :rcf)
+
 (defn- send-report-point!
   [from to pt]
   (POST "/api/report-pt"
@@ -275,10 +285,11 @@
      :params {:from from
               :to to
               :pt pt}
-     :handler #(js/alert (str "send " from "->" to ": " pt))
+     ;; :handler #(js/alert (str "send " from "->" to ": " pt))
+     :handler #(swap! pt-sent update pt inc)
      :error-handler #(js/alert "送信失敗。時間をおいて再送信してください。")}))
 
-(defn- radio-students
+(defn- send-students-pt
   [from to pt]
   [:span [:input {:type "radio"
                   :name "r"
@@ -287,22 +298,34 @@
 
 (def ^:private how-many 10)
 
+
 (defn students-page
   []
   (fn []
     [:section.section>div.container>div.content
-     (doall
-      (for [[i u] (map-indexed vector (take how-many (shuffle @users)))]
-        [:div.columns {:key i}
-         [:div.column.is-one-quarter
-          [:a {:href (report-url u)
-               :class (if (= u "hkimura") "hkimura" "other")}
-           u]
-          " "
-          (get @titles u)]
-         [:div.column
-          (for [p ["A" "B" "C" "D"]]
-            (radio-students js/login u p))]]))]))
+     [:div.columns
+      [:div.column
+       [:h3 "please send your pt"]
+       ;; [:p (str @pt-sent)]
+       (doall
+        (for [[i u]  (map-indexed vector (take how-many (shuffle @users)))]
+          [:div.columns {:key i}
+           [:div.column
+            [:a {:href (report-url u) :class "other"}
+             u]
+            " "
+            (get @titles u)]
+           [:div.column
+            (for [p ["A" "B" "C" "D"]]
+              (send-students-pt js/login u p))]]))]
+      [:div.column
+       [:h3 "points sent"]
+       [:p (str @pt-sent)]
+      ;;  (for [p ["A" "B" "C" "D"]]
+      ;;    [:p p [:span " "] (@pt-sent p)])
+       [:br]
+       [:h2 "points received"]]]]))
+
 
 ;; -------------------------
 ;; Exam Page
@@ -578,11 +601,6 @@
     {:handler #(reset! uploads-by-date (coerce-date-count %))
      :error-handler #(.log js/console "reset-records-login! error:" %)}))
 
-(comment
-  (GET "/api/record/nobody"
-    {:handler #(js/alert (coerce-date-count %))})
-  ; => null
-  :rcf)
 ;----------------------------------------------------------------
 
 (defn init! []
@@ -596,5 +614,18 @@
 
   (reset-uploads-by-date-all!)
   (reset-uploads-by-date! js/login)
+
+  @users
+
+  (reset! reports (map-indexed vector (take how-many (shuffle @users))))
+
+
+  (GET (str "/api/points-from/" js/login)
+    {:handler #(reset! pt-sent %)
+     :error-handler #(js/alert "can not set pt-sent")})
+
+  (GET (str "/api/points-to/" js/login)
+    {:handler #(reset! pt-recv %)
+     :error-handler #(js/alert "can not set pt-recv")})
 
   (mount-components))
