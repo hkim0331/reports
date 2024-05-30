@@ -70,6 +70,7 @@
 
 ;; -------------------------
 ;; navbar
+
 (defn nav-link [uri title page]
   [:a.navbar-item
    {:href   uri
@@ -302,7 +303,9 @@
         (for [[i u] (map-indexed vector @users-selected)]
           [:div.columns {:key i}
            [:div.column
-            [:a {:href (report-url u) :class "other"}
+            [:a {:href (report-url u)
+                 :class "other"
+                 :target "_blank"}
              u]
             " "
             (get @titles u)]
