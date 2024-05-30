@@ -4,13 +4,11 @@
 - with-let の使い方
 - 再読み込みの後じゃないと good! が出ていかないことがある。
 - dev container
-
 - colorful buttons.
 
 
-## v2.6.584 / 2024-05-30
-- remove users have been evaluated from sorted-set `users-selected`.
-  by this, became can not send two votes to one user in a session.
+## v2.6-SNAPSHOT / 2024-05-30
+- Remove users from `users-selected` after rating. By this, it can be avoided to send two or more votes to a user in a session.
 ```
   (swap! users-selected disj to))
 ```
