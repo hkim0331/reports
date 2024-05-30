@@ -267,27 +267,32 @@
 
 ;; -------------------------
 ;; Student Page
-;; FIXME: can not reload this page.
 
-(defn- send-report-point
+(defn- send-report-point!
   [from to pt]
-  (js/alert (str from " -> " to ": " pt)))
+  (POST "/api/report-pt"
+    {:headers {"x-csrf-field" js/csrfToken}
+     :params {:from from
+              :to to
+              :pt pt}
+     :handler #(js/alert (str "send " from "->" to ": " pt))
+     :error-handler #(js/alert "送信失敗。時間をおいて再送信してください。")}))
 
 (defn- radio-students
   [from to pt]
   [:span [:input {:type "radio"
                   :name "r"
-                  :on-change #(send-report-point from to pt)}]
+                  :on-change #(send-report-point! from to pt)}]
    pt " "])
 
-(def ^:private students-evals 5)
+(def ^:private how-many 10)
 
 (defn students-page
   []
   (fn []
     [:section.section>div.container>div.content
      (doall
-      (for [[i u] (map-indexed vector (take students-evals (shuffle @users)))]
+      (for [[i u] (map-indexed vector (take how-many (shuffle @users)))]
         [:div.columns {:key i}
          [:div.column.is-one-quarter
           [:a {:href (report-url u)
@@ -316,7 +321,6 @@
 ;; -------------------------
 ;; Goods
 
-;; FIXME, dirty
 (defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
@@ -347,18 +351,10 @@
   (->> @goods
        (filterv #(= js/login (f %)))))
 
-(comment
-  (count (filter-goods-by :snd))
-  (first (filter-goods-by :snd))
-  (apply max (map :id @goods))
-  (filter #(< 3050 (:id %)) @goods)
-  :rcf)
-
 (defn- received-column
   [received]
   [:div.column
    [:h2 "Goods Received (" (count received) ")"]
-   ;;(for [[id g] (map-indexed vector received)]
    (doall
     (for [g received]
       [:p {:key (str "r" (:id g))}
@@ -374,7 +370,6 @@
   [sent]
   [:div.column
    [:h2 "Goods Sent (" (count sent) ")"]
-   ;;(for [[id s] (map-indexed vector sent)]
    (doall
     (for [s sent]
       [:p {:key (str "g" (:id s))}
@@ -433,10 +428,6 @@
   []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
-   #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
-        人気のページがどんなページか見たくない？
-        たくさん good! をつけてくれる優しいお兄さんお姉さんのページ、見たくない？
-        そういうの、刺激になると思うんだけどなあ。"]
    [:p "全 " (count @goods) " goods"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
@@ -457,8 +448,6 @@
             ;;   (abbrev name))
             " → " s]))))])
 
-
-;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
 (defn messages []
   [:section.section>div.container>div.content
    [:h2 "Goods (Messages)"]
@@ -492,7 +481,6 @@
 
 ;; -------------------------
 ;; Pages
-
 
 ;; FIXME: does not determine the value of js/rp_mde in compile time.
 (def pages

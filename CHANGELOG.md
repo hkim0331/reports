@@ -15,7 +15,10 @@
 
 
 ## v2.5-SNAPSHOT
-
+### Added
+- db-dumps/create-points.sql (gitignored)
+- core.cljs:student-page and its relatinng functions.
+- services.clj:report-pt!
 
 ## v2.4.558 / 2024-05-30
 ### Added
