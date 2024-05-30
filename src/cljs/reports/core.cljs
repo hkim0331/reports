@@ -11,8 +11,8 @@
    [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def ^:private version "v2.6.584")
-(def ^:private now "2024-05-30 23:39:22")
+(def ^:private version "v2.6.591")
+(def ^:private now "2024-05-31 00:21:03")
 
 ;-------------------------------------------
 ; r/atom
