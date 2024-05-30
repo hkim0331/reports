@@ -16,11 +16,11 @@
 
 ;-------------------------------------------
 ; r/atom
-(defonce session   (r/atom {:page :home}))
-(defonce users     (r/atom []))
 (defonce goods     (r/atom []))
-(defonce users-all (r/atom []))
+(defonce session   (r/atom {:page :home}))
 (defonce titles    (r/atom {}))
+(defonce users     (r/atom []))
+(defonce users-all (r/atom []))
 
 (defonce random?    (r/atom false))
 (defonce type-count (r/atom 0))
@@ -28,7 +28,8 @@
 (defonce uploads-by-date-all (r/atom []))
 (defonce uploads-by-date     (r/atom []))
 
-(defonce reports (r/atom nil))
+(defonce users-selected (r/atom nil))
+
 (defonce pt-sent (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
 (defonce pt-recv (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
 
@@ -306,9 +307,8 @@
      [:div.columns
       [:div.column
        [:h3 "please send your pt"]
-       ;; [:p (str @pt-sent)]
        (doall
-        (for [[i u]  (map-indexed vector (take how-many (shuffle @users)))]
+        (for [[i u] (map-indexed vector @users-selected)]
           [:div.columns {:key i}
            [:div.column
             [:a {:href (report-url u) :class "other"}
@@ -563,7 +563,9 @@
 
 (defn- reset-users! []
   (GET "/api/users"
-    {:handler #(reset! users %)}
+    {:handler #(do
+                 (reset! users %)
+                 (reset! users-selected (take 10 (shuffle @users))))}
     {:error-handler #(.log js/console "error:" %)}))
 
 (defn- reset-goods! []
@@ -615,10 +617,6 @@
   (reset-uploads-by-date-all!)
   (reset-uploads-by-date! js/login)
 
-  @users
-
-  (reset! reports (map-indexed vector (take how-many (shuffle @users))))
-
 
   (GET (str "/api/points-from/" js/login)
     {:handler #(reset! pt-sent %)
@@ -627,5 +625,13 @@
   (GET (str "/api/points-to/" js/login)
     {:handler #(reset! pt-recv %)
      :error-handler #(js/alert "can not set pt-recv")})
+
+  ;; (js/alert (str "users" @users))
+  ;; (reset! users-selected
+  ;;         (map-indexed vector (take 10 (shuffle @users))))
+  ;; (js/alert (str @users-selected))
+
+  ;; (.log js/console (str "init! users" @users))
+  ;; (.log js/console (str "init!" @users-selected))
 
   (mount-components))
