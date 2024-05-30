@@ -2,35 +2,16 @@
 
 ## Unreleased
 - with-let の使い方
-- ERROR: XMLHttpRequest is not defined
-- error Access to /r/ is not authorized を
-  /login にリダイレクトする
-- button.is-primary.is-small でも大きすぎる
-- is-fifth でも大きすぎる。
-- good 送信後の input フィールドのクリア(クリアしない方がいい)
-- hot に時刻表示
-  -> get /users で最近アップデートの時刻をくっつけて持って来れれば可能だが、
-  0.8.3 のソリューションが影響を受ける。やめとこ。
-  -> hkimura が毎日数回以上、レポートページを更新すると、hot にしたときに
-  hkimura より上にある人が前回のチェックの後に更新あった人ってわかる。
-- Goods/graph から各レポートをリンク（リンク先がバレる。嫌がるか？）
 - 再読み込みの後じゃないと good! が出ていかないことがある。
-- reports ページが下に長すぎ。head で切って、more? とかやるか？
-- 誰から誰にをすべて隠して、メッセージ本文だけ時系列で表示する。
-- TDD
-- db/functions の引数
-- warning
-  127 |      [:p (str (.-rep (:date r)) "," (:count r))]))])
-  ---------------------^-----------------------------------------------
-  Cannot infer target type in expression (. (:date r) -rep)
-  型情報を与えてやるのかな？
-- message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
-- Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
-- commons.js:2 Channel: Error in handleResponse UNK/SW_UNREACHABLE broadcastEventToTab clipper_state_changed
-- Error in handleResponse UNK/SW_UNREACHABLE isLogsEnabled
-- Error in handleResponse UNK/SW_UNREACHABLE options getValues
-- Re の表示を短く
-- docker? dev container?
+- dev container?
+- report-pt! - 同人に複数票が入れられる。
+
+
+## v2.5-SNAPSHOT
+### Added
+- db-dumps/create-points.sql (gitignored)
+- core.cljs:student-page and its relatinng functions.
+- services.clj:report-pt!
 
 ## v2.4.558 / 2024-05-30
 ### Added
