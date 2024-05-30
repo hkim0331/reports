@@ -12,8 +12,8 @@
   (:import goog.History))
 
 
-(def ^:private version "v2.4.558")
-(def ^:private now "2024-05-30 10:50:50")
+(def ^:private version "v2.5.570")
+(def ^:private now "2024-05-30 15:32:54")
 
 ;-------------------------------------------
 ; r/atom
