@@ -13,11 +13,17 @@
    #_[cheshire.core :as json])
   (:import goog.History))
 
+(comment
+  js/login
+  js/hp_url
+  js/rp_mode
+  :rcf)
+
 ;; これは？
 ;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
-(def ^:private version "v2.2.544")
-(def ^:private now "2024-05-10 23:55:54")
+(def ^:private version "v2.4.558")
+(def ^:private now "2024-05-30 10:50:50")
 
 ;-------------------------------------------
 ; r/atom
@@ -32,7 +38,9 @@
 
 (defonce uploads-by-date-all (r/atom []))
 (defonce uploads-by-date     (r/atom []))
-;---------------------------------------------
+
+;; -------------------------
+;; Miscellaneous
 
 (defn- wrap-string [^String d] d)
 
@@ -64,6 +72,8 @@
            :name name
            :value value}])
 
+;; -------------------------
+;; navbar
 (defn nav-link [uri title page]
   [:a.navbar-item
    {:href   uri
@@ -273,6 +283,18 @@
                      :else
                      (post-message! js/login u mesg)))}
            "good!"]]]))]))
+;; -------------------------
+;; Exam
+
+(defn exam-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [:div
+      [:h2 "中間試験"]
+      [:ul
+       [:li "試験中は他の人のページを見れません。"]
+       [:li "自分回答は Reports　あるいは Upload の check ボタンから。"]]]]))
 
 ;; -------------------------
 ;; Goods
@@ -284,13 +306,19 @@
         time (subs s 40 48)]
     (str date " " time)))
 
+(defn- shorten
+  "shorten string `s` max `n` chars."
+  ([s] (shorten s 20))
+  ([s n] (let [pat (re-pattern (str "^(.{" n "}).*"))]
+           (str/replace-first s pat "$1..."))))
+
 (defn- reply? [{:keys [snd message]}]
   (when-let [msg (js/prompt "reply?")]
     (if (empty? msg)
       (js/alert "メッセージが空です。")
       (post-message! js/login
                      snd
-                     (str msg "(Re: " message ")")))))
+                     (str msg "(Re: " (shorten message) ")")))))
 
 (defn- abbrev-if-contains-re [s]
   (let [receiver (:rcv s)]
@@ -363,7 +391,8 @@
        [:ul
         [:li "Goods Received に表示される good! には reply で返信できます。"]
         [:li "Not Yet は自分が一度も good! を出してない人。
-            青色は一度以上アップロードした人。黒はまだアップロードしない人。"]]
+            青色は一度以上アップロードした人。黒はまだアップロードしない人。
+              ほぼ、去年の情報リテラシー受講生だな。"]]
        [:div.columns
         [received-column received]
         [sent-column sent]
@@ -444,17 +473,21 @@
     (for [g (sent-goods who)]
       [:li (first g) ", " (second g)])]))
 
-(comment
-  (take 3 @goods)
-  :rcf)
 ;; -------------------------
 ;; Pages
+
+(comment
+  js/login
+
+  :rcf)
 
 (def pages
   {:home   #'home-page
    :about  #'about-page
    :upload #'upload-page
-   :browse #'browse-page
+   :browse (case js/rp_mode
+             "exam" #'exam-page
+             #'browse-page)
    :goods  #'goods-page
    :recv-sent #'recv-sent
    :messages  #'messages
