@@ -31,9 +31,8 @@
 (def ^:private how-many 10)
 (defonce users-selected (r/atom nil))
 
-;; (defonce pt-sent (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
 (defonce pt-sent (r/atom nil))
-(defonce pt-recv (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
+(defonce pt-recv (r/atom nil))
 
 ;; -------------------------
 ;; Miscellaneous
