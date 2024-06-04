@@ -7,7 +7,7 @@
 - colorful buttons.
 
 
-## v2.7-SNAPSHOT
+## v2.7.597 / 2024-06-04
 - added /r/#/secret endpoint for midterm exam.
 
 ## v2.6.591 / 2024-05-31
