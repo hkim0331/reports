@@ -349,7 +349,7 @@
   (fn []
     [:section.section>div.container>div.content
      [:div
-      [:h2 "おめでとう"]
+      [:h2 "おめでとう " js/login " !"]
       [:p "secret は" (-> (md5.core/string->md5-hex js/login)
                          (subs 0 6))]]]))
 
