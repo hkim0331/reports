@@ -1,4 +1,4 @@
-(defproject reports "v2.6.591"
+(defproject reports "v2.7.597"
 
   :description "reports for literacy 2022"
   :url "https://rp.melt.kyutech.ac.jp"
@@ -46,7 +46,8 @@
    [selmer "1.12.59"]
    [thheller/shadow-cljs "2.28.4" :scope "provided"]
                  ;;
-   [hato "0.9.0"]]
+   [hato "0.9.0"]
+   [thedavidmeister/cljc-md5 "0.0.2"]]
   :min-lein-version "2.0.0"
 
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
