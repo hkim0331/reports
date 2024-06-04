@@ -7,6 +7,9 @@
 - colorful buttons.
 
 
+## v2.7.594 / 2024-06-04
+- added /r/#/secret endpoint for midterm exam.
+
 ## v2.6.591 / 2024-05-31
 - Remove users from `users-selected` after rating. By this, it can be avoided to send two or more votes to a user in a session.
 ```

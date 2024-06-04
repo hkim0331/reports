@@ -8,11 +8,13 @@
    [reitit.core :as reitit]
    [reports.ajax :as ajax]
    [goog.events :as events]
-   [goog.history.EventType :as HistoryEventType])
+   [goog.history.EventType :as HistoryEventType]
+   ;
+   md5.core)
   (:import goog.History))
 
-(def ^:private version "v2.6.591")
-(def ^:private now "2024-05-31 00:21:03")
+(def ^:private version "v2.7.594")
+(def ^:private now "2024-06-04 20:08:40")
 
 ;-------------------------------------------
 ; r/atom
@@ -342,6 +344,14 @@
        [:li "試験中は他の人のページを見れません。"]
        [:li "自分回答は Reports あるいは Upload の check ボタンから。"]]]]))
 
+(defn secret-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [:div
+      [:h2 "おめでとう"]
+      [:p "secret は" (-> (md5.core/string->md5-hex js/login)
+                         (subs 0 6))]]]))
 
 ;; -------------------------
 ;; Goods
@@ -510,6 +520,7 @@
 ;; FIXME: does not determine the value of js/rp_mde in compile time.
 (def pages
   {:home   #'home-page
+   :secret #'secret-page
    :about  #'about-page
    :upload #'upload-page
    :browse (case js/rp_mode
@@ -530,6 +541,7 @@
 (def router
   (reitit/router
    [["/" :home]
+    ["/secret" :secret]
     ["/about"  :about]
     ["/upload" :upload]
     ["/browse" :browse]
