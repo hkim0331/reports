@@ -1,7 +1,7 @@
 *.class
 *.jar
 .nrepl-port
-/.calva/repl.calva-repl
+.calva/repl.calva-repl
 /.clj-kondo/cache
 /.env
 /.lein-*
