@@ -7,6 +7,9 @@
 - colorful buttons.
 
 
+## v2.7-SNAPSHOT
+- ABCD 本番開始。 6/18 まで。
+
 ## v2.7.597 / 2024-06-04
 - added /r/#/secret endpoint for midterm exam.
 

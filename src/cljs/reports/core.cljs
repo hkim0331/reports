@@ -125,7 +125,7 @@
         [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
        [:ul
         [:li [:a {:href "#/upload"} "アップロード"]]
-        [:li [:a {:href "#/browse"} "ユーザーページ（コメント送信もここから）"]]
+        [:li [:a {:href "#/browse"} "ユーザーページ（ABCD 準備完了、6/18 23:59 までに）"]]
         [:li [:a {:href "#/goods"}  "自分が出した goods, 自分に届いた goods"]]
         [:li [:a {:href "#/day-by-day"} "日々の goods"]]
         [:li [:a {:href "#/recv-sent"} "誰から誰へ goods が飛んでるか"]]
