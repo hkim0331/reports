@@ -2,36 +2,68 @@
 
 ## Unreleased
 - with-let の使い方
-- ERROR: XMLHttpRequest is not defined
-- error Access to /r/ is not authorized を
-  /login にリダイレクトする
-- button.is-primary.is-small でも大きすぎる
-- is-fifth でも大きすぎる。
-- good 送信後の input フィールドのクリア(クリアしない方がいい)
-- hot に時刻表示
-  -> get /users で最近アップデートの時刻をくっつけて持って来れれば可能だが、
-  0.8.3 のソリューションが影響を受ける。やめとこ。
-  -> hkimura が毎日数回以上、レポートページを更新すると、hot にしたときに
-  hkimura より上にある人が前回のチェックの後に更新あった人ってわかる。
-- Goods/graph から各レポートをリンク（リンク先がバレる。嫌がるか？）
 - 再読み込みの後じゃないと good! が出ていかないことがある。
-- reports ページが下に長すぎ。head で切って、more? とかやるか？
-- 誰から誰にをすべて隠して、メッセージ本文だけ時系列で表示する。
-- TDD
-- db/functions の引数
-- warning
-  127 |      [:p (str (.-rep (:date r)) "," (:count r))]))])
-  ---------------------^-----------------------------------------------
-  Cannot infer target type in expression (. (:date r) -rep)
-  型情報を与えてやるのかな？
-- message バリデーション（同一絵文字の n 回以上連続をフェイルさせる）
-- Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
-- commons.js:2 Channel: Error in handleResponse UNK/SW_UNREACHABLE broadcastEventToTab clipper_state_changed
-- Error in handleResponse UNK/SW_UNREACHABLE isLogsEnabled
-- Error in handleResponse UNK/SW_UNREACHABLE options getValues
-- Re の表示を短く
-- docker? dev container?
+- dev container
+- colorful buttons.
 
+
+## v2.7.606 / 2024-06-12
+- ABCD 本番開始。 6/18 まで。
+
+## v2.7.597 / 2024-06-04
+- added /r/#/secret endpoint for midterm exam.
+
+## v2.6.591 / 2024-05-31
+- Remove users from `users-selected` after rating. By this, it can be avoided to send two or more votes to a user in a session.
+```
+  (swap! users-selected disj to))
+```
+
+- nginx valid_refers server_names は localhost でよい。
+```
+  location / {
+      valid_referers server_names
+          localhost
+          rp.melt.kyutech.ac.jp;
+      if ($invalid_referer) { return 403; }
+      include proxy_params;
+      proxy_pass http://127.0.0.1:8080;
+  }
+```
+- target="_blank" しないとだめ。
+
+
+## v2.6.580 / 2024-05-30
+### Added
+- update button to `points received`.
+### Changed
+- radio to buttons
+
+## v2.6.578 / 2024-05-30
+### Added
+- prod only wrap-restricted
+```
+  :middleware [(if (:dev env) identity middleware/wrap-restricted)
+  ...
+```
+- points sent
+
+
+## v2.5.570 / 2024-05-30
+### Added
+- db-dumps/create-points.sql (gitignored)
+- core.cljs:student-page and its relatinng functions.
+- services.clj:report-pt!
+
+## v2.4.558 / 2024-05-30
+### Added
+- `make node_modules`
+- `hp-server.sh` - start python http server to show received reports.
+### Fixed
+- `home.clj/home-page` - add {:mode (:mode env)} to params.
+- `home.html` - var mode = "{{mode}}";
+- `layout.clj/render` -  (println "layout/redder params" params)
+- `start-local.sh` - export RP_MODE="exam"
 
 ## v2.3.546 / 2024-05-20
 ### Added

@@ -3,35 +3,38 @@
    [ajax.core :refer [GET POST]]
    [clojure.string :as str]
    [clojure.set :refer [difference]]
-   #_[markdown.core :refer [md->html]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
    [reitit.core :as reitit]
    [reports.ajax :as ajax]
    [goog.events :as events]
    [goog.history.EventType :as HistoryEventType]
-   #_[cheshire.core :as json])
+   ;
+   md5.core)
   (:import goog.History))
 
-;; これは？
-;; (set! js/XMLHttpRequest (nodejs/require "xhr2"))
-
-(def ^:private version "v2.3.546")
-(def ^:private now "2024-05-20 10:51:18")
+(def ^:private version "v2.7.606")
+(def ^:private now "2024-06-12 14:09:53")
 
 ;-------------------------------------------
 ; r/atom
-(defonce session   (r/atom {:page :home}))
-(defonce users     (r/atom []))
 (defonce goods     (r/atom []))
-(defonce users-all (r/atom []))
+(defonce session   (r/atom {:page :home}))
 (defonce titles    (r/atom {}))
+(defonce users     (r/atom []))
+(defonce users-all (r/atom []))
 
 (defonce random?    (r/atom false))
 (defonce type-count (r/atom 0))
 
 (defonce uploads-by-date-all (r/atom []))
 (defonce uploads-by-date     (r/atom []))
+
+(def ^:private how-many 10)
+(defonce users-selected (r/atom nil))
+
+(defonce pt-sent (r/atom nil))
+(defonce pt-recv (r/atom nil))
 
 ;; -------------------------
 ;; Miscellaneous
@@ -68,6 +71,7 @@
 
 ;; -------------------------
 ;; navbar
+
 (defn nav-link [uri title page]
   [:a.navbar-item
    {:href   uri
@@ -121,7 +125,7 @@
         [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
        [:ul
         [:li [:a {:href "#/upload"} "アップロード"]]
-        [:li [:a {:href "#/browse"} "ユーザーページ（コメント送信もここから）"]]
+        [:li [:a {:href "#/browse"} "ユーザーページ（ABCD 準備完了、6/18 23:59 までに）"]]
         [:li [:a {:href "#/goods"}  "自分が出した goods, 自分に届いた goods"]]
         [:li [:a {:href "#/day-by-day"} "日々の goods"]]
         [:li [:a {:href "#/recv-sent"} "誰から誰へ goods が飛んでるか"]]
@@ -199,7 +203,8 @@
      [uploaded-column]]))
 
 ;; -------------------------
-;; Browse
+;; Browse & Comments
+
 (def ^:private filters {true shuffle false identity})
 
 ;; mesg must have `min-mesg` length.
@@ -216,14 +221,6 @@
                        (js/alert "送信失敗。時間をおいて再送信してください。")
                        (.log js/console (str %)))}))
 
-;; (defn send-message! [recv mesg]
-;;   (cond (< (count mesg) min-mesg)
-;;         (js/alert (str "メッセージは " min-mesg " 文字以上です。"))
-;;         (= recv js/login)
-;;         (js/alert "自分自身へのメッセージは送れません。")
-;;         :else
-;;         (post-message! js/login recv mesg)))
-
 (defn- browse-comments
   []
   [:div
@@ -232,9 +229,7 @@
     [:li "現在までのアップロードは " (str (count @users)) "人。"]
     [:li "新しいアップロードほど上。random を選ぶと順番がバラバラになる。"]
     [:li "ホームページのプログラム内容に関係するコメント、質問、回答が
-            ボコボコ交換されるのを期待してます。"]
-    #_[:li "2022のレポートで A つけたようなの、思い出して拾ってみました → "
-       [:a {:href "https://hp.melt.kyutech.ac.jp/2022/"} "2022"]]]])
+            ボコボコ交換されるのを期待してます。"]]])
 
 (defn browse-page
   []
@@ -279,9 +274,87 @@
            "good!"]]]))]))
 
 ;; -------------------------
+;; Student Page
+
+(defn- send-report-point!
+  [from to pt]
+  (POST "/api/report-pt"
+    {:headers {"x-csrf-field" js/csrfToken}
+     :params {:from from
+              :to to
+              :pt pt}
+     ;; :handler #(js/alert (str "send " from "->" to ": " pt))
+     :handler #(swap! pt-sent update pt inc)
+     :error-handler #(js/alert "送信失敗。時間をおいて再送信してください。")}))
+
+(defn- send-students-pt
+  ;; no use opt if use (random-uuid)
+  [from to pt opt]
+  [:button.button
+   {:on-click #(do
+                 (send-report-point! from to pt)
+                 ;; remove to from @users-selected
+                 (swap! users-selected disj to))
+    :key (random-uuid)} pt])
+
+(defn students-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [:div.columns
+      [:div.column
+       [:h3 "please send your pt"]
+       (doall
+        (for [[i u] (map-indexed vector @users-selected)]
+          [:div.columns {:key i}
+           [:div.column
+            [:a {:href (report-url u)
+                 :class "other"
+                 :target "_blank"}
+             u]
+            " "
+            (get @titles u)]
+           [:div.column
+            (for [[i p] (map-indexed vector ["A" "B" "C" "D"])]
+              (send-students-pt js/login u p {:key i}))]]))]
+      [:div.column
+       [:h3 "points sent"]
+       [:p (str (sort @pt-sent))]
+       [:br]
+       [:h3 "points received"]
+       [:p (str (sort @pt-recv))]
+       [:button.button.
+        {:on-click
+         (fn [e]
+           (GET (str "/api/points-to/" js/login)
+             {:handler #(reset! pt-recv %)
+              :error-handler #(js/alert "can not set pt-recv")}))}
+        "update"]]]]))
+
+;; -------------------------
+;; Exam Page
+(defn exam-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [:div
+      [:h2 "中間試験"]
+      [:ul
+       [:li "試験中は他の人のページを見れません。"]
+       [:li "自分回答は Reports あるいは Upload の check ボタンから。"]]]]))
+
+(defn secret-page
+  []
+  (fn []
+    [:section.section>div.container>div.content
+     [:div
+      [:h2 "おめでとう " js/login " !"]
+      [:p "secret は" (-> (md5.core/string->md5-hex js/login)
+                         (subs 0 6))]]]))
+
+;; -------------------------
 ;; Goods
 
-;; FIXME, dirty
 (defn- time-format [time]
   (let [s (str time)
         date (subs s 28 39)
@@ -312,18 +385,10 @@
   (->> @goods
        (filterv #(= js/login (f %)))))
 
-(comment
-  (count (filter-goods-by :snd))
-  (first (filter-goods-by :snd))
-  (apply max (map :id @goods))
-  (filter #(< 3050 (:id %)) @goods)
-  :rcf)
-
 (defn- received-column
   [received]
   [:div.column
    [:h2 "Goods Received (" (count received) ")"]
-   ;;(for [[id g] (map-indexed vector received)]
    (doall
     (for [g received]
       [:p {:key (str "r" (:id g))}
@@ -339,7 +404,6 @@
   [sent]
   [:div.column
    [:h2 "Goods Sent (" (count sent) ")"]
-   ;;(for [[id s] (map-indexed vector sent)]
    (doall
     (for [s sent]
       [:p {:key (str "g" (:id s))}
@@ -398,10 +462,6 @@
   []
   [:section.section>div.container>div.content
    [:h2 "Goods (Reveived → Who → Sent)"]
-   #_[:p "ログイン名、希望により伏せ字なんだが、どうですか？
-        人気のページがどんなページか見たくない？
-        たくさん good! をつけてくれる優しいお兄さんお姉さんのページ、見たくない？
-        そういうの、刺激になると思うんだけどなあ。"]
    [:p "全 " (count @goods) " goods"]
    (let [snd (goods-f :snd)
          rcv (goods-f :rcv)
@@ -422,8 +482,6 @@
             ;;   (abbrev name))
             " → " s]))))])
 
-
-;; 他人から他人へのメッセージを覗き見するのはすけべよね。やめとくか。
 (defn messages []
   [:section.section>div.container>div.content
    [:h2 "Goods (Messages)"]
@@ -455,17 +513,19 @@
     (for [g (sent-goods who)]
       [:li (first g) ", " (second g)])]))
 
-(comment
-  (take 3 @goods)
-  :rcf)
 ;; -------------------------
 ;; Pages
 
+;; FIXME: does not determine the value of js/rp_mde in compile time.
 (def pages
   {:home   #'home-page
+   :secret #'secret-page
    :about  #'about-page
    :upload #'upload-page
-   :browse #'browse-page
+   :browse (case js/rp_mode
+             "exam" #'exam-page
+             "student" #'students-page
+             #'browse-page)
    :goods  #'goods-page
    :recv-sent #'recv-sent
    :messages  #'messages
@@ -480,6 +540,7 @@
 (def router
   (reitit/router
    [["/" :home]
+    ["/secret" :secret]
     ["/about"  :about]
     ["/upload" :upload]
     ["/browse" :browse]
@@ -515,7 +576,10 @@
 
 (defn- reset-users! []
   (GET "/api/users"
-    {:handler #(reset! users %)}
+    {:handler #(do
+                 (reset! users %)
+                 (reset! users-selected
+                         (apply sorted-set (take how-many (shuffle @users)))))}
     {:error-handler #(.log js/console "error:" %)}))
 
 (defn- reset-goods! []
@@ -553,23 +617,26 @@
     {:handler #(reset! uploads-by-date (coerce-date-count %))
      :error-handler #(.log js/console "reset-records-login! error:" %)}))
 
-(comment
-  (GET "/api/record/nobody"
-    {:handler #(js/alert (coerce-date-count %))})
-  ; => null
-  :rcf)
 ;----------------------------------------------------------------
 
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
 
+
   (reset-users!)
   (reset-goods!)
   (reset-titles!)
   (reset-users-all!)
-
   (reset-uploads-by-date-all!)
   (reset-uploads-by-date! js/login)
+
+  (GET (str "/api/points-from/" js/login)
+    {:handler #(reset! pt-sent %)
+     :error-handler #(js/alert "can not set pt-sent")})
+
+  (GET (str "/api/points-to/" js/login)
+    {:handler #(reset! pt-recv %)
+     :error-handler #(js/alert "can not set pt-recv")})
 
   (mount-components))

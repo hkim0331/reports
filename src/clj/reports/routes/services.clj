@@ -17,8 +17,6 @@
       (str public "/" login)
       (str public "/" login "/" subdir))))
 
-;; (defn mkdir-p [dir]
-;;   (sh "mkdir" "-p" dir))
 
 (defn find-title
   "テキストファイル f 中の <title> ~ </title> に挟まれる文字列を返す。
@@ -30,9 +28,9 @@
     (catch Exception _ nil)))
 
 (defn upsert! [login title]
- (if-let [_ (db/find-title {:login login})]
-   (db/update-title! {:login login :title title})
-   (db/insert-title! {:login login :title title})))
+  (if-let [_ (db/find-title {:login login})]
+    (db/update-title! {:login login :title title})
+    (db/insert-title! {:login login :title title})))
 
 (defn upload!
   "受け取った multiplart-params を login/{type}/filename にセーブする。
@@ -106,8 +104,23 @@
   (log/debug "record-login login" login)
   (response/ok (db/record {:login login})))
 
+(defn report-pt! [{params :body-params}]
+  (log/debug "params:" params)
+  (response/ok (db/insert-point params)))
+
+(defn- to-map
+  "[{:pt p, :count c}...] => {:p :c, ...}"
+  [a]
+  (apply merge (map (fn [m] {(:pt m), (:count m)}) a)))
+
+(defn points-from [{{:keys [login]} :path-params}]
+  (response/ok (-> (db/points-from {:login login}) to-map)))
+
+(defn points-to [{{:keys [login]} :path-params}]
+  (response/ok (-> (db/points-to {:login login}) to-map)))
+
 (defn services-routes []
-  ["/api" {:middleware [middleware/wrap-restricted
+  ["/api" {:middleware [(if (:dev env) identity middleware/wrap-restricted)
                         middleware/wrap-csrf
                         middleware/wrap-formats]}
    ["/upload" {:post upload!}]
@@ -116,4 +129,7 @@
    ["/goods"  {:get goods}]
    ["/titles" {:get titles}]
    ["/records" {:get records-all}]
-   ["/record/:login" {:get record-login}]])
+   ["/record/:login" {:get record-login}]
+   ["/report-pt" {:post report-pt!}]
+   ["/points-from/:login" {:get points-from}]
+   ["/points-to/:login" {:get points-to}]])
