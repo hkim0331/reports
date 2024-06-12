@@ -1,7 +1,7 @@
 *.class
 *.jar
 .nrepl-port
-/.calva/output-window
+/.calva/repl.calva-repl
 /.clj-kondo/cache
 /.env
 /.lein-*
@@ -21,4 +21,3 @@ test-config.edn
 /db-dumps/*
 !/db-dumps/*.sh
 /db-dumps/2023
-
