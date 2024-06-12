@@ -13,8 +13,8 @@
    md5.core)
   (:import goog.History))
 
-(def ^:private version "v2.7.614")
-(def ^:private now "2024-06-12 14:15:59")
+(def ^:private version "v2.8.621")
+(def ^:private now "2024-06-12 22:49:28")
 
 ;-------------------------------------------
 ; r/atom

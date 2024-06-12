@@ -708,3 +708,25 @@ nil
 clj꞉reports.points꞉> 
 nil
 clj꞉reports.points꞉> 
+; [:app] Compiling ...
+; [:test] Compiling ...
+; ========= Running Tests =======================
+; [:app] Build completed. (268 files, 2 compiled, 0 warnings, 0.50s)
+; SHADOW import error /Users/hkim/workspace/reports/.shadow-cljs/builds/test/dev/out/cljs-runtime/reports.core.js
+;
+; /Users/hkim/workspace/reports/target/test/test.js:64
+;   /* ignore this, look at stacktrace */ fn.call(global, require, module, __filename, __dirname);
+;                                            ^
+; ReferenceError: rp_mode is not defined
+;     at /Users/hkim/workspace/reports/.shadow-cljs/builds/test/dev/out/cljs-runtime/reports/core.cljs:525:18
+;     at /Users/hkim/workspace/reports/.shadow-cljs/builds/test/dev/out/cljs-runtime/reports.core.js:930:3
+;     at global.SHADOW_IMPORT (/Users/hkim/workspace/reports/target/test/test.js:64:44)
+;     at /Users/hkim/workspace/reports/target/test/test.js:1563:1
+;     at Object.<anonymous> (/Users/hkim/workspace/reports/target/test/test.js:1569:3)
+;     at Module._compile (node:internal/modules/cjs/loader:1434:14)
+;     at Object.Module._extensions..js (node:internal/modules/cjs/loader:1518:10)
+;     at Module.load (node:internal/modules/cjs/loader:1249:32)
+;     at Function.Module._load (node:internal/modules/cjs/loader:1065:12)
+;     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:158:12)
+; ===============================================
+; [:test] Build completed. (200 files, 3 compiled, 0 warnings, 0.71s)

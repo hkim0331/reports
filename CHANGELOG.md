@@ -6,7 +6,7 @@
 - dev container
 - colorful buttons.
 
-## v2.8-SNAPSHOT
+## v2.8.621 / 2024-06-12
 alias login accounts.
 ### Added
 - reports/points.clj - read points from reports.points, export them to
