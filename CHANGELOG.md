@@ -6,6 +6,9 @@
 - dev container
 - colorful buttons.
 
+## v2.7.614 / 2024-06-12
+- did not reflect version tag. do release again.
+
 
 ## v2.7.606 / 2024-06-12
 - ABCD 本番開始。 6/18 まで。
