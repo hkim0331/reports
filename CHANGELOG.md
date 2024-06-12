@@ -6,7 +6,7 @@
 - dev container
 - colorful buttons.
 
-## v2.7-SNAPSHOT
+## v2.7.614 / 2024-06-12
 - did not reflect version tag. do release again.
 
 
