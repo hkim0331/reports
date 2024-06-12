@@ -21,3 +21,5 @@ test-config.edn
 /db-dumps/*
 !/db-dumps/*.sh
 /db-dumps/2023
+/data/*
+!/data/.keep
