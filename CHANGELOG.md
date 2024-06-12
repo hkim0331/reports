@@ -6,12 +6,24 @@
 - dev container
 - colorful buttons.
 
+## v2.8.621 / 2024-06-12
+alias login accounts.
+### Added
+- reports/points.clj - read points from reports.points, export them to
+  `data/points.edn` and `data/points.csv` converted login to md5 aliases.
+
+## v2.7.614 / 2024-06-12
+- did not reflect version tag. do release again.
+
+## v2.7.606 / 2024-06-12
+- ABCD 本番開始。 6/18 まで。
 
 ## v2.7.597 / 2024-06-04
 - added /r/#/secret endpoint for midterm exam.
 
 ## v2.6.591 / 2024-05-31
-- Remove users from `users-selected` after rating. By this, it can be avoided to send two or more votes to a user in a session.
+- Remove users from `users-selected` after rating. By this,
+it can be avoided to send two or more votes to a user in a session.
 ```
   (swap! users-selected disj to))
 ```

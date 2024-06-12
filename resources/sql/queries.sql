@@ -82,7 +82,7 @@ WHERE login = :login
 GROUP BY DATE(uploaded_at) ORDER BY DATE(uploaded_at)
 
 ----------------------------
--- reports
+-- points
 ----------------------------
 
 -- :name insert-point :! :1
@@ -103,3 +103,7 @@ group by pt;
 select pt, count(pt) from points
 where to_user = :login
 group by pt;
+
+-- :name points :? :*
+-- :doc select all points
+select * from points;

@@ -13,8 +13,8 @@
    md5.core)
   (:import goog.History))
 
-(def ^:private version "v2.7.597")
-(def ^:private now "2024-06-04 20:31:38")
+(def ^:private version "v2.8.621")
+(def ^:private now "2024-06-12 22:49:28")
 
 ;-------------------------------------------
 ; r/atom
@@ -33,9 +33,8 @@
 (def ^:private how-many 10)
 (defonce users-selected (r/atom nil))
 
-;; (defonce pt-sent (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
 (defonce pt-sent (r/atom nil))
-(defonce pt-recv (r/atom {"A" 0, "B" 0, "C" 0, "D", 0}))
+(defonce pt-recv (r/atom nil))
 
 ;; -------------------------
 ;; Miscellaneous
@@ -126,7 +125,7 @@
         [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
        [:ul
         [:li [:a {:href "#/upload"} "アップロード"]]
-        [:li [:a {:href "#/browse"} "ユーザーページ（コメント送信もここから）"]]
+        [:li [:a {:href "#/browse"} "ユーザーページ（ABCD 準備完了、6/18 23:59 までに）"]]
         [:li [:a {:href "#/goods"}  "自分が出した goods, 自分に届いた goods"]]
         [:li [:a {:href "#/day-by-day"} "日々の goods"]]
         [:li [:a {:href "#/recv-sent"} "誰から誰へ goods が飛んでるか"]]
