@@ -1,11 +1,11 @@
 *.class
 *.jar
-.nrepl-port
+/.nrepl-port
 /.calva/repl.calva-repl
-/.clj-kondo/cache
+/.clj-kondo/.cache
 /.env
 /.lein-*
-/.lsp/cache
+/.lsp/.cache
 /.shadow-cljs
 /checkouts
 /classes
