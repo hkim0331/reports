@@ -8,6 +8,8 @@
 
 ## v2.8-SNAPSHOT
 alias login accounts.
+I shall return.
+
 ### Added
 - reports/points.clj - read points from reports.points, export them to
   `data/points.edn` and `data/points.csv` converted login to md5 aliases.
