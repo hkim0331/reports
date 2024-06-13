@@ -42,4 +42,16 @@
   (filter #(and (= (:from_user %) (:to_user %)) (= "A" (:pt %)))
           users)
 
+  (count users)
+  (->> users
+       (map :from_user)
+       set
+       count)
+
+  (->> (map :from_user users)
+       sort
+       (group-by identity)
+       (map #(list (key %) (count (val %)))))
+
+
   :rcf)
