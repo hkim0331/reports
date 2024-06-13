@@ -36,4 +36,10 @@
 (comment
   (make-edn "data/point.edn")
   (make-csv "data/points.csv")
+
+  ;; 2024-06-13
+  (count users) ; => 1104
+  (filter #(and (= (:from_user %) (:to_user %)) (= "A" (:pt %)))
+          users)
+
   :rcf)
