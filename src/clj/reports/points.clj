@@ -23,7 +23,8 @@
 (defn- make-csv [outfile]
   (spit outfile
         (apply str
-               (for [{:keys [id from_user to_user pt timestamp]} users]
+               (for [{:keys [id from_user to_user pt timestamp]}
+                     (sort-by :id users)]
                  (str (apply str
                              (interpose ","
                                         [id
