@@ -13,8 +13,8 @@
    md5.core)
   (:import goog.History))
 
-(def ^:private version "v2.7.614")
-(def ^:private now "2024-06-12 14:15:59")
+(def ^:private version "v2.9-SNAPSHOT")
+(def ^:private now "2024-07-29 11:19:52")
 
 ;-------------------------------------------
 ; r/atom
@@ -123,7 +123,7 @@
        [:p "作成途中を評価するレポート。〆切際のやっつけサイトは点数低い。"]
        [:p "自分レポート => "
         [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
-       [:ul
+       #_[:ul
         [:li [:a {:href "#/upload"} "アップロード"]]
         [:li [:a {:href "#/browse"} "ユーザーページ（ABCD 準備完了、6/18 23:59 までに）"]]
         [:li [:a {:href "#/goods"}  "自分が出した goods, 自分に届いた goods"]]

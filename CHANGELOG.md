@@ -6,7 +6,7 @@
 - dev container
 - colorful buttons.
 
-## v2.9-SNAPSHOT
+## v2.9-SNAPSHOT / 2024-07-29
 for endterm exam.
 - compile, macroexpanding error occurred
 ```
@@ -14,10 +14,30 @@ for endterm exam.
 ;; (def ^:private users (db/points))
 (defn users [] (db/points))
 ```
-- `JAVA_HOME= ... lein uberjar` does not make it.
+- `JAVA_HOME= ... lein uberjar` does not change the JVM used in compilation.
+
+- Outdated libraries. bulma 1.0.1 works?
+```
+% clj -Tantq outdated
+```
+| :file       | :name                      | :current | :latest    |
+|------------ | -------------------------- | -------- | -----------|
+| project.clj | buddy/buddy-core           | 1.11.423 | 1.12.0-430 |
+|             | buddy/buddy-sign           | 3.5.351  | 3.6.1-359  |
+|             | cider/cider-nrepl          | 0.47.1   | 0.49.2     |
+|             | hato/hato                  | 0.9.0    | 1.0.0      |
+|             | jonase/eastwood            | 1.4.2    | 1.4.3      |
+|             | metosin/reitit             | 0.7.0    | 0.7.1      |
+|             | metosin/ring-http-response | 0.9.3    | 0.9.4      |
+|             | nrepl/nrepl                | 1.1.1    | 1.2.0      |
+|             | org.webjars.npm/bulma      | 0.9.4    | 1.0.1      |
+|             | ring/ring-core             | 1.12.1   | 1.12.2     |
+|             | ring/ring-devel            | 1.12.1   | 1.12.2     |
+|             | selmer/selmer              | 1.12.59  | 1.12.61    |
+|             | thheller/shadow-cljs       | 2.28.4   | 2.28.11    |
 
 
-## v2.8-SNAPSHOT
+## v2.9-SNAPSHOT / 2024-07-29
 alias login accounts.
 I shall return.
 ### Added
