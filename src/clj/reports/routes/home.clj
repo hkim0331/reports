@@ -11,13 +11,12 @@
 
 (defn home-page [request]
   (if-let [login (get-in request [:session :identity])]
-    (layout/render [request] "home.html" {:login  (name login) ;; string
-                                          :hp-url (:hp-url env)
-                                          :rp-mode (:rp-mode env)})
-    (layout/render [request]
+    (layout/render request "home.html" {:login  (name login) ;; string
+                                        :hp-url (:hp-url env)
+                                        :rp-mode (:rp-mode env)})
+    (layout/render request
                    "error.html"
-                   {:flash (:frash request)})))
-
+                   {:flash (:flash request)})))
 
 ;; ex1 answers.md
 ;; ex2 ex2-python.md
@@ -29,6 +28,7 @@
     (content-type
      (ok (md-to-html-string (slurp path)))
      "text/html")))
+
 
 (defn home-routes []
   ["/r" {:middleware [middleware/wrap-restricted

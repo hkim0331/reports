@@ -1,11 +1,11 @@
 *.class
 *.jar
-.nrepl-port
-/.calva/output-window
-/.clj-kondo/cache
+/.nrepl-port
+/.calva/repl.calva-repl
+/.clj-kondo/.cache
 /.env
 /.lein-*
-/.lsp/cache
+/.lsp/.cache
 /.shadow-cljs
 /checkouts
 /classes
@@ -21,4 +21,5 @@ test-config.edn
 /db-dumps/*
 !/db-dumps/*.sh
 /db-dumps/2023
-
+/data/*
+!/data/.keep

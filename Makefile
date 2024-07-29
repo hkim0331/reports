@@ -12,6 +12,7 @@ clean:
 	${RM} -r target
 
 uberjar: clean
+	# JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.12/libexec/openjdk.jdk/Contents/Home lein uberjar
 	lein uberjar
 
 deploy: uberjar

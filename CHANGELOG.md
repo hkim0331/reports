@@ -6,9 +6,48 @@
 - dev container
 - colorful buttons.
 
+## v2.9.636 / 2024-07-29 / endterm
+endterm exam.
+- navbar is not displayed when width of browser is too narrow.
+-> place a link to upload page in body.
+- simplify navbar.
+- compile, macroexpanding error occurred
+```
+;; compile error
+;; (def ^:private users (db/points))
+(defn users [] (db/points))
+```
+- `JAVA_HOME= ... lein uberjar` does not work.
+- Outdated libraries have not yet upgraded. bulma 1.0.1 works?
+```
+% clj -Tantq outdated
+```
+| :file       | :name                      | :current | :latest    |
+|------------ | -------------------------- | -------- | -----------|
+| project.clj | buddy/buddy-core           | 1.11.423 | 1.12.0-430 |
+|             | buddy/buddy-sign           | 3.5.351  | 3.6.1-359  |
+|             | cider/cider-nrepl          | 0.47.1   | 0.49.2     |
+|             | hato/hato                  | 0.9.0    | 1.0.0      |
+|             | jonase/eastwood            | 1.4.2    | 1.4.3      |
+|             | metosin/reitit             | 0.7.0    | 0.7.1      |
+|             | metosin/ring-http-response | 0.9.3    | 0.9.4      |
+|             | nrepl/nrepl                | 1.1.1    | 1.2.0      |
+|             | org.webjars.npm/bulma      | 0.9.4    | 1.0.1      |
+|             | ring/ring-core             | 1.12.1   | 1.12.2     |
+|             | ring/ring-devel            | 1.12.1   | 1.12.2     |
+|             | selmer/selmer              | 1.12.59  | 1.12.61    |
+|             | thheller/shadow-cljs       | 2.28.4   | 2.28.11    |
+
+
+## v2.9.636 / 2024-07-29
+alias login accounts.
+I shall return.
+### Added
+- reports/points.clj - read points from reports.points, export them to
+  `data/points.edn` and `data/points.csv` converted login to md5 aliases.
+
 ## v2.7.614 / 2024-06-12
 - did not reflect version tag. do release again.
-
 
 ## v2.7.606 / 2024-06-12
 - ABCD 本番開始。 6/18 まで。
@@ -17,7 +56,8 @@
 - added /r/#/secret endpoint for midterm exam.
 
 ## v2.6.591 / 2024-05-31
-- Remove users from `users-selected` after rating. By this, it can be avoided to send two or more votes to a user in a session.
+- Remove users from `users-selected` after rating. By this,
+it can be avoided to send two or more votes to a user in a session.
 ```
   (swap! users-selected disj to))
 ```

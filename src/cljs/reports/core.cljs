@@ -13,8 +13,8 @@
    md5.core)
   (:import goog.History))
 
-(def ^:private version "v2.7.614")
-(def ^:private now "2024-06-12 14:15:59")
+(def ^:private version "v2.9.636")
+(def ^:private now "2024-07-29 14:43:12")
 
 ;-------------------------------------------
 ; r/atom
@@ -93,9 +93,9 @@
       [:div.navbar-start
        ;;[nav-link "#/" "Home" :home]
        [nav-link "#/upload" "Upload"]
-       [nav-link "#/browse" "Browse"]
-       [nav-link "#/goods"  "Goods"]
-       [nav-link "/login"   "Login"]
+       #_[nav-link "#/browse" "Browse"]
+       #_[nav-link "#/goods"  "Goods"]
+       #_[nav-link "/login"   "Login"]
        [nav-link "/logout"  "Logout"]
        [nav-link "#/about"  "About" :about]]]]))
 
@@ -120,10 +120,14 @@
     (let [name js/login
           url (str js/hp_url name)]
       [:section.section>div.container>div.content
-       [:p "作成途中を評価するレポート。〆切際のやっつけサイトは点数低い。"]
-       [:p "自分レポート => "
+       [:p "endterm.zip から取り出した endterm.md に回答を上書き、アップロードする。 => "
+        [:a.button.buttin.is-danger.is-small {:href "/r/#/upload"} "回答"]]
+       #_[:p "レポートは作成途中とCSSが評価点。〆切際のやっつけサイトは点数低い。"]
+       #_[:p "自分レポート => "
         [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
-       [:ul
+       [:p "期末テスト回答（ちゃんとマークダウンできたか） => "
+        [:a.button.buttun.is-warning.is-small {:href "/api/md"} "チェック"]]
+       #_[:ul
         [:li [:a {:href "#/upload"} "アップロード"]]
         [:li [:a {:href "#/browse"} "ユーザーページ（ABCD 準備完了、6/18 23:59 までに）"]]
         [:li [:a {:href "#/goods"}  "自分が出した goods, 自分に届いた goods"]]
@@ -150,24 +154,30 @@
     [:div.column.is-one-fifth s1]
     [:div.column s2 [:input
                      (merge {:type "file" :name "upload"} accept)]]
-    [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
+    #_[:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]
+    [:div.column [:button.button.is-danger.is-small {:type "submit"} "up"]]]])
 
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
     [:div
-     [:h2 "Upload"]
+     [:h2 (str "Upload " js/login)]
+     [:p "上書きした endterm.md のセーブを確認後、up すること。"]
      [:div
-      [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
-      [upload-column "" "/css/ " "css" {:accept "text/css"}]
-      [upload-column "" "/images/ " "images" {:accept "image/*"}]
-      [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
-      [upload-column "" "/sounds/" "sounds" {:accept "audio/mp3"}]
-      [upload-column "" "/js/ " "js" {:accept "text/javascript"}]
-      [upload-column "" "zip " "zip" {:accept "application/zip"}]
+      ;;             loigin placeholder type accept
+      ;; [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
+      ;; [upload-column "" "/css/ " "css" {:accept "text/css"}]
+      ;; [upload-column "" "/images/ " "images" {:accept "image/*"}]
+      ;; [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
+      ;; [upload-column "" "/sounds/" "sounds" {:accept "audio/mp3"}]
+      ;; [upload-column "" "/js/ " "js" {:accept "text/javascript"}]
+      ;; [upload-column "" "zip " "zip" {:accept "application/zip"}]
       [upload-column "" "md "  "md"   {:accept "text/markdown"}]]
-     [:div "check your uploads => "
+     #_[:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
-     [:ul
+     [:div "check your markdown =>"
+      [:a.button.button.is-warning.is-small {:href "/api/md"} "endterm.md"]]
+
+     #_[:ul
       [:li "アップロードはファイルひとつずつ。フォルダはアップロードできない。"]
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書き。"]
@@ -200,7 +210,7 @@
     [:section.section>div.container>div.content
      [upload-columns]
      [:br]
-     [uploaded-column]]))
+     #_[uploaded-column]]))
 
 ;; -------------------------
 ;; Browse & Comments
@@ -622,7 +632,6 @@
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
-
 
   (reset-users!)
   (reset-goods!)
