@@ -2,22 +2,22 @@
   (:require
    [clojure.java.io :as io]
    [clojure.java.shell :refer [sh]]
+   [clojure.string :as str]
    [clojure.tools.logging :as log]
+   ;; [hato.client :as hc]
+   [markdown.core :refer [md-to-html-string]]
    [reports.config :refer [env]]
    [reports.db.core :as db]
    [reports.layout :as layout]
    [reports.middleware :as middleware]
-   [ring.util.response]
-   [ring.util.http-response :as response]))
+   ;; [ring.util.response] ;; from ring
+   [ring.util.http-response :refer [content-type ok] :as response]))
 
 (defn dest-dir [login subdir]
   (let [public (:upload-to env)]
     (if (= subdir "html")
       (str public "/" login)
       (str public "/" login "/" subdir))))
-
-;; (defn mkdir-p [dir]
-;;   (sh "mkdir" "-p" dir))
 
 (defn find-title
   "テキストファイル f 中の <title> ~ </title> に挟まれる文字列を返す。
@@ -29,9 +29,9 @@
     (catch Exception _ nil)))
 
 (defn upsert! [login title]
- (if-let [_ (db/find-title {:login login})]
-   (db/update-title! {:login login :title title})
-   (db/insert-title! {:login login :title title})))
+  (if-let [_ (db/find-title {:login login})]
+    (db/update-title! {:login login :title title})
+    (db/insert-title! {:login login :title title})))
 
 (defn upload!
   "受け取った multiplart-params を login/{type}/filename にセーブする。
@@ -40,17 +40,17 @@
   (let [{:keys [filename tempfile size]} upload
         dir (dest-dir login type)
         dest (io/file dir filename)]
-    ;; (log/info "dir:" dir "dest:" dest)
     (try
       (when (empty? filename)
         (throw (Exception. "choose a file to upload.")))
       (sh "mkdir" "-p" dir)
-      ;; (log/info login type filename size dir tempfile)
       (log/info login type filename size dir)
       (when (zero? size)
         (throw (Exception. "size is 0")))
-      ;; (when (zero? (count (slurp tempfile)))
-      ;;   (throw (Exception. "file length is 0")))
+       ;; 2023-08-23 md ファイル以下には md だけ
+      (when (= type "md")
+        (when-not (str/ends-with? filename ".md")
+          (throw (Exception. "*.md only"))))
       (io/copy tempfile dest)
       (when (zero? (count (slurp dest)))
         (throw (Exception. "saved file length is 0")))
@@ -64,7 +64,9 @@
       ;; {:status 200
       ;;  :headers {"content-type" "text/html"}
       ;;  :body "upload success (exam mode)"}
-
+      ;;
+      ;; endterm, 2024-07-31.
+      (response/found "https://rp.melt.kyutech.ac.jp/r/#/")
       (catch Exception e
         (let [message (.getMessage e)]
           (log/error "upload! error:" login message)
@@ -98,14 +100,50 @@
   (log/debug "record-login login" login)
   (response/ok (db/record {:login login})))
 
+(defn report-pt! [{params :body-params}]
+  (log/debug "params:" params)
+  (response/ok (db/insert-point params)))
+
+(defn- to-map
+  "[{:pt p, :count c}...] => {:p :c, ...}"
+  [a]
+  (apply merge (map (fn [m] {(:pt m), (:count m)}) a)))
+
+(defn points-from [{{:keys [login]} :path-params}]
+  (response/ok (-> (db/points-from {:login login}) to-map)))
+
+(defn points-to [{{:keys [login]} :path-params}]
+  (response/ok (-> (db/points-to {:login login}) to-map)))
+
+
+(defn markdown-path [path]
+  (md-to-html-string (slurp path)))
+
+(defn md [request]
+  (if-let [login (get-in request [:session :identity])]
+    (let [url (str (:hp-url env) (name login) "/md/endterm.md")
+          path (str "public/" (name login) "/md/endterm.md")]
+      (if (.exists (io/file path))
+        (content-type (ok (markdown-path path)) "text/html")
+        (layout/error-page {:stats 404
+                            :title "not found endterm.md"
+                            :message "endterm.md is not uploaded yet."})))
+    (layout/error-page {:status 404
+                        :title "not login"
+                        :messsage "you need to login."})))
+
 (defn services-routes []
-  ["/api" {:middleware [middleware/wrap-restricted
+  ["/api" {:middleware [(if (:dev env) identity middleware/wrap-restricted)
                         middleware/wrap-csrf
                         middleware/wrap-formats]}
+   ["/md" {:get md}]
    ["/upload" {:post upload!}]
    ["/users"  {:get users}]
    ["/save-message" {:post save-message!}]
    ["/goods"  {:get goods}]
    ["/titles" {:get titles}]
    ["/records" {:get records-all}]
-   ["/record/:login" {:get record-login}]])
+   ["/record/:login" {:get record-login}]
+   ["/report-pt" {:post report-pt!}]
+   ["/points-from/:login" {:get points-from}]
+   ["/points-to/:login" {:get points-to}]])

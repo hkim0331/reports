@@ -1,0 +1,13 @@
+;; WARNING
+;; The dev-config.edn file is used for local environment variables, such as database credentials.
+;; This file is listed in .gitignore and will be excluded from version control by Git.
+
+{:dev true
+ :port 3000
+ :nrepl-port 7000
+ :database-url "postgresql://host/db?user=user&password=pass"
+ :users-db "https://api.host/api/user/"
+
+ ;; need change in production
+ :upload-to "/Volumes/RAM_DISK"
+ :hp-url "http://localhost:8080/"}

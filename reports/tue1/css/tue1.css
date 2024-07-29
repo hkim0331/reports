@@ -1,0 +1,13 @@
+body {
+  background-color: black;
+  color: white;
+}
+
+div.container {
+  margin: 2em;
+}
+
+p#title {
+  font-size: x-large;
+  font-weight: bold;
+}

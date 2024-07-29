@@ -1,12 +1,13 @@
 (ns ^:dev/once reports.app
   (:require
-    [reports.core :as core]
-    [cljs.spec.alpha :as s]
-    [expound.alpha :as expound]
-    [devtools.core :as devtools]))
+   [reports.core :as core]
+   [cljs.spec.alpha :as s]
+   [expound.alpha :as expound]
+   [devtools.core :as devtools]))
 
 (extend-protocol IPrintWithWriter
-  js/Symbol
+  ;;js/Symbol
+  symbol
   (-pr-writer [sym writer _]
     (-write writer (str "\"" (.toString sym) "\""))))
 
