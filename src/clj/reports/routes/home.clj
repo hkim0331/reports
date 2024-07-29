@@ -25,10 +25,7 @@
 ;; endterm endterm.md
 (defn preview [{{:keys [login]} :path-params}]
   (let [path (str (:upload-to env) "/" login "/endterm.md")]
-    (content-type
-     (ok (md-to-html-string (slurp path)))
-     "text/html")))
-
+    (content-type (ok (md-to-html-string (slurp path))) "text/html")))
 
 (defn home-routes []
   ["/r" {:middleware [middleware/wrap-restricted

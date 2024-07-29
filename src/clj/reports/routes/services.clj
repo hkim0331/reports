@@ -10,7 +10,6 @@
    [reports.db.core :as db]
    [reports.layout :as layout]
    [reports.middleware :as middleware]
-   ;; [ring.util.response] ;; from ring
    [ring.util.http-response :refer [content-type ok] :as response]))
 
 (defn dest-dir [login subdir]
