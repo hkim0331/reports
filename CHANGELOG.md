@@ -7,16 +7,17 @@
 - colorful buttons.
 
 ## v2.9-SNAPSHOT / 2024-07-29
-for endterm exam.
+-
+- simplify navbar.
+- bump-version to v2.9-SNAPSHOT
 - compile, macroexpanding error occurred
 ```
 ;; compile error
 ;; (def ^:private users (db/points))
 (defn users [] (db/points))
 ```
-- `JAVA_HOME= ... lein uberjar` does not change the JVM used in compilation.
-
-- Outdated libraries. bulma 1.0.1 works?
+- `JAVA_HOME= ... lein uberjar` does not work.
+- Outdated libraries have not yet upgraded. bulma 1.0.1 works?
 ```
 % clj -Tantq outdated
 ```
@@ -37,7 +38,7 @@ for endterm exam.
 |             | thheller/shadow-cljs       | 2.28.4   | 2.28.11    |
 
 
-## v2.9-SNAPSHOT / 2024-07-29
+## v2.8-SNAPSHOT
 alias login accounts.
 I shall return.
 ### Added

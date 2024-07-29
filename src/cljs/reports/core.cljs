@@ -93,9 +93,9 @@
       [:div.navbar-start
        ;;[nav-link "#/" "Home" :home]
        [nav-link "#/upload" "Upload"]
-       [nav-link "#/browse" "Browse"]
-       [nav-link "#/goods"  "Goods"]
-       [nav-link "/login"   "Login"]
+       #_[nav-link "#/browse" "Browse"]
+       #_[nav-link "#/goods"  "Goods"]
+       #_[nav-link "/login"   "Login"]
        [nav-link "/logout"  "Logout"]
        [nav-link "#/about"  "About" :about]]]]))
 
@@ -155,19 +155,24 @@
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
     [:div
-     [:h2 "Upload"]
+     [:h2 (str "Upload " js/login)]
+     [:p "上書きした endterm.md のセーブを確認後、up すること。"]
      [:div
-      [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
-      [upload-column "" "/css/ " "css" {:accept "text/css"}]
-      [upload-column "" "/images/ " "images" {:accept "image/*"}]
-      [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
-      [upload-column "" "/sounds/" "sounds" {:accept "audio/mp3"}]
-      [upload-column "" "/js/ " "js" {:accept "text/javascript"}]
-      [upload-column "" "zip " "zip" {:accept "application/zip"}]
+      ;;             loigin placeholder type accept
+      ;; [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
+      ;; [upload-column "" "/css/ " "css" {:accept "text/css"}]
+      ;; [upload-column "" "/images/ " "images" {:accept "image/*"}]
+      ;; [upload-column "" "/movies/ " "movies" {:accept "video/*"}]
+      ;; [upload-column "" "/sounds/" "sounds" {:accept "audio/mp3"}]
+      ;; [upload-column "" "/js/ " "js" {:accept "text/javascript"}]
+      ;; [upload-column "" "zip " "zip" {:accept "application/zip"}]
       [upload-column "" "md "  "md"   {:accept "text/markdown"}]]
-     [:div "check your uploads => "
+     #_[:div "check your uploads => "
       [:a.button.buttun.is-warning.is-small {:href url} "check"]]
-     [:ul
+     [:div "check your markdown =>"
+      [:a.button.button.is-warning.is-small {:href "/api/md"} "endterm.md"]]
+
+     #_[:ul
       [:li "アップロードはファイルひとつずつ。フォルダはアップロードできない。"]
       [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
       [:li "同じファイル名でアップロードすると上書き。"]
@@ -200,7 +205,7 @@
     [:section.section>div.container>div.content
      [upload-columns]
      [:br]
-     [uploaded-column]]))
+     #_[uploaded-column]]))
 
 ;; -------------------------
 ;; Browse & Comments
@@ -622,7 +627,6 @@
 (defn init! []
   (ajax/load-interceptors!)
   (hook-browser-navigation!)
-
 
   (reset-users!)
   (reset-goods!)
