@@ -14,9 +14,9 @@
     (layout/render request "home.html" {:login  (name login) ;; string
                                         :hp-url (:hp-url env)
                                         :rp-mode (:rp-mode env)})
-    (layout/render request
-                   "error.html"
-                   {:flash (:flash request)})))
+    (layout/error-page {:status 404
+                        :title "not login"
+                        :message "you need login"})))
 
 ;; ex1 answers.md
 ;; ex2 ex2-python.md

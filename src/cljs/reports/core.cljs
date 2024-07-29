@@ -13,8 +13,8 @@
    md5.core)
   (:import goog.History))
 
-(def ^:private version "v2.9.636")
-(def ^:private now "2024-07-29 14:43:12")
+(def ^:private version "v2.9.641")
+(def ^:private now "2024-07-29 16:00:27")
 
 ;-------------------------------------------
 ; r/atom
@@ -173,18 +173,19 @@
       ;; [upload-column "" "zip " "zip" {:accept "application/zip"}]
       [upload-column "" "md "  "md"   {:accept "text/markdown"}]]
      #_[:div "check your uploads => "
-      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
-     [:div "check your markdown =>"
-      [:a.button.button.is-warning.is-small {:href "/api/md"} "endterm.md"]]
-
+        [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+     #_[:div "check your markdown =>"
+        [:a.button.button.is-warning.is-small {:href "/api/md"} "endterm.md"]]
      #_[:ul
-      [:li "アップロードはファイルひとつずつ。フォルダはアップロードできない。"]
-      [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
-      [:li "同じファイル名でアップロードすると上書き。"]
-      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
-      [:li "アップロードが反映されない時、ブラウザの履歴（キャッシュ）をクリア。"]
-      [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]
-      [:li "md から markdown 以外をアップロードするのは間違いです。"]]]))
+        [:li "アップロードはファイルひとつずつ。フォルダはアップロードできない。"]
+        [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
+        [:li "同じファイル名でアップロードすると上書き。"]
+        [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
+        [:li "アップロードが反映されない時、ブラウザの履歴（キャッシュ）をクリア。"]
+        [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]
+        [:li "md から markdown 以外をアップロードするのは間違いです。"]]
+     [:hr]
+     "hkimura, " version]))
 
 ;; FIXME: @uploads-by-date は nil のケースがある。
 (defn uploaded-column

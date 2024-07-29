@@ -4,7 +4,7 @@
    [clojure.java.shell :refer [sh]]
    [clojure.string :as str]
    [clojure.tools.logging :as log]
-   [hato.client :as hc]
+   ;; [hato.client :as hc]
    [markdown.core :refer [md-to-html-string]]
    [reports.config :refer [env]]
    [reports.db.core :as db]
@@ -115,8 +115,6 @@
 (defn points-to [{{:keys [login]} :path-params}]
   (response/ok (-> (db/points-to {:login login}) to-map)))
 
-(defn url->path [url]
-  )
 
 (defn markdown-path [path]
   (md-to-html-string (slurp path)))
@@ -125,8 +123,14 @@
   (if-let [login (get-in request [:session :identity])]
     (let [url (str (:hp-url env) (name login) "/md/endterm.md")
           path (str "public/" (name login) "/md/endterm.md")]
-      (content-type (ok (markdown-path path)) "text/html"))
-    (layout/render request "error.html" {:flash (:flash request)})))
+      (if (.exists (io/file path))
+        (content-type (ok (markdown-path path)) "text/html")
+        (layout/error-page {:stats 404
+                            :title "not found endterm.md"
+                            :message "endterm.md is not uploaded yet."})))
+    (layout/error-page {:status 404
+                        :title "not login"
+                        :messsage "you need to login."})))
 
 (defn services-routes []
   ["/api" {:middleware [(if (:dev env) identity middleware/wrap-restricted)
