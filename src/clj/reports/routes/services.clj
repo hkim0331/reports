@@ -4,21 +4,20 @@
    [clojure.java.shell :refer [sh]]
    [clojure.string :as str]
    [clojure.tools.logging :as log]
+   [hato.client :as hc]
    [markdown.core :refer [md-to-html-string]]
    [reports.config :refer [env]]
    [reports.db.core :as db]
    [reports.layout :as layout]
    [reports.middleware :as middleware]
    ;; [ring.util.response] ;; from ring
-   [ring.util.http-response :refer [content-type ok] :as response]
-   ))
+   [ring.util.http-response :refer [content-type ok] :as response]))
 
 (defn dest-dir [login subdir]
   (let [public (:upload-to env)]
     (if (= subdir "html")
       (str public "/" login)
       (str public "/" login "/" subdir))))
-
 
 (defn find-title
   "テキストファイル f 中の <title> ~ </title> に挟まれる文字列を返す。
@@ -117,19 +116,15 @@
   (response/ok (-> (db/points-to {:login login}) to-map)))
 
 (defn markdown-url [url]
-  ;;(md-to-html-string (slurp path))
-  "<p>hello</p>")
+  (println "url:" url)
+  (let [ret (hc/get url)]
+    (md-to-html-string (:body ret))))
 
 (defn md [request]
-  (println "md" (get-in request [:session :identity]))
   (if-let [login (get-in request [:session :identity])]
-    (let [url (:hp-url env)]
-      (println "path" url)
-      (content-type
-       (ok (markdown-url (str url "/" login "/md/markdown.md")))
-       "text/html"))
-    (layout/render request "error.html"
-                   {:flash (:flash request)})))
+    (let [url (str (:hp-url env) (name login) "/md/endterm.md")]
+      (content-type (ok (markdown-url url)) "text/html"))
+    (layout/render request "error.html" {:flash (:flash request)})))
 
 (defn services-routes []
   ["/api" {:middleware [(if (:dev env) identity middleware/wrap-restricted)

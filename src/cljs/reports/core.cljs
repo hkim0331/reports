@@ -120,9 +120,11 @@
     (let [name js/login
           url (str js/hp_url name)]
       [:section.section>div.container>div.content
-       [:p "作成途中を評価するレポート。〆切際のやっつけサイトは点数低い。"]
-       [:p "自分レポート => "
+       [:p "レポートは作成途中とCSSが評価点。〆切際のやっつけサイトは点数低い。"]
+       #_[:p "自分レポート => "
         [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
+       [:p "期末テスト回答（ちゃんとマークダウンできたか） => "
+        [:a.button.buttun.is-warning.is-small {:href "/api/md"} "チェック"]]
        #_[:ul
         [:li [:a {:href "#/upload"} "アップロード"]]
         [:li [:a {:href "#/browse"} "ユーザーページ（ABCD 準備完了、6/18 23:59 までに）"]]

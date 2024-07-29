@@ -18,8 +18,6 @@
                    "error.html"
                    {:flash (:flash request)})))
 
-
-
 ;; ex1 answers.md
 ;; ex2 ex2-python.md
 ;; ex3 ex3-python.md
@@ -37,5 +35,4 @@
                       middleware/wrap-csrf
                       middleware/wrap-formats]}
    ["/" {:get home-page}]
-   ["/preview/:login" {:get preview}]
-   ["/md" {:get md}]])
+   ["/preview/:login" {:get preview}]])
