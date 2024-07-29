@@ -115,15 +115,17 @@
 (defn points-to [{{:keys [login]} :path-params}]
   (response/ok (-> (db/points-to {:login login}) to-map)))
 
-(defn markdown-url [url]
-  (println "url:" url)
-  (let [ret (hc/get url)]
-    (md-to-html-string (:body ret))))
+(defn url->path [url]
+  )
+
+(defn markdown-path [path]
+  (md-to-html-string (slurp path)))
 
 (defn md [request]
   (if-let [login (get-in request [:session :identity])]
-    (let [url (str (:hp-url env) (name login) "/md/endterm.md")]
-      (content-type (ok (markdown-url url)) "text/html"))
+    (let [url (str (:hp-url env) (name login) "/md/endterm.md")
+          path (str "public/" (name login) "/md/endterm.md")]
+      (content-type (ok (markdown-path path)) "text/html"))
     (layout/render request "error.html" {:flash (:flash request)})))
 
 (defn services-routes []

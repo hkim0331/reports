@@ -120,7 +120,9 @@
     (let [name js/login
           url (str js/hp_url name)]
       [:section.section>div.container>div.content
-       [:p "レポートは作成途中とCSSが評価点。〆切際のやっつけサイトは点数低い。"]
+       [:p "endterm.zip から取り出した endterm.md に回答を上書き、アップロードする。 => "
+        [:a.button.buttin.is-danger.is-small {:href "/r/#/upload"} "回答"]]
+       #_[:p "レポートは作成途中とCSSが評価点。〆切際のやっつけサイトは点数低い。"]
        #_[:p "自分レポート => "
         [:a.button.buttun.is-warning.is-small {:href url} "チェック"]]
        [:p "期末テスト回答（ちゃんとマークダウンできたか） => "
@@ -152,7 +154,8 @@
     [:div.column.is-one-fifth s1]
     [:div.column s2 [:input
                      (merge {:type "file" :name "upload"} accept)]]
-    [:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]]])
+    #_[:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]
+    [:div.column [:button.button.is-danger.is-small {:type "submit"} "up"]]]])
 
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
