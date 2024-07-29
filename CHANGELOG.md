@@ -6,10 +6,20 @@
 - dev container
 - colorful buttons.
 
+## v2.9-SNAPSHOT
+for endterm exam.
+- compile, macroexpanding error occurred
+```
+;; compile error
+;; (def ^:private users (db/points))
+(defn users [] (db/points))
+```
+- `JAVA_HOME= ... lein uberjar` does not make it.
+
+
 ## v2.8-SNAPSHOT
 alias login accounts.
 I shall return.
-
 ### Added
 - reports/points.clj - read points from reports.points, export them to
   `data/points.edn` and `data/points.csv` converted login to md5 aliases.
