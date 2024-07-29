@@ -6,10 +6,11 @@
 - dev container
 - colorful buttons.
 
-## v2.9-SNAPSHOT / 2024-07-29
--
+## v2.9.636 / 2024-07-29 / endterm
+endterm exam.
+- navbar is not displayed when width of browser is too narrow.
+-> place a link to upload page in body.
 - simplify navbar.
-- bump-version to v2.9-SNAPSHOT
 - compile, macroexpanding error occurred
 ```
 ;; compile error
@@ -38,7 +39,7 @@
 |             | thheller/shadow-cljs       | 2.28.4   | 2.28.11    |
 
 
-## v2.8-SNAPSHOT
+## v2.9.636 / 2024-07-29
 alias login accounts.
 I shall return.
 ### Added
