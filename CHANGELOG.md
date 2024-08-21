@@ -6,6 +6,9 @@
 - dev container
 - colorful buttons.
 
+## v2.10-SNAPSHOT
+- markdown-clj: clj は serif
+
 ## v2.9.636 / 2024-07-29 / endterm
 endterm exam.
 - navbar is not displayed when width of browser is too narrow.

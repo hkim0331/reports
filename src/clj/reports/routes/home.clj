@@ -24,7 +24,7 @@
 ;; ex4 ex4-python.md
 ;; endterm endterm.md
 (defn preview [{{:keys [login]} :path-params}]
-  (let [path (str (:upload-to env) "/" login "/endterm.md")]
+  (let [path (str (:upload-to env) "/" login "/re-exam.md")]
     (content-type (ok (md-to-html-string (slurp path))) "text/html")))
 
 (defn home-routes []
