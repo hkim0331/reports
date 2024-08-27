@@ -14,9 +14,9 @@
     (layout/render request "home.html" {:login  (name login) ;; string
                                         :hp-url (:hp-url env)
                                         :rp-mode (:rp-mode env)})
-    (layout/render request
-                   "error.html"
-                   {:flash (:flash request)})))
+    (layout/error-page {:status 404
+                        :title "not login"
+                        :message "you need login"})))
 
 ;; ex1 answers.md
 ;; ex2 ex2-python.md
@@ -24,11 +24,8 @@
 ;; ex4 ex4-python.md
 ;; endterm endterm.md
 (defn preview [{{:keys [login]} :path-params}]
-  (let [path (str (:upload-to env) "/" login "/endterm.md")]
-    (content-type
-     (ok (md-to-html-string (slurp path)))
-     "text/html")))
-
+  (let [path (str (:upload-to env) "/" login "/re-exam.md")]
+    (content-type (ok (md-to-html-string (slurp path))) "text/html")))
 
 (defn home-routes []
   ["/r" {:middleware [middleware/wrap-restricted

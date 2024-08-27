@@ -6,7 +6,6 @@
    ;;[reports.db.core :as db]]
    [reports.layout :as layout]
    [reports.middleware :as middleware]
-   ;; [ring.util.response]
    [ring.util.http-response :as response]))
 
 (defn please-login-page [_]

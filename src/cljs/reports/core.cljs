@@ -13,8 +13,8 @@
    md5.core)
   (:import goog.History))
 
-(def ^:private version "v2.9.636")
-(def ^:private now "2024-07-29 14:43:12")
+(def ^:private version "v2.11.654")
+(def ^:private now "2024-08-27 10:44:35")
 
 ;-------------------------------------------
 ; r/atom
@@ -117,10 +117,13 @@
 (defn home-page
   []
   (fn []
-    (let [name js/login
+    (let [thing "re-re-exam"
+          name js/login
           url (str js/hp_url name)]
       [:section.section>div.container>div.content
-       [:p "endterm.zip から取り出した endterm.md に回答を上書き、アップロードする。 => "
+       [:p (str
+            thing ".zip から取り出した "
+            thing ".md に回答を上書き、アップロードする。 => ")
         [:a.button.buttin.is-danger.is-small {:href "/r/#/upload"} "回答"]]
        #_[:p "レポートは作成途中とCSSが評価点。〆切際のやっつけサイトは点数低い。"]
        #_[:p "自分レポート => "
@@ -154,15 +157,15 @@
     [:div.column.is-one-fifth s1]
     [:div.column s2 [:input
                      (merge {:type "file" :name "upload"} accept)]]
-    #_[:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]
     [:div.column [:button.button.is-danger.is-small {:type "submit"} "up"]]]])
 
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
     [:div
      [:h2 (str "Upload " js/login)]
-     [:p "上書きした endterm.md のセーブを確認後、up すること。"]
+     [:p "上書きした re-re-exam.md のセーブを確認後、up すること。"]
      [:div
+      ;; re-re-exam のため、不必要な upload-column を見せない。
       ;;             loigin placeholder type accept
       ;; [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
       ;; [upload-column "" "/css/ " "css" {:accept "text/css"}]
@@ -173,18 +176,19 @@
       ;; [upload-column "" "zip " "zip" {:accept "application/zip"}]
       [upload-column "" "md "  "md"   {:accept "text/markdown"}]]
      #_[:div "check your uploads => "
-      [:a.button.buttun.is-warning.is-small {:href url} "check"]]
-     [:div "check your markdown =>"
-      [:a.button.button.is-warning.is-small {:href "/api/md"} "endterm.md"]]
-
+        [:a.button.buttun.is-warning.is-small {:href url} "check"]]
+     #_[:div "check your markdown =>"
+        [:a.button.button.is-warning.is-small {:href "/api/md"} "endterm.md"]]
      #_[:ul
-      [:li "アップロードはファイルひとつずつ。フォルダはアップロードできない。"]
-      [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
-      [:li "同じファイル名でアップロードすると上書き。"]
-      [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
-      [:li "アップロードが反映されない時、ブラウザの履歴（キャッシュ）をクリア。"]
-      [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]
-      [:li "md から markdown 以外をアップロードするのは間違いです。"]]]))
+        [:li "アップロードはファイルひとつずつ。フォルダはアップロードできない。"]
+        [:li "*.html や *.css, *.png 等のアップロード先はそれぞれ違います。"]
+        [:li "同じファイル名でアップロードすると上書き。"]
+        [:li "アップロードできたからってページが期待通りに見えるとは限らない。"]
+        [:li "アップロードが反映されない時、ブラウザの履歴（キャッシュ）をクリア。"]
+        [:li "/js/ は授業ではやらない JavaScript。好きもん用。"]
+        [:li "md から markdown 以外をアップロードするのは間違いです。"]]
+     [:hr]
+     "hkimura, " version]))
 
 ;; FIXME: @uploads-by-date は nil のケースがある。
 (defn uploaded-column
