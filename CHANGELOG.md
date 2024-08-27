@@ -6,8 +6,8 @@
 - dev container
 - colorful buttons.
 
-## v2.10-SNAPSHOT
-- markdown-clj: clj は serif
+## v2.10.647 / 2024-08-27
+- prep for re-re-exam.
 
 ## v2.9.636 / 2024-07-29 / endterm
 endterm exam.
