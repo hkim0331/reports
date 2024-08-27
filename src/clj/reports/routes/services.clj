@@ -65,7 +65,9 @@
       ;;  :body "upload success (exam mode)"}
       ;;
       ;; endterm, 2024-07-31.
+      ;; FIXME: 開発時はこれじゃない。
       (response/found "https://rp.melt.kyutech.ac.jp/r/#/")
+
       (catch Exception e
         (let [message (.getMessage e)]
           (log/error "upload! error:" login message)
