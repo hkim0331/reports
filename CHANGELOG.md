@@ -7,10 +7,10 @@
 - colorful buttons.
 
 ## v2.11-SNAPSHOT
+prep for re-re-exam.
 - fixme: 開発なのに、本番サーバへアップロードに行く。
 
 ## v2.10.647 / 2024-08-27
-- prep for re-re-exam.
 
 ## v2.9.636 / 2024-07-29 / endterm
 endterm exam.
