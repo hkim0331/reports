@@ -4,7 +4,10 @@
 - with-let の使い方
 - 再読み込みの後じゃないと good! が出ていかないことがある。
 - dev container
-- colorful buttons.
+
+
+## v2.11-SNAPSHOT
+- m64:dev-config.edn
 
 ## v2.11.654 / 2024-08-27
 prep for re-re-exam.
