@@ -58,13 +58,15 @@
         (when-let [title (find-title tempfile)]
           (upsert! login title)))
       (log/info login "upload success")
-      (response/found (str (reports.config/env :hp-url) login))
+      ;; (response/found (str (reports.config/env :hp-url) login))
+      ;; Only catch or finally clause can follow catch in try expression
       ;; midterm exam, 2023-06-12.
       ;; {:status 200
       ;;  :headers {"content-type" "text/html"}
       ;;  :body "upload success (exam mode)"}
       ;;
       ;; endterm, 2024-07-31.
+      ;; FIXME: 開発時はこれじゃない。
       (response/found "https://rp.melt.kyutech.ac.jp/r/#/")
       (catch Exception e
         (let [message (.getMessage e)]
@@ -121,13 +123,14 @@
 (defn md [request]
   (if-let [login (get-in request [:session :identity])]
     (let [url (str (:hp-url env) (name login) "/md/re-exam.md")
-          path (str "public/" (name login) "/md/re-exam.md")]
+          md "re-re-exam.md"
+          path (str "public/" (name login) (str "/md/" md))]
       (if (.exists (io/file path))
         ;;(content-type (ok (markdown-path path)) "text/html")
         (content-type (ok (slurp path)) "text/plain")
         (layout/error-page {:stats 404
-                            :title "not found re-exam.md"
-                            :message "re-exam.md is not uploaded yet."})))
+                            :title (str "not found " md)
+                            :message (str md " is not uploaded yet.")})))
     (layout/error-page {:status 404
                         :title "not login"
                         :messsage "you need to login."})))

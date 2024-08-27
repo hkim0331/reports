@@ -117,10 +117,13 @@
 (defn home-page
   []
   (fn []
-    (let [name js/login
+    (let [thing "re-re-exam"
+          name js/login
           url (str js/hp_url name)]
       [:section.section>div.container>div.content
-       [:p "re-exam.zip から取り出した re-exam.md に回答を上書き、アップロードする。 => "
+       [:p (str
+            thing ".zip から取り出した "
+            thing ".md に回答を上書き、アップロードする。 => ")
         [:a.button.buttin.is-danger.is-small {:href "/r/#/upload"} "回答"]]
        #_[:p "レポートは作成途中とCSSが評価点。〆切際のやっつけサイトは点数低い。"]
        #_[:p "自分レポート => "
@@ -154,15 +157,15 @@
     [:div.column.is-one-fifth s1]
     [:div.column s2 [:input
                      (merge {:type "file" :name "upload"} accept)]]
-    #_[:div.column [:button.button.is-info.is-small {:type "submit"} "up"]]
     [:div.column [:button.button.is-danger.is-small {:type "submit"} "up"]]]])
 
 (defn- upload-columns []
   (let [url (str js/hp_url js/login)]
     [:div
      [:h2 (str "Upload " js/login)]
-     [:p "上書きした re-exam.md のセーブを確認後、up すること。"]
+     [:p "上書きした re-re-exam.md のセーブを確認後、up すること。"]
      [:div
+      ;; re-re-exam のため、不必要な upload-column を見せない。
       ;;             loigin placeholder type accept
       ;; [upload-column (str js/login) "/ " "html" {:accept "text/html"}]
       ;; [upload-column "" "/css/ " "css" {:accept "text/css"}]

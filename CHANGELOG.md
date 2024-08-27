@@ -6,13 +6,16 @@
 - dev container
 - colorful buttons.
 
+## v2.11-SNAPSHOT
+- fixme: 開発なのに、本番サーバへアップロードに行く。
+
 ## v2.10.647 / 2024-08-27
 - prep for re-re-exam.
 
 ## v2.9.636 / 2024-07-29 / endterm
 endterm exam.
 - navbar is not displayed when width of browser is too narrow.
--> place a link to upload page in body.
+  -> place a link to upload page in body.
 - simplify navbar.
 - compile, macroexpanding error occurred
 ```
