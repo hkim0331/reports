@@ -58,15 +58,20 @@
         (when-let [title (find-title tempfile)]
           (upsert! login title)))
       (log/info login "upload success")
+      ;; production では public/<login>/ を見せれば良い。
+      ;;
       ;; (response/found (str (reports.config/env :hp-url) login))
-      ;; Only catch or finally clause can follow catch in try expression
+      ;;
+      ;; 試験時はアップロードしたmd をテキストファイルで落とす。
+      ;; md->html を使うとマークダウンに失敗した人が騒ぎ出す。
+      ;;
       ;; midterm exam, 2023-06-12.
       ;; {:status 200
       ;;  :headers {"content-type" "text/html"}
       ;;  :body "upload success (exam mode)"}
       ;;
       ;; endterm, 2024-07-31.
-      ;; FIXME: 開発時はこれじゃない。
+      ;; FIXME: 開発時でも本番サイトに飛んでしまう。
       (response/found "https://rp.melt.kyutech.ac.jp/r/#/")
       (catch Exception e
         (let [message (.getMessage e)]
