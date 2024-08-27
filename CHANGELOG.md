@@ -6,7 +6,7 @@
 - dev container
 - colorful buttons.
 
-## v2.11-SNAPSHOT
+## v2.11.654 / 2024-08-27
 prep for re-re-exam.
 - fixme: 開発なのに、本番サーバへアップロードに行く。
 
