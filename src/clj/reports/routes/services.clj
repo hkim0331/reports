@@ -58,7 +58,8 @@
         (when-let [title (find-title tempfile)]
           (upsert! login title)))
       (log/info login "upload success")
-      (response/found (str (reports.config/env :hp-url) login))
+      ;; (response/found (str (reports.config/env :hp-url) login))
+      ;; Only catch or finally clause can follow catch in try expression
       ;; midterm exam, 2023-06-12.
       ;; {:status 200
       ;;  :headers {"content-type" "text/html"}
@@ -67,7 +68,6 @@
       ;; endterm, 2024-07-31.
       ;; FIXME: 開発時はこれじゃない。
       (response/found "https://rp.melt.kyutech.ac.jp/r/#/")
-
       (catch Exception e
         (let [message (.getMessage e)]
           (log/error "upload! error:" login message)
