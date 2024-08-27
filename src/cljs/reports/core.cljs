@@ -120,7 +120,7 @@
     (let [name js/login
           url (str js/hp_url name)]
       [:section.section>div.container>div.content
-       [:p "re-exam.zip から取り出した re-exam.md に回答を上書き、アップロードする。 => "
+       [:p "re-re-exam.zip から取り出した re-re-exam.md に回答を上書き、アップロードする。 => "
         [:a.button.buttin.is-danger.is-small {:href "/r/#/upload"} "回答"]]
        #_[:p "レポートは作成途中とCSSが評価点。〆切際のやっつけサイトは点数低い。"]
        #_[:p "自分レポート => "
@@ -161,7 +161,7 @@
   (let [url (str js/hp_url js/login)]
     [:div
      [:h2 (str "Upload " js/login)]
-     [:p "上書きした re-exam.md のセーブを確認後、up すること。"]
+     [:p "上書きした re-re-exam.md のセーブを確認後、up すること。"]
      [:div
       ;;             loigin placeholder type accept
       ;; [upload-column (str js/login) "/ " "html" {:accept "text/html"}]

@@ -121,13 +121,14 @@
 (defn md [request]
   (if-let [login (get-in request [:session :identity])]
     (let [url (str (:hp-url env) (name login) "/md/re-exam.md")
-          path (str "public/" (name login) "/md/re-exam.md")]
+          md "re-re-exam.md"
+          path (str "public/" (name login) (str "/md/" md))]
       (if (.exists (io/file path))
         ;;(content-type (ok (markdown-path path)) "text/html")
         (content-type (ok (slurp path)) "text/plain")
         (layout/error-page {:stats 404
-                            :title "not found re-exam.md"
-                            :message "re-exam.md is not uploaded yet."})))
+                            :title (str "not found " md)
+                            :message (str md " is not uploaded yet.")})))
     (layout/error-page {:status 404
                         :title "not login"
                         :messsage "you need to login."})))
